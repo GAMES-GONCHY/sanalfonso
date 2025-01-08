@@ -1,0 +1,86 @@
+/* Fuente */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Variables CSS */
+:root {
+    --primary-color: #ff6b6b;
+    --secondary-color: #ff5252;
+    --background-color: #f4f7fa;
+    --text-color: #333333;
+    --input-border-color: #ddd;
+    --input-focus-border-color: #5a9;
+    --input-focus-shadow-color: rgba(90, 154, 90, 0.2);
+    --font-family: 'Roboto', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.login-container h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--input-border-color);
+    border-radius: 4px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.login-container input[type="text"]:focus,
+.login-container input[type="password"]:focus {
+    border-color: var(--input-focus-border-color);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--input-focus-shadow-color);
+}
+
+.login-container button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-container button:hover {
+    background-color: var(--secondary-color);
+}
+
+.login-container .forgot-password,
+.login-container .register {
+    display: block;
+    margin-top: 1rem;
+    color: #888;
+}
+
+.login-container .forgot-password:hover,
+.login-container .register:hover {
+    color: #555;
+}
+
+.login-container .register {
+    font-weight: bold;
+}
