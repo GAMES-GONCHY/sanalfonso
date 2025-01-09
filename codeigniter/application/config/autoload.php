@@ -132,7 +132,7 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array('estudiante_model','crudusers_model','usuario_model','datalogger_model','medidor_model','membresia_model','lectura_model','avisocobranza_model','tarifa_model', 'qr_model', 'reporte_model');
+$autoload['model'] = array('crudusers_model','usuario_model','datalogger_model','medidor_model','membresia_model','lectura_model','avisocobranza_model','tarifa_model', 'qr_model', 'reporte_model');
 
 // Incluir el autoload de Composer
 require_once APPPATH . '../vendor/autoload.php';

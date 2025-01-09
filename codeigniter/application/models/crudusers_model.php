@@ -91,6 +91,14 @@ class Crudusers_model extends CI_Model
 			$duplicate['nickName'] = true;
 		}
 
+		$this->db->where('ci', $newdata['ci']);
+		$query = $this->db->get('usuario');
+
+		if ($query->num_rows() > 0) 
+		{
+			$duplicate['ci'] = true;
+		}
+
 		return $duplicate;
 	}
 	public function comprobarmodificacion($newdata, $id)

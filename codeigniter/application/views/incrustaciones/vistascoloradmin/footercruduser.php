@@ -207,6 +207,7 @@
         }
     });
 
+
     // Configuración global de Parsley para aplicar estilos a los mensajes de error
     Parsley.on('field:error', function() {
         this.$element.nextAll('.parsley-errors-list').find('li').css('color', 'red');
@@ -214,12 +215,21 @@
 
     Parsley.on('field:validate', function() {
         // Aplica a todos los campos de texto excepto algunos que puedas excluir, si es necesario
-        if (this.$element.is('input[type="text"]')) {
+        if (this.$element.is('input[type="text"]') && this.$element.attr('id') !== 'ci') {
             this.$element.attr('data-parsley-no-special-chars', '');
             this.$element.attr('data-parsley-no-special-chars-message', 'Este campo no debe contener caracteres especiales ni tener espacios al inicio o al final.');
         }
     });
+
 </script>
+
+
+
+
+
+
+
+
 
 
 

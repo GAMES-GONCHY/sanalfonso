@@ -21,17 +21,25 @@
 								<div class="col-xl-7 col-lg-8">
 									<div class="d-flex mb-1">
 										<h2 class="mb-0 text-white">
-										<b>Consumo:</b>
-										<span data-animation="number" data-value="<?php echo number_format($consumo['consumo'], 2); ?>">0.00</span> [m3]
+											<b>Consumo:</b>
+											<span data-animation="number" data-value="<?php echo number_format($consumo['consumo'], 2); ?>">0.00</span> [m3]
 										</h2>
 									</div>
 									<div class="mb-3">
 										<i class="fa fa-caret-up"></i>
 										<span data-animation="number" data-value=""></span>
 										<?php
-											$fecha = new DateTime($consumo['fechaLectura']);
-											$formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE, null, null, 'MMMM yyyy');
-											echo ucfirst($formatter->format($fecha));
+											if (!empty($consumo['fechaLectura'])) {
+												try {
+													$fecha = new DateTime($consumo['fechaLectura']);
+													$formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE, null, null, 'MMMM yyyy');
+													echo ucfirst($formatter->format($fecha));
+												} catch (Exception $e) {
+													echo "Fecha no disponible";
+												}
+											} else {
+												echo "Fecha no disponible";
+											}
 										?>
 									</div>
 									<hr class="bg-white-transparent-5" />
@@ -45,8 +53,16 @@
 											</h2>
 											<i class="fa fa-caret-up"></i>
 											<?php
-												$fecha = new DateTime($consumo['fechaLectura']);
-												echo ucfirst($formatter->format($fecha));
+												if (!empty($consumo['fechaLectura'])) {
+													try {
+														$fecha = new DateTime($consumo['fechaLectura']);
+														echo ucfirst($formatter->format($fecha));
+													} catch (Exception $e) {
+														echo "Fecha no disponible";
+													}
+												} else {
+													echo "Fecha no disponible";
+												}
 											?>
 										</div>
 									</div>
@@ -60,8 +76,8 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
+
 
 
 

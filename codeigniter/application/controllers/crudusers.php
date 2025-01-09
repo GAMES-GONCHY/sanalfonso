@@ -53,29 +53,62 @@ class Crudusers extends CI_Controller
 	{
 		$newdata['nickname'] = $_POST['nickname'];
 		$newdata['email'] = $_POST['email'];
+		$newdata['ci'] = strtoupper($_POST['ci']);
 
 		$consulta = $this->crudusers_model->comprobarinsercion($newdata);
 		
 		if (!empty($consulta)) 
 		{
 			
-			if (!(isset($consulta['email']) && isset($consulta['nickName']))) 
+			if (isset($consulta['email']) && isset($consulta['nickName']) && isset($consulta['ci'])) 
 			{
-				if (isset($consulta['email'])) 
-				{
-					$this->session->set_flashdata('mensaje', 'ERROR: El E-mail ya está registrado en el sistema.');
-					$this->session->set_flashdata('alert_type', 'error');
-				}
-				if (isset($consulta['nickName'])) 
-				{
-					$this->session->set_flashdata('mensaje', 'ERROR: El Nickname ya está registrado en el sistema.');
-					$this->session->set_flashdata('alert_type', 'error');
-				}
+				$this->session->set_flashdata('mensaje', 'ERROR: El E-mail , Nickname y CI ya está registrados en el sistema.');
+				$this->session->set_flashdata('alert_type', 'error');
 			}
 			else 
 			{
-				$this->session->set_flashdata('mensaje', 'ERROR: El E-mail y Nickname ya están registrados en el sistema.');
-				$this->session->set_flashdata('alert_type', 'error');
+				if (isset($consulta['email'])&&isset($consulta['nickName'])) 
+				{
+					$this->session->set_flashdata('mensaje', 'ERROR: El E-mail y Nickname ya está registrados en el sistema.');
+					$this->session->set_flashdata('alert_type', 'error');
+				}
+				else
+				{
+					if (isset($consulta['email'])&&isset($consulta['ci'])) 
+					{
+						$this->session->set_flashdata('mensaje', 'ERROR: El E-mail y CI ya está registrados en el sistema.');
+						$this->session->set_flashdata('alert_type', 'error');
+					}
+					else
+					{
+						if (isset($consulta['nickName'])&&isset($consulta['ci'])) 
+						{
+							$this->session->set_flashdata('mensaje', 'ERROR: El Nickname y CI ya está registrados en el sistema.');
+							$this->session->set_flashdata('alert_type', 'error');
+						}
+						else
+						{
+							if (isset($consulta['nickName']))
+							{
+								$this->session->set_flashdata('mensaje', 'ERROR: El Nickname ya está registrado en el sistema.');
+								$this->session->set_flashdata('alert_type', 'error');
+							}
+							else
+							{
+								if (isset($consulta['email']))
+								{
+									$this->session->set_flashdata('mensaje', 'ERROR: El E-mail ya está registrado en el sistema.');
+									$this->session->set_flashdata('alert_type', 'error');
+								}
+								else
+								{
+									$this->session->set_flashdata('mensaje', 'ERROR: El CI ya está registrado en el sistema.');
+									$this->session->set_flashdata('alert_type', 'error');
+								}
+							}
+						}
+					}
+				}
 			}
 			//redirect('crudusers/agregar');
 			redirect('crudusers/agregar/'. $_POST['rol']);			
@@ -87,6 +120,7 @@ class Crudusers extends CI_Controller
 			$data['nombre'] = strtoupper($_POST['nombre']);
 			$data['primerApellido'] = strtoupper($_POST['primerapellido']);
 			$data['segundoApellido'] = strtoupper($_POST['segundoapellido']);
+			$data['ci'] = strtoupper($_POST['ci']);
 			$data['email'] = $_POST['email'];
 			$data['rol'] = $_POST['rol'];
 			$data['fono'] = $_POST['fono'];

@@ -63,19 +63,39 @@
             <div class="form-group row mb-3">
               <label class="col-lg-4 col-form-label form-label" for="nombre" style="color: white;">Nombre * :</label>
               <div class="col-lg-8">
-                <input class="form-control" type="text" id="nombre" name="nombre" placeholder="Nombre" data-parsley-required="true" />
+                <input class="form-control" type="text" style="text-transform: uppercase;" id="nombre" name="nombre" placeholder="Nombre" data-parsley-required="true" />
               </div>
             </div>
             <div class="form-group row mb-3">
               <label class="col-lg-4 col-form-label form-label" for="primerapellido" style="color: white;">Primer Apellido * :</label>
               <div class="col-lg-8">
-                <input class="form-control" type="text" id="primerapellido" name="primerapellido" placeholder="Primer Apellido" data-parsley-required="true" />
+                <input class="form-control" type="text" style="text-transform: uppercase;" id="primerapellido" name="primerapellido" placeholder="Primer Apellido" data-parsley-required="true" />
               </div>
             </div>
             <div class="form-group row mb-3">
               <label class="col-lg-4 col-form-label form-label" for="segundoapellido" style="color: white;">Segundo Apellido :</label>
               <div class="col-lg-8">
-                <input class="form-control" type="text" id="segundoapellido" name="segundoapellido" placeholder="Segundo Apellido" data-parsley-required="false" />
+                <input class="form-control" type="text" style="text-transform: uppercase;" id="segundoapellido" name="segundoapellido" placeholder="Segundo Apellido" data-parsley-required="false" />
+              </div>
+            </div>
+
+            <div class="form-group row mb-3">
+              <label class="col-lg-4 col-form-label form-label" for="ci" style="color: white;">CI :</label>
+              <div class="col-lg-8">
+                <!-- <input class="form-control" type="text" id="ci" name="ci" placeholder="CI" data-parsley-required="true" /> -->
+                <input 
+                    class="form-control" 
+                    type="text" 
+                    id="ci" 
+                    name="ci" 
+                    placeholder="CI" 
+                    required
+                    style="text-transform: uppercase;"
+                    data-parsley-required="true" 
+                    data-parsley-required-message="Este campo es obligatorio." 
+                    data-parsley-pattern="/^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)?$/" 
+                    data-parsley-pattern-message="Solo se permiten letras, números y un guion opcional seguido de alfanumérico, sin caracteres especiales ni espacios."
+                />
               </div>
             </div>
 

@@ -14,7 +14,11 @@
             <div class="stats-progress progress">
               <div class="progress-bar" style="width: 100.0%;"></div>
             </div>
-            <div class="stats-desc">Periodo: <?php echo $top1['fechaLectura'];?></div>
+            
+            <div class="stats-desc">
+                Periodo: <?php echo isset($top1['fechaLectura']) && !empty($top1['fechaLectura']) ? $top1['fechaLectura'] : 'No disponible'; ?>
+            </div>
+
           </div>
         </div>
       </a>
@@ -32,7 +36,10 @@
             <div class="stats-progress progress">
               <div class="progress-bar" style="width: 70.1%;"></div>
             </div>
-            <div class="stats-desc">Periodo: <?php echo $top1['fechaLectura'];?></div>
+            <div class="stats-desc">
+                Periodo: <?php echo isset($top1['fechaLectura']) && !empty($top1['fechaLectura']) ? $top1['fechaLectura'] : 'No disponible'; ?>
+            </div>
+
           </div>
         </div>
       </a>
@@ -63,16 +70,32 @@
           <div class="stats-icon stats-icon-lg"><i class="fa fa-trophy fa-fw"></i></div>
           <div class="stats-content">
             <div class="stats-title">TOP 5 CONSUMIDORES</div>
-            <div class="stats-number">(1) <span style="color: gold; font-size: 14px;"><?php echo trim($top1['socio']); ?></span></div>
+            <div class="stats-number">(1) 
+              <span style="color: gold; font-size: 14px;">
+                <?php 
+                  echo isset($top1['socio']) && !empty(trim($top1['socio'])) 
+                    ? trim($top1['socio']) 
+                    : 'Sin información';
+                ?>
+              </span>
+            </div>
             
             <div class="stats-progress progress">
               <div class="progress-bar" style="width: 100.0%;"></div>
             </div>
-            <div class="stats-desc">Periodo: <?php echo $top1['fechaLectura']; ?></div>
+            <div class="stats-desc">
+              Periodo: 
+              <?php 
+                echo isset($top1['fechaLectura']) && !empty($top1['fechaLectura']) 
+                  ? $top1['fechaLectura'] 
+                  : 'No disponible';
+              ?>
+            </div>
           </div>
         </div>
       </a>
     </div>
+
   </div>
 
   <!-- Tabla de Reportes -->
