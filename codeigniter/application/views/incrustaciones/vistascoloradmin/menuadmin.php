@@ -146,7 +146,7 @@
 
 
             <!-- Geolocalización -->
-            <div class="menu-item has-sub <?php echo ($this->uri->segment(1) === 'geodatalogger') ? 'active' : ''; ?>">
+            <!-- <div class="menu-item has-sub <?php echo ($this->uri->segment(1) === 'geodatalogger') ? 'active' : ''; ?>">
                 <a href="javascript:;" class="menu-link">
                     <div class="menu-icon"><i class="fa fa-map-marker"></i></div>
                     <div class="menu-text">Geolocalización</div>
@@ -159,10 +159,10 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> -->
             
             <!-- Dispositivos -->
-            <div class="menu-item <?php echo ($this->uri->segment(1) === 'datalogger' && $this->uri->segment(2) === 'habilitados') ? 'active' : ''; ?>">
+            <!-- <div class="menu-item <?php echo ($this->uri->segment(1) === 'datalogger' && $this->uri->segment(2) === 'habilitados') ? 'active' : ''; ?>">
                 <a href="<?php echo base_url('index.php/datalogger/habilitados'); ?>" class="menu-link">
                     <div class="menu-icon"><i class="fa fa-microchip"></i></div>
                     <div class="menu-text">Datalogger</div>
@@ -174,6 +174,14 @@
                     <div class="menu-icon"><i class="fa fa-tachometer-alt"></i></div>
 
                     <div class="menu-text">Medidores</div>
+                </a>
+            </div> -->
+            
+            <!-- Lecturas -->
+            <div class="menu-item has-sub <?php echo ($this->uri->segment(1) === 'lectura' && $this->uri->segment(2) === 'habilitados') ? 'active' : ''; ?>">
+                <a href="<?php echo base_url('index.php/lectura/mostrarlectura'); ?>" class="menu-link">
+                    <div class="menu-icon"><i class="fa fa-broadcast-tower"></i></div>
+                    <div class="menu-text">Lecturas</div>
                 </a>
             </div>
 
@@ -190,31 +198,6 @@
                     <div class="menu-item <?php echo ($this->uri->segment(2) === 'habilitados') ? 'active' : ''; ?>">
                         <a href="<?php echo base_url('index.php/tarifa/habilitados'); ?>" class="menu-link">
                             <div class="menu-text">Historial de tarifas</div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Lecturas -->
-            <div class="menu-item has-sub <?php echo ($this->uri->segment(1) === 'lecturadl') ? 'active' : ''; ?>">
-                <a href="javascript:;" class="menu-link">
-                    <!-- <div class="menu-icon"><i class="fa fa-list-ol"></i></div> -->
-                    <div class="menu-icon"><i class="fa fa-broadcast-tower"></i></div>
-                    <div class="menu-text">Lecturas</div>
-                    <div class="menu-caret"></div>
-                </a>
-                <div class="menu-submenu">
-                    <!-- Opción Ver en Tiempo Real -->
-                    <div class="menu-item <?php echo ($this->uri->segment(2) === 'actualizarlecturas') ? 'active' : ''; ?>">
-                        <a href="<?php echo base_url('index.php/lecturadl/actualizarlecturas/0'); ?>" class="menu-link">
-                            <div class="menu-text">Monitoreo en tiempo real</div>
-                        </a>
-                    </div>
-
-                    <!-- Opción Ver Último Registro -->
-                    <div class="menu-item <?php echo ($this->uri->segment(2) === 'mostrarlectura') ? 'active' : ''; ?>">
-                        <a href="<?php echo base_url('index.php/lecturadl/mostrarlectura'); ?>" class="menu-link">
-                            <div class="menu-text">Historial</div>
                         </a>
                     </div>
                 </div>

@@ -137,7 +137,7 @@ class Crudusers extends CI_Controller
 				$codigoSocio= $this->usuario_model->getusercode($idUsuario)->row_array();
 
 				$data2['idUsuario'] = $idUsuario;
-				$data2['codigoSocio'] = 'S-'.substr($codigoSocio['primerApellido'], 0, 2) . substr($codigoSocio['nombre'], -1);
+				$data2['codigoSocio'] = 'S-'.substr($codigoSocio['primerApellido'], 0, 2) . substr($codigoSocio['nombre'], -1) . substr($codigoSocio['ci'],0,1) . substr($codigoSocio['ci'], -1);
 				$this->db->insert('membresia',$data2);
 				$idMembresia=$this->db->insert_id();
 

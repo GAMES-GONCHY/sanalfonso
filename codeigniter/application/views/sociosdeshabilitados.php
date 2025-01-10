@@ -42,6 +42,7 @@
                   <th>Nombre</th>
                   <th>Primer Apellido</th>
                   <th>Segundo Apellido</th>
+                  <th>CI</th>
                   <th>E-mail</th>
                   <th>Rol</th>
                   <th>Fono</th>
@@ -74,6 +75,7 @@
                     <td><?php echo $row->nombre ?></td>
                     <td><?php echo $row->primerApellido ?></td>
                     <td><?php echo $row->segundoApellido ?></td>
+                    <td><?php echo $row->ci ?></td>
                     <td><?php echo $row->email ?></td>
                     <td><?php echo $row->rol ?></td>
                     <td><?php echo $row->fono ?></td>
@@ -103,6 +105,7 @@
                   <th>Nombre</th>
                   <th>Primer Apellido</th>
                   <th>Segundo Apellido</th>
+                  <th>CI</th>
                   <th>E-mail</th>
                   <th>Rol</th>
                   <th>Fono</th>

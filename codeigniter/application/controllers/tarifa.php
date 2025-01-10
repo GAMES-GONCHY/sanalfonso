@@ -32,9 +32,6 @@ class Tarifa extends CI_Controller
 		// $data['fechaInicioVigencia'] = $_POST['fechaInicioVigencia1'];
 
 		$this->tarifa_model->agregar($data);
-
-
-
 		redirect('tarifa/habilitados');
 	}
 
