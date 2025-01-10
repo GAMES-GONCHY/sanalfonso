@@ -1,14 +1,9 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-        "This file is @generated automatically"
-    ],
-    "content-hash": "8721d9f60d18fedcfa01ce290188abc1",
     "packages": [
         {
             "name": "aldas/modbus-tcp-client",
             "version": "3.5.1",
+            "version_normalized": "3.5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aldas/modbus-tcp-client.git",
@@ -35,7 +30,9 @@
             "suggest": {
                 "psr/log": "Required for using the Log middleware with BinaryStreamConnection"
             },
+            "time": "2024-03-10T12:44:20+00:00",
             "type": "library",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "ModbusTcpClient\\": "src/"
@@ -53,11 +50,12 @@
                 "issues": "https://github.com/aldas/modbus-tcp-client/issues",
                 "source": "https://github.com/aldas/modbus-tcp-client/tree/3.5.1"
             },
-            "time": "2024-03-10T12:44:20+00:00"
+            "install-path": "../aldas/modbus-tcp-client"
         },
         {
             "name": "chriskacerguis/codeigniter-restserver",
             "version": "3.1.7",
+            "version_normalized": "3.1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/chriskacerguis/codeigniter-restserver.git",
@@ -69,7 +67,9 @@
                 "reference": "70bcd18e590df90b33949153455695ac8a6e2bd7",
                 "shasum": ""
             },
+            "time": "2024-09-17T02:20:27+00:00",
             "type": "library",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "chriskacerguis\\RestServer\\": "src/"
@@ -90,11 +90,12 @@
                 "issues": "https://github.com/chriskacerguis/codeigniter-restserver/issues",
                 "source": "https://github.com/chriskacerguis/codeigniter-restserver/tree/3.1.7"
             },
-            "time": "2024-09-17T02:20:27+00:00"
+            "install-path": "../chriskacerguis/codeigniter-restserver"
         },
         {
             "name": "phpmailer/phpmailer",
             "version": "v6.9.1",
+            "version_normalized": "6.9.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
@@ -133,7 +134,9 @@
                 "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)",
                 "thenetworg/oauth2-azure": "Needed for Microsoft XOAUTH2 authentication"
             },
+            "time": "2023-11-25T22:23:28+00:00",
             "type": "library",
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "PHPMailer\\PHPMailer\\": "src/"
@@ -171,16 +174,9 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-25T22:23:28+00:00"
+            "install-path": "../phpmailer/phpmailer"
         }
     ],
-    "packages-dev": [],
-    "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": {},
-    "prefer-stable": false,
-    "prefer-lowest": false,
-    "platform": {},
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "dev": true,
+    "dev-package-names": []
 }
