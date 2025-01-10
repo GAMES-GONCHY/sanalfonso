@@ -14,7 +14,7 @@ class Usuario_model extends CI_Model
 	}
 	public function getusercode($idUsuario)
 	{
-		$this->db->select('nombre, primerApellido');
+		$this->db->select('nombre, primerApellido, ci');
 		$this->db->from('usuario');
 		$this->db->where('idUsuario',$idUsuario);
 		return $this->db->get();

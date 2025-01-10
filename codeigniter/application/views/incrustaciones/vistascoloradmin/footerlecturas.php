@@ -10,6 +10,75 @@
   </div>
   <!-- END APP HEADER -->
 
+<!-- Modal para ingresar nueva lectura -->
+<div class="modal fade" id="modalNuevaLectura" tabindex="-1" role="dialog" data-parsley-validate="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="border-radius: 10px; overflow: hidden; box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);">
+            <!-- Header con diseño mejorado -->
+            <div class="modal-header" style="background-color: #f8f9fa; border-bottom: 2px solid #007bff;">
+                <h5 class="modal-title" style="color: #007bff; font-weight: bold; font-size: 18px;" id="modalNuevaLecturaLabel">
+                    Ingrese una nueva lectura
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px; font-family: Arial, sans-serif; color: #333;">
+                <!-- Información del socio con diseño en dos filas -->
+                <div class="mb-3" style="background: #f5f5f5; padding: 15px; border-radius: 8px; box-shadow: inset 0px 1px 5px rgba(0, 0, 0, 0.1);">
+                    <div class="row">
+                        <div class="col-6">
+                            <p style="margin: 0; padding: 5px 0; font-size: 14px;">
+                                <strong style="color: #0056b3;">Código Socio:</strong> 
+                                <span id="codigo-socio" style="color: #333;"></span>
+                            </p>
+                            <p style="margin: 0; padding: 5px 0; font-size: 14px;">
+                                <strong style="color: #0056b3;">Lectura Actual:</strong> 
+                                <span id="lectura-actual" style="color: #333;"></span>
+                            </p>
+                            <!-- <p style="margin: 0; padding: 5px 0; font-size: 14px;">
+                                <strong style="color: #0056b3;">CI:</strong> 
+                                <span id="ci" style="color: #333;"></span>
+                            </p> -->
+                          
+                        </div>
+                        <div class="col-6">
+                            <p style="margin: 0; padding: 5px 0; font-size: 14px;">
+                                <strong style="color: #0056b3;">Socio:</strong> 
+                                <span id="nombre-socio" style="color: #333;"></span>
+                            </p>
+                            <p style="margin: 0; padding: 5px 0; font-size: 14px;">
+                                <strong style="color: #0056b3;">Fecha Lec. Act.:</strong> 
+                                <span id="fecha-lectura" style="color: #333;"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <form id="formNuevaLectura" action="<?php echo base_url('index.php/tarifa/agregar'); ?>" method="POST">
+                    <div class="form-group mb-3">
+                        <label for="tarifaMinima" class="form-label" style="font-weight: bold; color: #007bff;">Ingresar Lectura</label>
+                        <input type="text" name="nuevaLectura" id="nuevaLectura" class="form-control" required
+                            data-parsley-decimal41 
+                            data-parsley-trigger="input" 
+                            placeholder="Ejemplo: 999.9" 
+                            maxlength="5"
+                            style="width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);">
+                    </div>
+                    <div class="modal-footer" style="border-top: 2px solid #ddd; display: flex; justify-content: space-between;">
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" style="padding: 10px 20px; font-size: 14px; border-radius: 5px; border: 1px solid #dc3545;">
+                            Cerrar
+                        </button>
+                        <button type="submit" class="btn btn-outline-success" style="padding: 10px 20px; font-size: 14px; border-radius: 5px; border: 1px solid #28a745;">
+                            Registrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 
 
@@ -192,28 +261,26 @@
 
 <!-- tarifas/modificar -->
 <script>
-function cargarDatos(idTarifa, fechaInicioVigencia) {
-    // Busca la fila correspondiente por su ID
-    var fila = document.getElementById("row_" + idTarifa);
+function cargarLectura(fechaFormateada, lecturaActual, codigoSocio, nombreSocio, ci) {
 
-    // Comprobar si la fila existe
-    if (fila) {
-        // Obtener los valores de las celdas correspondientes
-        var tarifaVigente = fila.cells[1].innerText;
-        var tarifaMinima = fila.cells[2].innerText;
-        var fechaInicioVigencia = fila.cells[3].innerText;
+        console.log('Entrando a cargarLectura...');
+        console.log('Datos recibidos:', { fechaFormateada, lecturaActual, codigoSocio, nombreSocio, ci });
+        
+        var form = $('#formNuevaLectura').parsley();
+        form.reset(); // Resetea el estado de validación de Parsley
+        document.getElementById('nuevaLectura').classList.remove('parsley-error'); // Elimina la clase de error si quedó activa
 
         // Asignar los valores a los campos del modal
-        document.getElementById('idTarifa').value = idTarifa;
-        document.getElementById('tarifaVigente').value = tarifaVigente.trim();
-        document.getElementById('tarifaMinima').value = tarifaMinima.trim();
-        document.getElementById('fechaInicioVigencia').value = fechaInicioVigencia.trim();
+
+        document.getElementById('codigo-socio').textContent = codigoSocio;
+        document.getElementById('nombre-socio').textContent = nombreSocio;
+        // document.getElementById('ci').textContent = ci;
+        document.getElementById('fecha-lectura').textContent = fechaFormateada;
+        document.getElementById('lectura-actual').textContent = lecturaActual;
 
         // Mostrar el modal de modificación
-        $('#modalModificarTarifa').modal('show');
-    } else {
-        console.error("No se encontró la fila: ", idTarifa);
-    }
+        $('#modalNuevaLectura').modal('show');
+
 }
 
 </script>

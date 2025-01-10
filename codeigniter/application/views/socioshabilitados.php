@@ -38,13 +38,13 @@
                   <th width="1%" data-orderable="false">Perfil</th>
                   <!-- <th>Cargar</th> -->
                   <th>Codigo Socio</th>
-                  <th>Nick name</th>
+                  <th>Nickname</th>
                   <th>Nombre</th>
                   <th>Primer Apellido</th>
                   <th>Segundo Apellido</th>
+                  <th>CI</th>
                   <th>E-mail</th>
-                  <th>Asignar Datalogger</th>
-                  <th>Rol</th>
+                  <!-- <th>Asignar Datalogger</th> -->
                   <th>Fono</th>
                   <th>Creado</th>
                   <th>Modificar</th>
@@ -88,8 +88,9 @@
                     <td><?php echo $row->nombre ?></td>
                     <td><?php echo $row->primerApellido ?></td>
                     <td><?php echo $row->segundoApellido ?></td>
+                    <td><?php echo $row->ci ?></td>
                     <td><?php echo $row->email ?></td>
-                    <td>
+                    <!-- <td>
                       <?php
                       echo form_open_multipart("geodatalogger/redireccionar"); // <form>
                       ?>
@@ -98,28 +99,11 @@
                       <?php
                       echo form_close(); // </form>
                       ?>
-                    </td>
-                    <td>
-                        <?php
-                        if ($row->rol == 2) {
-                            echo "Administrador";
-                        }
-                        else 
-                        {
-                          if($row->rol == 0)
-                          {
-                            echo "Socio";
-                          }
-                          else
-                          {
-                            echo "Auxiliar";
-                          }
-                        }
-                        ?>
-                    </td>
-                    <td><?php echo $row->fono ?></td>
-                    <td><?php echo $row->fechaRegistro ?></td>
+                    </td> -->
                     
+                    <td><?php echo $row->fono ?></td>
+                    <!-- <td><?php echo $row->fechaRegistro ?></td> -->
+                    <td><?php echo date('d-m-Y', strtotime($row->fechaRegistro)); ?></td>
                     <td>
                       <?php
                       echo form_open_multipart("crudusers/modificar"); // <form>
@@ -157,9 +141,9 @@
                   <th>Nombre</th>
                   <th>Primer Apellido</th>
                   <th>Segundo Apellido</th>
+                  <th>CI</th>
                   <th>E-mail</th>
-                  <th>Asignar Datalogger</th>
-                  <th>Rol</th>
+                  <!-- <th>Asignar Datalogger</th> -->
                   <th>Fono</th>
                   <th>Creado</th>
                   <th>Modificar</th>

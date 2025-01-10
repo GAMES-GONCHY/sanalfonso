@@ -39,12 +39,12 @@
                   <th width="1%">No.</th>
                   <th width="1%" data-orderable="false">Perfil</th>
                   <!-- <th>Cargar</th> -->
-                  <th>Nick name</th>
+                  <th>Nickname</th>
                   <th>Nombre</th>
                   <th>Primer Apellido</th>
                   <th>Segundo Apellido</th>
+                  <th>CI</th>
                   <th>E-mail</th>
-                  <th>Rol</th>
                   <th>Fono</th>
                   <th>Género</th>
                   <th>Creado</th>
@@ -88,25 +88,8 @@
                     <td><?php echo $row->nombre ?></td>
                     <td><?php echo $row->primerApellido ?></td>
                     <td><?php echo $row->segundoApellido ?></td>
+                    <td><?php echo $row->ci ?></td>
                     <td><?php echo $row->email ?></td>
-                    <td>
-                        <?php
-                        if ($row->rol == 2) {
-                            echo "Administrador";
-                        }
-                        else 
-                        {
-                          if($row->rol == 0)
-                          {
-                            echo "Socio";
-                          }
-                          else
-                          {
-                            echo "Auxiliar";
-                          }
-                        }
-                        ?>
-                    </td>
                     <td><?php echo $row->fono ?></td>
                     <td>
                     <?php
@@ -120,7 +103,8 @@
                         }
                         ?>
                     </td>
-                    <td><?php echo $row->fechaRegistro ?></td>
+                    <td><?php echo date('d-m-Y', strtotime($row->fechaRegistro)); ?></td>
+
                     <td>
                       <?php
                       echo form_open_multipart("crudusers/modificar"); // <form>
@@ -154,12 +138,12 @@
                   <th width="1%">No.</th>
                   <th width="1%" data-orderable="false">Perfil</th>
                   <!-- <th>Cargar</th> -->
-                  <th>Nick name</th>
+                  <th>Nickname</th>
                   <th>Nombre</th>
                   <th>Primer Apellido</th>
                   <th>Segundo Apellido</th>
+                  <th>CI</th>
                   <th>E-mail</th>
-                  <th>Rol</th>
                   <th>Fono</th>
                   <th>Género</th>
                   <th>Creado</th>
