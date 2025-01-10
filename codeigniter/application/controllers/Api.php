@@ -7,9 +7,11 @@ class Api extends RestController {
 
    
     public function prueba_get() {
-        $this->response([
+        /*$this->response([
             'status' => true,
             'message' => 'La API REST está funcionando correctamente'
-        ], 200);
+        ], 200);*/
+		$array = array("hola", "mundo","cinthia");
+		$this->response($array);
     }
 }
