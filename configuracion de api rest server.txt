@@ -119,3 +119,35 @@ Configura el archivo index.php para cargar el autoload de Composer.
 Configura el .htaccess para habilitar URLs limpias.
 Crea un controlador para la API.
 Añade rutas para los endpoints.
+
+
+
+
+
+
+
+ARCHIVOS COPIADOS Y SUS SIGNIFICADO
+
+En tu imagen se observan dos archivos relevantes para tu proyecto en CodeIgniter:
+
+REST_Controller.php:
+Este archivo es parte de una extensión para CodeIgniter conocida como CodeIgniter Rest Server. Este controlador sirve para implementar APIs RESTful en tu proyecto. Proporciona funcionalidades útiles como manejo de peticiones HTTP (GET, POST, PUT, DELETE) y formateo de respuestas (JSON, XML, etc.), simplificando la creación de servicios web.
+
+Usualmente se utiliza cuando deseas construir una API REST para interactuar con sistemas externos o aplicaciones móviles (como en tu caso, con Flutter).
+Este archivo actúa como la base para los controladores que heredan de él.
+Ejemplo de uso:
+
+php
+Copiar código
+class MiApi extends REST_Controller {
+    public function usuarios_get() {
+        $data = ['usuario1', 'usuario2'];
+        $this->response($data, REST_Controller::HTTP_OK);
+    }
+}
+Format.php:
+Este archivo complementa al REST_Controller. Su función principal es formatear los datos de las respuestas que se devuelven desde la API. Por ejemplo, si envías datos en JSON o XML, Format.php se encarga de estructurar los datos en el formato correcto.
+
+Trabaja junto con REST_Controller.php para asegurar que las respuestas sean coherentes y fáciles de consumir por el cliente (aplicación móvil o sistema).
+Maneja conversiones entre diferentes tipos de datos y formatos de salida.
+En resumen, ambos archivos son esenciales para trabajar con APIs RESTful en CodeIgniter. Si estás desarrollando una API para tu sistema, estos archivos te facilitarán la gestión de peticiones y respuestas. ¿Te gustaría un ejemplo más detallado de cómo usar estos archivos?
