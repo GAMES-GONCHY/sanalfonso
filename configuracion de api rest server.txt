@@ -1,0 +1,121 @@
+Si cambiaste de carpeta o proyecto donde deseas trabajar con CodeIgniter Rest Server, necesitarás realizar algunos pasos para configurarlo nuevamente en tu nuevo proyecto. Aquí tienes una guía detallada paso a paso:
+
+1. Verifica si Composer está instalado
+Antes de continuar, asegúrate de que Composer esté instalado en tu sistema. Abre tu terminal o Git Bash y ejecuta:
+
+bash
+Copiar código
+composer --version
+Deberías ver algo como: Composer version x.x.x.
+
+2. Configura Composer en la nueva carpeta del proyecto
+Navega a la carpeta de tu nuevo proyecto en la terminal:
+
+bash
+Copiar código
+cd /ruta/a/tu/nuevo/proyecto
+Si no existe un archivo composer.json en esta carpeta, inicializa Composer:
+
+bash
+Copiar código
+composer init
+Responde las preguntas del asistente y crea un archivo básico composer.json.
+
+3. Instala CodeIgniter Rest Server en el nuevo proyecto
+Ejecuta el siguiente comando en la raíz del proyecto para instalar la librería:
+
+bash
+Copiar código
+composer require chriskacerguis/codeigniter-restserver
+Esto creará una carpeta vendor/ y añadirá la dependencia al archivo composer.json.
+
+4. Configura el autoload de Composer
+Abre el archivo index.php en la raíz de tu proyecto.
+Busca la sección donde se definen constantes y carga el framework.
+Asegúrate de agregar esta línea para incluir el autoload de Composer:
+php
+Copiar código
+require_once __DIR__ . '/vendor/autoload.php';
+Por ejemplo:
+php
+Copiar código
+// Cargar el autoload de Composer
+require_once __DIR__ . '/vendor/autoload.php';
+
+// Cargar el framework
+require_once BASEPATH . 'core/CodeIgniter.php';
+5. Configura el archivo .htaccess
+Si el archivo .htaccess no está presente, crea uno en la raíz del proyecto y agrega lo siguiente:
+
+apache
+Copiar código
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /ruta/a/tu/proyecto/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
+Reemplaza /ruta/a/tu/proyecto/ con el nombre de la carpeta de tu proyecto.
+
+6. Verifica las rutas
+Abre el archivo application/config/routes.php y añade las rutas necesarias para la API:
+
+php
+Copiar código
+$route['api/prueba'] = 'api/prueba';
+7. Crea el controlador Api.php
+En la carpeta application/controllers/, crea un archivo llamado Api.php con este contenido:
+
+php
+Copiar código
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+use chriskacerguis\RestServer\RestController;
+
+class Api extends RestController {
+
+    public function __construct() {
+        parent::__construct();
+    }
+
+    public function prueba_get() {
+        $this->response([
+            'status' => true,
+            'message' => 'La API REST está funcionando correctamente'
+        ], 200);
+    }
+}
+8. Prueba la API REST
+Inicia tu servidor local (XAMPP, WAMP, etc.).
+Accede a la siguiente URL en tu navegador o Postman:
+ruby
+Copiar código
+http://localhost/ruta/a/tu/proyecto/api/prueba
+Deberías ver el siguiente resultado:
+json
+Copiar código
+{
+    "status": true,
+    "message": "La API REST está funcionando correctamente"
+}
+9. Verifica la instalación de dependencias
+Si el archivo composer.json ya tenía configuradas dependencias, asegúrate de ejecutar:
+
+bash
+Copiar código
+composer install
+Esto instalará todas las librerías necesarias.
+
+10. Notas finales
+Si realizaste configuraciones previas en otro proyecto, asegúrate de copiar cualquier archivo de configuración relevante (como .htaccess, controladores, o modelos) al nuevo proyecto.
+Si necesitas más endpoints, puedes extender el controlador Api.php.
+Resumen
+Para que la API REST funcione en tu nuevo proyecto:
+
+Instala CodeIgniter Rest Server con Composer.
+Configura el archivo index.php para cargar el autoload de Composer.
+Configura el .htaccess para habilitar URLs limpias.
+Crea un controlador para la API.
+Añade rutas para los endpoints.
