@@ -124,4 +124,25 @@ class Crudusers_model extends CI_Model
 		}
 		return $duplicates;
 	}
+
+	public function buscar_socios($codigo = null, $nombre = null)
+{
+    // Seleccionar los datos relevantes
+    $this->db->select('usuario.idUsuario, usuario.nickName, usuario.nombre, usuario.primerApellido, usuario.segundoApellido, usuario.email, usuario.fono, membresia.codigoSocio');
+    $this->db->from('usuario');
+    $this->db->join('membresia', 'membresia.idUsuario = usuario.idUsuario', 'inner');
+    
+    // Filtros de búsqueda
+    if ($codigo) {
+        $this->db->where('membresia.codigoSocio', $codigo);
+    }
+    if ($nombre) {
+        $this->db->like('usuario.nombre', $nombre);
+    }
+    
+    // Ejecutar la consulta
+    $query = $this->db->get();
+    return $query->result_array(); // Devolver los resultados como un array
+}
+
 }

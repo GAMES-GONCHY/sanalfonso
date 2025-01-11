@@ -211,3 +211,28 @@ Quieres traducir los mensajes a otro idioma.
 Deseas personalizar los mensajes para que sean más claros o específicos para tu aplicación.
 Conclusión:
 Este archivo es un componente estándar de la biblioteca REST_Controller en CodeIgniter y sirve para gestionar los mensajes de texto que la biblioteca muestra al interactuar con tu API. Si no necesitas traducciones o mensajes personalizados, puedes dejarlo tal como está.
+
+
+********************************************************************
+
+¡Claro que sí! Aquí tienes una explicación paso a paso y sencilla sobre qué son los endpoints, para qué sirven, y cómo crearlos en CodeIgniter 3 para que puedas enlazar tu sistema web con tu aplicación móvil.
+
+¿Qué es un endpoint?
+Un endpoint es un punto de entrada (una URL específica) en tu sistema que permite a otros programas o dispositivos interactuar con tu aplicación. En el contexto de una API REST, los endpoints son rutas que se exponen para realizar operaciones como:
+
+Obtener datos (por ejemplo, listar usuarios o lecturas).
+Crear datos (registrar una nueva lectura, por ejemplo).
+Actualizar datos (modificar información existente).
+Eliminar datos.
+¿Para qué sirve un endpoint en tu proyecto?
+En tu caso, los endpoints te permiten:
+
+Que la aplicación móvil pueda buscar un socio en tu sistema web por nombre o código.
+Que la aplicación móvil registre una nueva lectura en el sistema web. Esto hace que el sistema web y la app móvil puedan comunicarse entre sí.
+Cómo se crean endpoints en CodeIgniter 3
+Configura la biblioteca REST_Controller:
+
+CodeIgniter no tiene soporte nativo para APIs REST, pero podemos usar una biblioteca llamada REST_Controller.
+Asegúrate de tener los archivos REST_Controller.php y Format.php en la carpeta application/libraries.
+Crea un controlador para los endpoints: Los controladores en CodeIgniter son los encargados de manejar las solicitudes y enviar respuestas. Vamos a crear un archivo para nuestro API.
+
