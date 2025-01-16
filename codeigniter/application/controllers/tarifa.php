@@ -11,7 +11,7 @@ class Tarifa extends CI_Controller
 		$this->load->view('incrustaciones/vistascoloradmin/head');
         $this->load->view('incrustaciones/vistascoloradmin/menuadmin');
         $this->load->view('tarifashabilitadas', $data);
-        $this->load->view('incrustaciones/vistascoloradmin/footerlecturas');
+        $this->load->view('incrustaciones/vistascoloradmin/footertarifas');
 		
 	}
 	public function deshabilitados()
@@ -22,7 +22,7 @@ class Tarifa extends CI_Controller
 		$this->load->view('incrustaciones/vistascoloradmin/head');
         $this->load->view('incrustaciones/vistascoloradmin/menuadmin');
         $this->load->view('tarifasdeshabilitadas', $data); // Mostrar las lecturas fallidas
-        $this->load->view('incrustaciones/vistascoloradmin/footerlecturas');
+        $this->load->view('incrustaciones/vistascoloradmin/footertarifas');
 		
 	}
 	public function agregar()

@@ -42,53 +42,17 @@
             </tr>
           </thead>
           <tbody id="lecturas-body">
-            <?php
-            $cont = 1;
-            $meses = [
-              'Jan' => 'Ene', 'Feb' => 'Feb', 'Mar' => 'Mar', 'Apr' => 'Abr',
-              'May' => 'May', 'Jun' => 'Jun', 'Jul' => 'Jul', 'Aug' => 'Ago',
-              'Sep' => 'Sep', 'Oct' => 'Oct', 'Nov' => 'Nov', 'Dec' => 'Dic'
-            ];
-            foreach ($lecturas as $lectura) {
-              // Verificar si la fecha de lectura está presente y es válida
-              if (!empty($lectura['fechaLectura'])) {
-                // Crear el objeto DateTime solo si el valor no es nulo o vacío
-                $fecha = strtotime($lectura['fechaLectura']);
-                $fechaFormateada = date('d', $fecha) . '-' . strtoupper($meses[date('M', $fecha)]) . '-' . date('Y', $fecha);
-                
-              }
-              else
-              {
-                $fechaFormateada = null;
-                $mes = "Mes no disponible"; // Mensaje alternativo si no hay fecha de lectura
-              }
-            ?>
+            
               <tr>
-                <td><?php echo $cont; ?></td>
-                <td><?php echo $lectura['lecturaActual']; ?></td>
-                <td><?php echo $lectura['lecturaAnterior'] !== null ? $lectura['lecturaAnterior'] : 0; ?></td>
-                <td><?php echo $lectura['codigoSocio']; ?></td>
-                <td><?php echo $lectura['nombreSocio']; ?></td>
-                <td><?php echo $lectura['ci']; ?></td>
-                <td><?php echo $fechaFormateada ?></td>
-                <td>
-                  <button 
-                      class="btn btn-success btn-sm mx-1" 
-                      data-bs-toggle="modal" 
-                      data-bs-target="#modalNuevaLectura"
-                      onclick="cargarLectura('<?php echo $fechaFormateada; ?>',
-                          <?php echo $lectura['lecturaActual']; ?>,
-                          '<?php echo $lectura['codigoSocio']; ?>',
-                          '<?php echo $lectura['nombreSocio']; ?>',
-                          '<?php echo $lectura['ci']; ?>')">
-                      <i class="fas fa-pencil-alt"></i> <!-- Icono de lápiz -->
-                  </button>
-                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
               </tr>
-            <?php
-              $cont++;
-            }
-            ?>
           </tbody>
           <tfoot>
             <tr>

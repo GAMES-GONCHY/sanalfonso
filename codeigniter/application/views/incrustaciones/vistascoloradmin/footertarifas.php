@@ -64,10 +64,10 @@
                             data-parsley-trigger="input" 
                             placeholder="Ejemplo: 123456" 
                             style="width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);">  
-                        <input type="hidden" id="idMembresia" name="idMembresia">
-                        <input type="hidden" id="lecturaActual" name="lecturaActual">
-                        <input type="hidden" id="ci" name="ci">
-                        <input type="hidden" id="cont" name="cont">
+                        <input type="text" id="idMembresia" name="idMembresia">
+                        <input type="text" id="lecturaActual" name="lecturaActual">
+                        <input type="text" id="ci" name="ci">
+                        <input type="text" id="cont" name="cont">
                     </div>
                     
                 </form>
@@ -129,10 +129,8 @@
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/pdfmake/build/pdfmake.min.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/pdfmake/build/vfs_fonts.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/jszip/dist/jszip.min.js"></script>
-  <script>
-    var rutaObtenerLecturas = '<?php echo base_url(); ?>index.php/lectura/obtenerLecturas';
-  </script>
-  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo3.js"></script>
+
+  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
 
   <!-- toast -->

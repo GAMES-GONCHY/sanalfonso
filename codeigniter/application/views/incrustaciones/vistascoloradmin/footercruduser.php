@@ -315,7 +315,8 @@
             $('#puerto').val(puerto);
         }
 
-        $('#btnGuardarConfiguracion').on('click', function() {
+        $('#btnGuardarConfiguracion').on('click', function()
+        {
             // Obtener los valores de los inputs en el modal
             var idDatalogger = $('#idDatalogger').val();
             var IP = $('#IP').val();

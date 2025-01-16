@@ -5,7 +5,7 @@ class Lectura_model extends CI_Model
 {
     public function habilitados() 
     {
-        $this->db->select('M.codigoSocio, CONCAT_WS(" ", U.nombre, U.primerApellido, IFNULL(U.segundoApellido,"")) AS nombreSocio,
+        $this->db->select('M.codigoSocio, M.idMembresia, CONCAT_WS(" ", U.nombre, U.primerApellido, IFNULL(U.segundoApellido,"")) AS nombreSocio,
                             U.ci, L.lecturaActual, L.lecturaAnterior, L.fechaLectura');
         $this->db->from('usuario U');
         $this->db->join('membresia M', 'U.idUsuario = M.idUsuario', 'inner');
@@ -15,5 +15,12 @@ class Lectura_model extends CI_Model
         $query = $this->db->get();
         return $query->result_array();
     }
-    
+    public function insertarnuevalectura($data) 
+    {
+        $data['idAutor']=$this->session->userdata('idUsuario');
+		$this->db->insert('lectura', $data);
+        // Retornar true si la operación fue exitosa, false en caso contrario
+        return $this->db->affected_rows() > 0;
+
+    }
 }
