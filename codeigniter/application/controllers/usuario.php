@@ -3,19 +3,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Usuario extends CI_Controller 
 {
-		public function index()
+	public function index()
 	{
-		// Evitar redirigir si se trata de una solicitud a la API
-		if ($this->uri->segment(1) === 'api') {
-			// Continúa con la lógica de la API
-			return;
-		}
+		if ($this->session->userdata('nickName')) 
+		{
+            // Si el usuario ya está logueado, redirige al panel
+            redirect('usuario/panel', 'refresh');
+        } 
+		else 
+		{
+            // Si no está logueado, muestra la página de login
+            $this->load->view('pagelogin2');
+        }
 
-		if ($this->session->userdata('nickName')) {
-			redirect('usuario/panel', 'refresh');
-		} else {
-			$this->load->view('pagelogin2');
-		}
 	}
 
 	public function validarusuario()
