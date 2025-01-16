@@ -37,8 +37,8 @@
               <th>Código Socio</th>
               <th>Socio</th>
               <th>CI</th>
-              <th>Fecha Lectura</th>
-              <th>Ingresar Lectura</th>
+              <th>Periodo</th>
+              <th>Accion</th>
             </tr>
           </thead>
           <tbody id="lecturas-body">
@@ -62,8 +62,8 @@
               <th>Código Socio</th>
               <th>Socio</th>
               <th>CI</th>
-              <th>Fecha Lectura</th>
-              <th>Ingresar Lectura</th>
+              <th>Periodo</th>
+              <th>Accion</th>
             </tr>
           </tfoot>
         </table>

@@ -23,11 +23,6 @@ class Lectura extends CI_Controller
         // Verificar y registrar los datos recibidos
         log_message('debug', 'Datos recibidos en el controlador: ' . json_encode($data));
     
-        // Validar datos requeridos
-        if (empty($data['idMembresia']) || empty($data['lecturaAnterior']) || empty($data['lecturaActual']) || empty($data['idAutor'])) {
-            echo json_encode(['status' => 'error', 'message' => 'Faltan datos obligatorios.']);
-            return;
-        }
     
         // Procesar inserción
         $consulta = $this->lectura_model->insertarnuevalectura($data);
@@ -39,15 +34,6 @@ class Lectura extends CI_Controller
         }
     }
     
-    // public function obtenerLecturas()
-    // {
-    //     $lecturas = $this->lectura_model->habilitados();
-    //     $contador = 1;
-    //     foreach ($lecturas as &$lectura) {
-    //         $lectura['numero'] = $contador++; // Agregar un índice
-    //     }
-    //     echo json_encode($lecturas);
-    // }
     public function obtenerLecturas()
     {
         $lecturas = $this->lectura_model->habilitados();
@@ -65,8 +51,39 @@ class Lectura extends CI_Controller
                 $año = $fecha->format('Y');
                 $lectura['fechaLectura'] = "$dia-$mes-$año"; // Formato final
             }
+            else
+            {
+                $lectura['fechaLectura'] = "Sin fecha";
+            }
         }
 
         echo json_encode($lecturas);
+    }
+    public function modificarLectura()
+    {
+        // Capturar los datos enviados desde el frontend
+        $idLectura = $this->input->post('idLectura');
+        $lecturaActual = $this->input->post('lectuActual');
+        
+
+         // Depuración: Verifica los datos recibidos
+        log_message('debug', 'Datos recibidos en modificarLectura: ' . json_encode(['idLectura' => $idLectura, 'lecturaActual' => $lecturaActual]));
+
+        // Validar que los datos no estén vacíos
+        if (empty($idLectura) || empty($lecturaActual)) {
+            echo json_encode(['status' => 'error', 'message' => 'Datos incompletos.']);
+            return;
+        }
+
+
+        // Llamar al método del modelo para actualizar la lectura
+        $resultado = $this->lectura_model->modificarLecturabd($idLectura, $lecturaActual);
+
+        // Responder al frontend según el resultado
+        if ($resultado) {
+            echo json_encode(['status' => 'success', 'message' => 'Lectura modificada correctamente.']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Error al modificar la lectura.']);
+        }
     }
 }

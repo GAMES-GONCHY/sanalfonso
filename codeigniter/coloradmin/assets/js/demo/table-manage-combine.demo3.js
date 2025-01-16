@@ -44,7 +44,14 @@ var handleDataTableCombinationSetting = function() {
 								data-bs-toggle="modal" 
 								data-bs-target="#modalNuevaLectura"
 								onclick="cargarLectura('${row.fechaLectura}', '${row.lecturaActual}', '${row.codigoSocio}', '${row.nombreSocio}', '${row.ci}', '${row.idMembresia}', '${row.numero}')">
-								<i class="fas fa-pencil-alt"></i>
+								<i class="fas fa-plus"></i>
+							</button>
+							<button 
+								class="btn btn-yellow btn-sm mx-1" 
+								data-bs-toggle="modal" 
+								data-bs-target="#modalModificarLectura"
+								onclick="modificarLectura('${row.fechaLectura}', '${row.lecturaActual}', '${row.lecturaAnterior}', '${row.codigoSocio}', '${row.nombreSocio}', '${row.idLectura}')">
+								<i class="fas fa-edit"></i>
 							</button>`;
 					}
 				}
