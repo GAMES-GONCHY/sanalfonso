@@ -332,7 +332,7 @@ flutter pub get
 
 
 *****************************************************
-VERIFICACION DE PAR AEL BUEN FUCNIOANMIENTO DE LA APP MOVIL EN FLUTTER
+VERIFICACION DE PARA EL BUEN FUCNIOANMIENTO DE LA APP MOVIL EN FLUTTER
 
 Entiendo tu preocupación por la cantidad de herramientas necesarias para desarrollar y ejecutar una aplicación móvil. Aquí te presento un resumen claro y completo de los requisitos necesarios, por qué son necesarios y cómo se relacionan entre sí:
 
@@ -424,7 +424,7 @@ Si tienes dudas sobre algún paso o herramienta, avísame. Estoy aquí para ayud
 
 
 
-
+***************************************************************************************
 
 Tú dijiste:
 y comopuedo saber si ya tengno instalado todo estos requisitos
@@ -556,3 +556,25 @@ En proyectos Flutter, Gradle se utiliza principalmente para:
 
 Compilar y construir la parte nativa (Android) de las aplicaciones Flutter.
 Gestionar dependencias para Android.
+
+
+**************************************************************
+instalar la librerioa JWT
+Asegúrate de tener una librería de JWT integrada en tu sistema. Si no tienes una, puedes agregarla desde Firebase JWT para PHP.
+
+Instala la librería JWT si no la tienes
+Si no has instalado JWT, puedes hacerlo usando Composer:
+
+bash
+Copiar
+Editar
+composer require firebase/php-jwt
+Crea una librería para manejar JWT
+En CodeIgniter, crea una librería llamada Jwt.php en la carpeta application/libraries.
+
+php
+Copiar
+Editar
+
+
+
