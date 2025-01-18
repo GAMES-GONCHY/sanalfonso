@@ -10,84 +10,6 @@
   </div>
   <!-- END APP HEADER -->
 
-  <!-- Modal para ingresar nueva lectura -->
-<div class="modal fade" id="modalNuevaLectura" role="dialog" data-parsley-validate="true" aria-labelledby="modalNuevaLecturaLabel" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" style="border-radius: 10px; overflow: hidden; box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);">
-            <!-- Header con diseño mejorado -->
-            <div class="modal-header" style="background-color: #f8f9fa; border-bottom: 2px solid #007bff;">
-                <h5 class="modal-title" style="color: #007bff; font-weight: bold; font-size: 18px;" id="modalNuevaLecturaLabel">
-                    Ingrese una nueva lectura
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body" style="padding: 20px; font-family: Arial, sans-serif; color: #333;">
-                <!-- Información del socio con diseño en dos filas -->
-                <div class="mb-3" style="background: #f5f5f5; padding: 15px; border-radius: 8px; box-shadow: inset 0px 1px 5px rgba(0, 0, 0, 0.1);">
-                    <div class="row">
-                        <div class="col-6">
-                            <p style="margin: 0; padding: 5px 0; font-size: 14px;">
-                                <strong style="color: #0056b3;">Código Socio:</strong> 
-                                <span id="codigo-socio" style="color: #333;"></span>
-                            </p>
-                            <p style="margin: 0; padding: 5px 0; font-size: 14px;">
-                                <strong style="color: #0056b3;">Lectura Actual:</strong> 
-                                <span id="lectura-actual" style="color: #333;"></span>
-                            </p>
-                        </div>
-                        <div class="col-6">
-                            <p style="margin: 0; padding: 5px 0; font-size: 14px;">
-                                <strong style="color: #0056b3;">Socio:</strong> 
-                                <span id="nombre-socio" style="color: #333;"></span>
-                            </p>
-                            <p style="margin: 0; padding: 5px 0; font-size: 14px;">
-                                <strong style="color: #0056b3;">Fecha Lec. Act.:</strong> 
-                                <span id="fecha-lectura" style="color: #333;"></span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <form id="formNuevaLectura">
-                    <div class="form-group mb-3">
-                        <label for="nuevaLectura" class="form-label" style="font-weight: bold; color: #007bff;">Ingresar Lectura</label>
-                        <input type="number" 
-                            name="nuevaLectura" 
-                            id="nuevaLectura" 
-                            class="form-control" 
-                            required
-                            min="1" 
-                            max="999999" 
-                            step="1"
-                            data-parsley-min="1" 
-                            data-parsley-max="999999"
-                            data-parsley-trigger="input" 
-                            placeholder="Ejemplo: 123456" 
-                            style="width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);">  
-                        <input type="text" id="idMembresia" name="idMembresia">
-                        <input type="text" id="lecturaActual" name="lecturaActual">
-                        <input type="text" id="ci" name="ci">
-                        <input type="text" id="cont" name="cont">
-                    </div>
-                    
-                </form>
-                <div class="modal-footer" style="border-top: 2px solid #ddd; display: flex; justify-content: space-between;">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" style="padding: 10px 20px; font-size: 14px; border-radius: 5px; border: 1px solid #dc3545;">
-                        Cerrar
-                    </button>
-                    <button type="button" id="btnRegistrarNuevaLectura" class="btn btn-outline-success" style="padding: 10px 20px; font-size: 14px; border-radius: 5px; border: 1px solid #28a745;">
-                        Registrar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
 
   <!-- jQuery primero -->
   <script src="<?php echo base_url(); ?>coloradmin/assets/js/jquery.min.js"></script>
@@ -130,7 +52,7 @@
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/pdfmake/build/vfs_fonts.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/jszip/dist/jszip.min.js"></script>
 
-  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo.js"></script>
+  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo4.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
 
   <!-- toast -->
@@ -185,49 +107,6 @@
     });
 </script>
 
-
-
-
-
-  <!-- Botones de exportacion dataTable -->
-  <!-- <script>
-    var options = {
-      dom: '<"dataTables_wrapper dt-bootstrap"<"row"<"col-xl-7 d-block d-sm-flex d-xl-block justify-content-center"<"d-block d-lg-inline-flex me-0 me-md-3"l><"d-block d-lg-inline-flex"B>><"col-xl-5 d-flex d-xl-block justify-content-center"fr>>t<"row"<"col-md-5"i><"col-md-7"p>>>',
-      buttons: [{
-          extend: 'copy',
-          className: 'btn-sm'
-        },
-        {
-          extend: 'csv',
-          className: 'btn-sm'
-        },
-        {
-          extend: 'excel',
-          className: 'btn-sm'
-        },
-        {
-          extend: 'pdf',
-          className: 'btn-sm'
-        },
-        {
-          extend: 'print',
-          className: 'btn-sm'
-        }
-      ],
-      responsive: true,
-      colReorder: true,
-      keys: true,
-      rowReorder: true,
-      select: true
-    };
-
-    if ($(window).width() <= 1200) {
-      options.rowReorder = false;
-      options.colReorder = false;
-    }
-
-    $('#data-table-combine').DataTable(options);
-  </script> -->
 
   <!-- Sweet alart cierre de sesión -->
   <script>

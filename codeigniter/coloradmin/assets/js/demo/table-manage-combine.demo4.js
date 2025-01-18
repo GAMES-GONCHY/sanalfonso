@@ -7,7 +7,7 @@ Website: http://www.seantheme.com/color-admin/
 
 var handleDataTableCombinationSetting = function() {
 	"use strict";
-
+    
 	if ($('#datatable').length !== 0) {
 		var options = {
 			dom: '<"dataTables_wrapper dt-bootstrap"<"row"<"col-xl-7 d-block d-sm-flex d-xl-block justify-content-center"<"d-block d-lg-inline-flex me-0 me-md-3"l><"d-block d-lg-inline-flex"B>><"col-xl-5 d-flex d-xl-block justify-content-center"fr>>t<"row"<"col-md-5"i><"col-md-7"p>>>',
@@ -18,44 +18,6 @@ var handleDataTableCombinationSetting = function() {
 			keys: true,
 			rowReorder: true,
 			select: true,
-			ajax: {
-				url: rutaObtenerLecturas,
-				type: 'POST', // Cambiado a POST
-				data: function(d) {
-					// Si necesitas enviar parámetros adicionales, puedes añadirlos aquí
-					return d;
-				},
-				dataSrc: '' // Ajusta esto según el formato del JSON de respuesta
-			},
-			columns: [
-				{ data: 'numero' },
-				{ data: 'lecturaActual' },
-				{ data: 'lecturaAnterior' },
-				{ data: 'codigoSocio' },
-				{ data: 'nombreSocio' },
-				{ data: 'ci' },
-				{ data: 'fechaLectura' },
-				{
-					data: null,
-					render: function (data, type, row) {
-						return `
-							<button 
-								class="btn btn-success btn-sm mx-1" 
-								data-bs-toggle="modal" 
-								data-bs-target="#modalNuevaLectura"
-								onclick="cargarLectura('${row.fechaLectura}', '${row.lecturaActual}', '${row.codigoSocio}', '${row.nombreSocio}', '${row.ci}', '${row.idMembresia}', '${row.lecturaAnterior}')">
-								<i class="fas fa-plus"></i>
-							</button>
-							<button 
-								class="btn btn-yellow btn-sm mx-1" 
-								data-bs-toggle="modal" 
-								data-bs-target="#modalModificarLectura"
-								onclick="modificarLectura('${row.fechaLectura}', '${row.lecturaActual}', '${row.lecturaAnterior}', '${row.codigoSocio}', '${row.nombreSocio}', '${row.idLectura}')">
-								<i class="fas fa-edit"></i>
-							</button>`;
-					}
-				}
-			],
 			language: {
 				"sProcessing":     "Procesando...",
 				"sLengthMenu":     "Mostrar _MENU_ registros",
@@ -86,7 +48,6 @@ var handleDataTableCombinationSetting = function() {
 			options.rowReorder = false;
 			options.colReorder = false;
 		}
-		// Guarda la instancia globalmente
 		window.tablaLecturas = $('#datatable').DataTable(options);
 	}
 };

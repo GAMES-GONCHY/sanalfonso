@@ -48,26 +48,25 @@
                       </div>
                   </div>
 
-                  <form id="formNuevaLectura">
+                  <form id="formNuevaLectura" data-parsley-validate="true">
                       <div class="form-group mb-3">
                           <label for="nuevaLectura" class="form-label" style="font-weight: bold; color: #007bff;">Ingresar nueva lectura</label>
-                          <input type="number" 
-                              name="nuevaLectura" 
-                              id="nuevaLectura" 
-                              class="form-control" 
-                              required
-                              min="1" 
-                              max="999999" 
-                              step="1"
-                              data-parsley-min="1" 
-                              data-parsley-max="999999"
-                              data-parsley-trigger="input" 
-                              placeholder="Ejemplo: 123456" 
-                              style="width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);">  
-                          <input type="text" id="idMembresia" name="idMembresia">
+                          <input 
+                            type="number" 
+                            name="nuevaLectura" 
+                            id="nuevaLectura" 
+                            class="form-control" 
+                            data-parsley-gte="#lecturaActual"
+                            data-parsley-required="true" 
+                            data-parsley-trigger="change focusout" 
+                            data-parsley-required-message="Este campo es obligatorio." 
+                            data-parsley-gte-message="La nueva lectura debe ser mayor o igual a la lectura actual."
+                            placeholder="Ejemplo: 123456" 
+                            style="width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);">
+                          <input type="hidden" id="idMembresia" name="idMembresia">
                           <input type="hidden" id="lecturaActual" name="lecturaActual">
                           <input type="hidden" id="ci" name="ci">
-                          <input type="hidden" id="cont" name="cont">
+                          <input type="hidden" id="lecturaAnterior" name="lecturaAnterior">
                       </div>
                       
                   </form>
@@ -85,7 +84,7 @@
   </div>
 
   <!-- modal modificar lectura -->
-  <div class="modal fade" id="modalModificarLectura" role="dialog" data-parsley-validate="true" aria-labelledby="modalModificarLecturaLabel" tabindex="-1">
+  <div class="modal fade" id="modalModificarLectura" role="dialog" aria-labelledby="modalModificarLecturaLabel" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content" style="border-radius: 10px; overflow: hidden; box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);">
               <!-- Header con diseño mejorado -->
@@ -119,22 +118,26 @@
                       </div>
                   </div>
 
-                  <form id="formModificarLectura">
-                    <div class="row g-3 mb-4">
+                  <form id="formModificarLectura" data-parsley-validate="true" data-parsley-errors-container="#custom-error-container">
+                  <div class="row g-3 mb-4">
                       <!-- Input para Modificar Lectura Actual -->
                       <div class="col-md-6">
                           <div class="form-floating">
-                              <input type="number" 
-                                    class="form-control modern-input" 
-                                    id="lecturaActualMod" 
-                                    name="lecturaActualMod" 
-                                    placeholder="Modificar Lectura"
-                                    required
-                                    min="1" 
-                                    max="999999" 
-                                    step="1">
-                              <label for="nuevaLecturaModificar" class="text-muted">Modificar Lectura Actual</label>
+                          <input 
+                              type="number" 
+                              class="form-control modern-input" 
+                              id="lecturaActualMod" 
+                              name="lecturaActualMod" 
+                              placeholder="Modificar Lectura"
+                              data-parsley-gte="#lecturaAnteriorMod" 
+                              data-parsley-required="true"
+                              data-parsley-trigger="change focusout"
+                              data-parsley-required-message="Este campo es obligatorio."
+                              data-parsley-gte-message="La lectura actual debe ser mayor o igual a la lectura anterior.">
+                              <label for="lecturaActualMod" class="text-muted">Modificar Lectura Actual</label>
                           </div>
+                          <!-- Contenedor para mensajes de error -->
+                          <div id="custom-error-container" style="color: #FF0000; font-size: 14px; font-weight: bold; margin-top: 5px;"></div>
                       </div>
 
                       <!-- Input para Lectura Anterior -->
@@ -156,10 +159,10 @@
                               <label for="lecturaAnteriorMod" class="text-muted" style="color: #adb5bd;">Lectura Anterior</label>
                           </div>
                       </div>
+                  </div>
+                  <input type="hidden" id="idLectura" name="idLectura">
+              </form>
 
-                    </div>
-                    <input type="hidden" id="idLectura" name="idLectura">
-                  </form>
                   <div class="modal-footer" style="border-top: 2px solid #ddd; display: flex; justify-content: space-between;">
                       <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" style="padding: 10px 20px; font-size: 14px; border-radius: 5px; border: 1px solid #dc3545;">
                           Cerrar
@@ -235,46 +238,59 @@
   <!-- forms validations -->
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/parsleyjs/dist/parsley.min.js"></script>
   <script>
-    // Configura Parsley para usar el idioma español
-    Parsley.addMessages('es', {
-        defaultMessage: "Este valor parece ser inválido.",
-        type: {
-            email:        "Este valor debe ser una dirección de correo electrónico válida.",
-            url:          "Este valor debe ser una URL válida.",
-            number:       "Este valor debe ser un número válido.",
-            integer:      "Este valor debe ser un número entero válido.",
-            digits:       "Este valor debe ser un número entero.",
-            alphanum:     "Este valor debe ser alfanumérico."
-        },
-        notblank:       "Este valor no debe estar en blanco.",
-        required:       "Este campo es obligatorio.",
-        pattern:        "Este valor es incorrecto.",
-        min:            "Este valor debe ser mayor o igual a %s.",
-        max:            "Este valor debe ser menor o igual a %s.",
-        range:          "Este valor debe estar entre %s y %s.",
-        minlength:      "Este valor es demasiado corto. Debe contener al menos %s caracteres.",
-        maxlength:      "Este valor es demasiado largo. Debe contener %s caracteres o menos.",
-        length:         "Este valor debe tener entre %s y %s caracteres.",
-        mincheck:       "Debes seleccionar al menos %s opción.",
-        maxcheck:       "No puedes seleccionar más de %s opciones.",
-        check:          "Debes seleccionar entre %s y %s opciones.",
-        equalto:        "Este valor debe ser idéntico."
-    });
+      // Configura Parsley para usar el idioma español
+      Parsley.addMessages('es', {
+          defaultMessage: "Este valor parece ser inválido.",
+          type: {
+              email:        "Este valor debe ser una dirección de correo electrónico válida.",
+              url:          "Este valor debe ser una URL válida.",
+              number:       "Este valor debe ser un número válido.",
+              integer:      "Este valor debe ser un número entero válido.",
+              digits:       "Este valor debe ser un número entero.",
+              alphanum:     "Este valor debe ser alfanumérico."
+          },
+          notblank:       "Este valor no debe estar en blanco.",
+          required:       "Este campo es obligatorio.",
+          pattern:        "Este valor es incorrecto.",
+          min:            "Este valor debe ser mayor o igual a %s.",
+          max:            "Este valor debe ser menor o igual a %s.",
+          range:          "Este valor debe estar entre %s y %s.",
+          minlength:      "Este valor es demasiado corto. Debe contener al menos %s caracteres.",
+          maxlength:      "Este valor es demasiado largo. Debe contener %s caracteres o menos.",
+          length:         "Este valor debe tener entre %s y %s caracteres.",
+          mincheck:       "Debes seleccionar al menos %s opción.",
+          maxcheck:       "No puedes seleccionar más de %s opciones.",
+          check:          "Debes seleccionar entre %s y %s opciones.",
+          equalto:        "Este valor debe ser idéntico."
+      });
 
-    // Establecer el idioma español como predeterminado
-    Parsley.setLocale('es');
+      // Establecer el idioma español como predeterminado
+      Parsley.setLocale('es');
 
-    // Agregar una validación personalizada para validar un DECIMAL(4,1)
-    window.Parsley.addValidator('decimal41', {
-        validateString: function(value) {
-            // Validar que tenga hasta 3 dígitos enteros y hasta 1 decimal
-            return /^\d{1,3}(\.\d{1})?$/.test(value);
-        },
-        messages: {
-            es: "Debe ser un número con hasta 3 dígitos enteros y 1 decimal."  // Mensaje en español
-        }
-    });
-</script>
+      // Agregar una validación personalizada para validar un DECIMAL(4,1)
+      window.Parsley.addValidator('decimal41', {
+          validateString: function(value) {
+              // Validar que tenga hasta 3 dígitos enteros y hasta 1 decimal
+              return /^\d{1,3}(\.\d{1})?$/.test(value);
+          },
+          messages: {
+              es: "Debe ser un número con hasta 3 dígitos enteros y 1 decimal."  // Mensaje en español
+          }
+      });
+      // Agregar una validación personalizada para validar que un valor sea mayor o igual a otro
+      window.Parsley.addValidator('gte', {
+          validateString: function(value, requirement) {
+              // Obtener el valor del campo referencia
+              const targetValue = document.querySelector(requirement).value;
+              return parseFloat(value) >= parseFloat(targetValue || 0);
+          },
+          messages: {
+              en: 'This value should be greater than or equal to the previous value.',
+              es: 'La lectura actual debe ser mayor o igual a la lectura anterior.'
+          }
+      });
+  </script>
+
 
 
   <!-- Sweet alart cierre de sesión -->
@@ -318,131 +334,166 @@
 
 <!-- insertar nueva lectura -->
 <script>
-  function cargarLectura(fechaFormateada, lecturaActual, codigoSocio, nombreSocio, ci, idMembresia, cont)
+  function cargarLectura(fechaFormateada, lecturaActual, codigoSocio, nombreSocio, ci, idMembresia, lecturaAnterior)
   {
-
     console.log('Entrando a cargarLectura...');
-    console.log('Datos recibidos:', { fechaFormateada, lecturaActual, codigoSocio, nombreSocio, ci });
+    console.log('Datos recibidos:', { fechaFormateada, lecturaActual, codigoSocio, nombreSocio, ci, idMembresia, lecturaAnterior });
     
     var form = $('#formNuevaLectura').parsley();
     form.reset(); // Resetea el estado de validación de Parsley
     document.getElementById('nuevaLectura').classList.remove('parsley-error'); // Elimina la clase de error si quedó activa
 
     // Asignar los valores a los campos del modal
-
     document.getElementById('fecha-lectura').textContent = fechaFormateada;
     document.getElementById('lectura-actual').textContent = lecturaActual;
     document.getElementById('codigo-socio').textContent = codigoSocio;
     document.getElementById('nombre-socio').textContent = nombreSocio;
     document.getElementById('ci').value = ci;
-    document.getElementById('cont').value = cont;
+    document.getElementById('lecturaAnterior').value = lecturaAnterior;
     document.getElementById('idMembresia').value = idMembresia;
     document.getElementById('lecturaActual').value = lecturaActual;
     // Limpia el campo de nueva lectura
     document.getElementById('nuevaLectura').value = '';
+
+    const form1 = $('#formNuevaLectura').parsley();
+    form1.reset();
+
+    $('#modalNuevaLectura').modal('show');
   }
 
+  $('#modalNuevaLectura').on('keydown', function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Evitar que se envíe el formulario al presionar Enter
+      $('#btnRegistrarNuevaLectura').trigger('click'); // Simular un clic en el botón
+    }
+  });
 
-        $('#btnRegistrarNuevaLectura').on('click', function()
-        {
-              // Capturar los datos del formulario
-              const formData = {
-                  nuevaLectura: $('#nuevaLectura').val(),
-                  idMembresia: $('#idMembresia').val(),
-                  ci: $('#ci').val(),
-                  lecturaAnterior: $('#lecturaActual').val(),
-                  cont: $('#cont').val(),
-              };
-              // Verificar los datos capturados antes de enviarlos
-              console.log('Datos capturados para el envío:', formData);
+  $('#btnRegistrarNuevaLectura').on('click', function() {
+    // Inicializar Parsley en el formulario
+    const form1 = $('#formNuevaLectura').parsley();
 
-              // Enviar los datos mediante AJAX
-              $.ajax({
-                  url: '<?php echo base_url("index.php/lectura/insertarnuevalectura"); ?>',
-                  type: 'POST',
-                  data: formData,
-                  dataType: 'json',
-                  success: function (response) {
-                      if (response.status === 'success') {
-                          toastr.success(response.message);
-                          $('#modalNuevaLectura').modal('hide');
+    // Validar el formulario
+    if (form1.isValid()) {
+      // Capturar los datos del formulario
+      const formData =
+      {
+        nuevaLectura: $('#nuevaLectura').val(),
+        idMembresia: $('#idMembresia').val(),
+        ci: $('#ci').val(),
+        lecturaAnterior: $('#lecturaActual').val(),
+        cont: $('#cont').val(),
+      };
 
-                          // Recargar la tabla con los datos actualizados
-                          window.tablaLecturas.ajax.reload(null, false); // false para mantener la posición actual
-                      } else {
-                          toastr.error(response.message || 'Error al registrar la lectura.');
-                      }
-                  },
-                  error: function(xhr, status, error) {
-                      toastr.error('Error al intentar registrar la lectura. Inténtelo nuevamente.');
-                      console.error('Error AJAX:', {
-                          status: status,
-                          error: error,
-                          response: xhr.responseText
-                      });
-                  }
-              });
+      // Verificar los datos capturados antes de enviarlos
+      console.log('Datos capturados para el envío:', formData);
+
+      // Enviar los datos mediante AJAX
+      $.ajax({
+        url: '<?php echo base_url("index.php/lectura/insertarnuevalectura"); ?>',
+        type: 'POST',
+        data: formData,
+        dataType: 'json',
+        success: function(response) {
+          if (response.status === 'success') {
+            toastr.success(response.message);
+            $('#modalNuevaLectura').modal('hide');
+
+            // Recargar la tabla con los datos actualizados
+            window.tablaLecturas.ajax.reload(null, false); // false para mantener la posición actual
+          } else {
+            toastr.error(response.message || 'Error al registrar la lectura.');
+          }
+        },
+        error: function(xhr, status, error) {
+          toastr.error('Error al intentar registrar la lectura. Inténtelo nuevamente.');
+          console.error('Error AJAX:', {
+            status: status,
+            error: error,
+            response: xhr.responseText
           });
+        }
+      });
+    } else {
+      console.log('Formulario no válido. Por favor, corrige los errores.');
+      toastr.error('Por favor, ingrese datos válidos.');
+    }
+  });
 </script>
 
 
 <!-- editar lectura -->
 <script>
-  function modificarLectura(fechaLectura, lecturaActual, lecturaAnterior, codigoSocio, nombreSocio, idLectura)
-  {
-      // Carga los datos en los campos del modal
-      document.getElementById('codigo-socio-modificar').textContent = codigoSocio;
-      document.getElementById('nombre-socio-modificar').textContent = nombreSocio;
-      document.getElementById('fecha-lectura-modificar').textContent = fechaLectura;
-      $('#lecturaActualMod').val(lecturaActual);
-      $('#lecturaAnteriorMod').val(lecturaAnterior);
-      $('#idLectura').val(idLectura);
+  function modificarLectura(fechaLectura, lecturaActual, lecturaAnterior, codigoSocio, nombreSocio, idLectura) {
+    // Carga los datos en los campos del modal
+    document.getElementById('codigo-socio-modificar').textContent = codigoSocio;
+    document.getElementById('nombre-socio-modificar').textContent = nombreSocio;
+    document.getElementById('fecha-lectura-modificar').textContent = fechaLectura;
+    $('#lecturaActualMod').val(lecturaActual);
+    $('#lecturaAnteriorMod').val(lecturaAnterior);
+    $('#idLectura').val(idLectura);
 
+    // Inicializa Parsley en el formulario y resetea las validaciones anteriores
+    const form = $('#formModificarLectura').parsley();
+    form.reset();
 
-      // Mostrar el modal después de cargar los datos
+    // Mostrar el modal después de cargar los datos
     $('#modalModificarLectura').modal('show');
   }
-  $('#btnGuardarModificacionLectura').on('click', function()
-  {
-    // Limpia el campo de nueva lectura
-    document.getElementById('nuevaLectura').value = '';
-    // Capturar los datos del formulario
-    const formData = {
+
+  $('#modalModificarLectura').on('keydown', function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Evitar que se envíe el formulario al presionar Enter
+      $('#btnGuardarModificacionLectura').trigger('click'); // Simular un clic en el botón
+    }
+  });
+
+  $('#btnGuardarModificacionLectura').on('click', function() {
+    // Inicializar Parsley en el formulario
+    const form = $('#formModificarLectura').parsley();
+
+    // Validar el formulario antes de enviar
+    if (form.isValid()) {
+      // Capturar los datos del formulario
+      const formData = {
         lectuActual: $('#lecturaActualMod').val(),
         idLectura: $('#idLectura').val(),
-    };
-    
-    
-    // Verificar los datos capturados antes de enviarlos
-    console.log('Datos capturados para el envío:', formData);
-    
-    $.ajax({
+      };
+
+      // Verificar los datos capturados antes de enviarlos
+      console.log('Datos capturados para el envío:', formData);
+
+      // Enviar los datos mediante AJAX
+      $.ajax({
         url: '<?php echo base_url("index.php/lectura/modificarLectura"); ?>',
         type: 'POST',
         data: formData,
         dataType: 'json',
-        success: function (response) {
-            if (response.status === 'success') {
-                toastr.success(response.message);
-                $('#modalModificarLectura').modal('hide');
+        success: function(response) {
+          if (response.status === 'success') {
+            toastr.success(response.message);
+            $('#modalModificarLectura').modal('hide');
 
-                // Recargar la tabla con los datos actualizados
-                window.tablaLecturas.ajax.reload(null, false); // false para mantener la posición actual
-            } else {
-                toastr.error(response.message || 'Error al modificar la lectura.');
-            }
+            // Recargar la tabla con los datos actualizados
+            window.tablaLecturas.ajax.reload(null, false); // false para mantener la posición actual
+          } else {
+            toastr.error(response.message || 'Error al modificar la lectura.');
+          }
         },
         error: function(xhr, status, error) {
-            toastr.error('Error al intentar modificar la lectura. Inténtelo nuevamente.');
-            console.error('Error AJAX:', {
-                status: status,
-                error: error,
-                response: xhr.responseText
-            });
+          toastr.error('Error al intentar modificar la lectura. Inténtelo nuevamente.');
+          console.error('Error AJAX:', {
+            status: status,
+            error: error,
+            response: xhr.responseText
+          });
         }
-    });
+      });
+    } else {
+      console.log('Formulario no válido. Por favor, corrige los errores.');
+      toastr.error('Por favor, ingrese datos válidos.');
+    }
   });
-  
+
 </script>
 
 

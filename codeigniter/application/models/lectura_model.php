@@ -5,16 +5,35 @@ class Lectura_model extends CI_Model
 {
     public function habilitados() 
     {
-        $this->db->select('M.codigoSocio, M.idMembresia, CONCAT_WS(" ", U.nombre, U.primerApellido, IFNULL(U.segundoApellido,"")) AS nombreSocio,
-                            U.ci, IFNULL(L.lecturaActual,0) AS lecturaActual, IFNULL(L.lecturaAnterior,0) AS lecturaAnterior, L.fechaLectura, L.idLectura');
+        $this->db->select('M.codigoSocio, 
+                        M.idMembresia, 
+                        CONCAT_WS(" ", U.nombre, U.primerApellido, IFNULL(U.segundoApellido, "")) AS nombreSocio, 
+                        U.ci, 
+                        IFNULL(MAX(L.lecturaActual),0) AS lecturaActual, 
+                        IFNULL(MAX(L.lecturaAnterior),0) AS lecturaAnterior, 
+                        MAX(L.fechaLectura) AS fechaLectura, 
+                        MAX(L.idLectura) AS idLectura');
         $this->db->from('usuario U');
         $this->db->join('membresia M', 'U.idUsuario = M.idUsuario', 'inner');
-        $this->db->join('lectura L', 'M.idMembresia = L.idMembresia', 'left');
+        $this->db->join('lectura L', 'M.idMembresia = L.idMembresia AND L.estado = 1', 'left');
         $this->db->where('U.estado', 1);
-        $this->db->where('L.estado = 1 OR L.estado IS NULL');
-        $this->db->order_by('L.fechaLectura', 'DESC'); 
+        $this->db->group_by('M.idMembresia');
         $query = $this->db->get();
+
         return $query->result_array();
+
+
+
+        // $this->db->select('M.codigoSocio, M.idMembresia, CONCAT_WS(" ", U.nombre, U.primerApellido, IFNULL(U.segundoApellido,"")) AS nombreSocio,
+        //     U.ci, IFNULL(L.lecturaActual,0) AS lecturaActual, IFNULL(L.lecturaAnterior,0) AS lecturaAnterior, L.fechaLectura, L.idLectura');
+        // $this->db->from('usuario U');
+        // $this->db->join('membresia M', 'U.idUsuario = M.idUsuario', 'inner');
+        // $this->db->join('lectura L', 'M.idMembresia = L.idMembresia', 'left');
+        // $this->db->where('U.estado', 1);
+        // $this->db->where('L.estado = 1 OR L.estado IS NULL');
+        // $this->db->order_by('L.fechaLectura', 'DESC'); 
+        // $query = $this->db->get();
+        // return $query->result_array();
     }
     public function insertarnuevalectura($data) 
     {

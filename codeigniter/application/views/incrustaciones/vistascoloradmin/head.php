@@ -377,6 +377,17 @@ div.pt-2 .parsley-errors-list li {
       color: white; /* Asegura que el texto sea visible */
     }
   </style>
+  <!-- mensajes de error del parsley -->
+  <style>
+    li[class^="parsley-"],
+    li[class*=" parsley-"] {
+        color: #FF0000 !important; /* Cambia el color a rojo vivo */
+        font-size: 14px; /* Ajusta el tamaño de la fuente */
+        font-weight: bold; /* Opcional: Aplica un peso negrita */
+        margin-top: 5px; /* Espaciado */
+        list-style: none; /* Elimina viñetas */
+    }
+  </style>
 
 </head>
 

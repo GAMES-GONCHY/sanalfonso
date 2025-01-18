@@ -170,46 +170,6 @@
 
 
 
-       <!-- Modal para insertar nueva tarifa -->
-      <!-- <div class="modal fade" id="modalNuevaTarifa" tabindex="-1" role="dialog" aria-labelledby="modalNuevaTarifaLabel" aria-hidden="true" data-parsley-validate="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalNuevaTarifaLabel">Nueva Tarifa </h5>
-                    <p class="text-warning mt-2">
-                        Al crear una nueva tarifa, la tarifa vigente actual será dada de baja automáticamente.
-                    </p>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                  <form action="<?php echo base_url('index.php/tarifa/agregar'); ?>" method="POST">
-                      <div class="form-group">
-                      <label for="tarifaMinima">Tarifa Mínima</label>
-                      <input type="text" name="tarifaMinima1" id="tarifaMinima1" class="form-control" required 
-                              data-parsley-decimal41 
-                              data-parsley-trigger="input"
-                              placeholder="999.9" 
-                              maxlength="5">
-                      </div>
-                      <div class="form-group">
-                          <label for="tarifaVigente">Tarifa Vigente</label>
-                          <input type="text" name="tarifaVigente1" id="tarifaVigente1" class="form-control" required 
-                                  data-parsley-decimal41 
-                                  data-parsley-trigger="input"
-                                  placeholder="999.9" 
-                                  maxlength="5">
-                      </div>
-                      
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                          <button type="submit" class="btn btn-success">Registrar</button>
-                      </div>
-                  </form>
-                </div>
-            </div>
-        </div>
-      </div> -->
-
       <!-- Modal para insertar nueva tarifa -->
       <div class="modal fade" id="modalNuevaTarifa" tabindex="-1" role="dialog" aria-labelledby="modalNuevaTarifaLabel" aria-hidden="true" data-parsley-validate="true">
           <div class="modal-dialog modal-dialog-centered" role="document">

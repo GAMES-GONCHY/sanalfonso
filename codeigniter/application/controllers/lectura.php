@@ -22,8 +22,22 @@ class Lectura extends CI_Controller
     
         // Verificar y registrar los datos recibidos
         log_message('debug', 'Datos recibidos en el controlador: ' . json_encode($data));
-    
-    
+        
+        if($data['lecturaAnterior']!=0 && $data['lecturaActual']!=0)
+        {
+            if (empty($data['idMembresia']) || empty($data['lecturaAnterior']) || empty($data['lecturaActual']) || empty($data['idAutor'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Datos incompletos.']);
+                    log_message('debug', 'verificando data: ' . json_encode($data));
+                return;
+            }
+        }
+        // else
+        // {
+        //     if (empty($data['lecturaActual']) || empty($data['idMembresia']) || empty($data['lecturaAnterior']))
+        //     {
+        //         return;
+        //     }
+        // }
         // Procesar inserción
         $consulta = $this->lectura_model->insertarnuevalectura($data);
     
