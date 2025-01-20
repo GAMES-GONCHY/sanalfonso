@@ -50,26 +50,32 @@
 
                   <form id="formNuevaLectura" data-parsley-validate="true">
                       <div class="form-group mb-3">
-                          <label for="nuevaLectura" class="form-label" style="font-weight: bold; color: #007bff;">Ingresar nueva lectura</label>
+                          <label for="nuevaLectura" class="form-label" style="font-weight: bold; color: #007bff;">Ingrese nueva lectura</label>
                           <input 
-                            type="number" 
-                            name="nuevaLectura" 
-                            id="nuevaLectura" 
-                            class="form-control" 
-                            data-parsley-gte="#lecturaActual"
-                            data-parsley-required="true" 
-                            data-parsley-trigger="change focusout" 
-                            data-parsley-required-message="Este campo es obligatorio." 
-                            data-parsley-gte-message="La nueva lectura debe ser mayor o igual a la lectura actual."
-                            placeholder="Ejemplo: 123456" 
-                            style="width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);">
+                              type="number" 
+                              name="nuevaLectura" 
+                              id="nuevaLectura" 
+                              class="form-control" 
+                              data-parsley-gte="#lecturaActual"
+                              data-parsley-maxdigits
+                              data-parsley-required="true" 
+                              data-parsley-trigger="change focusout" 
+                              data-parsley-required-message="Este campo es obligatorio." 
+                              data-parsley-gte-message="La nueva lectura debe ser mayor o igual a la lectura actual."
+                              data-parsley-maxdigits-message="El valor debe tener como máximo 6 dígitos."
+                              data-parsley-errors-container="#error-container-nuevaLectura"
+                              placeholder="Ejemplo: 123456" 
+                              style="width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);">
+                          <!-- Contenedor para mensajes de error -->
+                          <div id="error-container-nuevaLectura" style="color: #FF0000; font-size: 14px; font-weight: bold; margin-top: 5px;"></div>
+
                           <input type="hidden" id="idMembresia" name="idMembresia">
                           <input type="hidden" id="lecturaActual" name="lecturaActual">
                           <input type="hidden" id="ci" name="ci">
                           <input type="hidden" id="lecturaAnterior" name="lecturaAnterior">
                       </div>
-                      
                   </form>
+
                   <div class="modal-footer" style="border-top: 2px solid #ddd; display: flex; justify-content: space-between;">
                       <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" style="padding: 10px 20px; font-size: 14px; border-radius: 5px; border: 1px solid #dc3545;">
                           Cerrar
@@ -120,25 +126,29 @@
 
                   <form id="formModificarLectura" data-parsley-validate="true" data-parsley-errors-container="#custom-error-container">
                   <div class="row g-3 mb-4">
-                      <!-- Input para Modificar Lectura Actual -->
-                      <div class="col-md-6">
-                          <div class="form-floating">
-                          <input 
-                              type="number" 
-                              class="form-control modern-input" 
-                              id="lecturaActualMod" 
-                              name="lecturaActualMod" 
-                              placeholder="Modificar Lectura"
-                              data-parsley-gte="#lecturaAnteriorMod" 
-                              data-parsley-required="true"
-                              data-parsley-trigger="change focusout"
-                              data-parsley-required-message="Este campo es obligatorio."
-                              data-parsley-gte-message="La lectura actual debe ser mayor o igual a la lectura anterior.">
-                              <label for="lecturaActualMod" class="text-muted">Modificar Lectura Actual</label>
+                        <!-- Input para Modificar Lectura Actual -->
+                          <div class="col-md-6">
+                              <div class="form-floating">
+                                  <input 
+                                      type="number" 
+                                      name="lecturaActualMod" 
+                                      id="lecturaActualMod" 
+                                      class="form-control" 
+                                      data-parsley-gte="#lecturaAnteriorMod"
+                                      data-parsley-maxdigits
+                                      data-parsley-required="true" 
+                                      data-parsley-trigger="change focusout" 
+                                      data-parsley-required-message="Este campo es obligatorio." 
+                                      data-parsley-gte-message="La nueva lectura debe ser mayor o igual a la lectura actual."
+                                      data-parsley-maxdigits-message="El valor debe tener como máximo 6 dígitos."
+                                      data-parsley-errors-container="#error-container-lecturaActualMod"
+                                      placeholder="Ejemplo: 123456" 
+                                      style="width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);">
+                                  <label for="lecturaActualMod" class="text-muted">Lectura Actual</label>
+                              </div>
+                              <!-- Contenedor para mensajes de error -->
+                              <div id="error-container-lecturaActualMod" style="color: #FF0000; font-size: 14px; font-weight: bold; margin-top: 5px;"></div>
                           </div>
-                          <!-- Contenedor para mensajes de error -->
-                          <div id="custom-error-container" style="color: #FF0000; font-size: 14px; font-weight: bold; margin-top: 5px;"></div>
-                      </div>
 
                       <!-- Input para Lectura Anterior -->
                       <div class="col-md-6">
@@ -237,59 +247,76 @@
 
   <!-- forms validations -->
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/parsleyjs/dist/parsley.min.js"></script>
+
   <script>
-      // Configura Parsley para usar el idioma español
-      Parsley.addMessages('es', {
-          defaultMessage: "Este valor parece ser inválido.",
-          type: {
-              email:        "Este valor debe ser una dirección de correo electrónico válida.",
-              url:          "Este valor debe ser una URL válida.",
-              number:       "Este valor debe ser un número válido.",
-              integer:      "Este valor debe ser un número entero válido.",
-              digits:       "Este valor debe ser un número entero.",
-              alphanum:     "Este valor debe ser alfanumérico."
-          },
-          notblank:       "Este valor no debe estar en blanco.",
-          required:       "Este campo es obligatorio.",
-          pattern:        "Este valor es incorrecto.",
-          min:            "Este valor debe ser mayor o igual a %s.",
-          max:            "Este valor debe ser menor o igual a %s.",
-          range:          "Este valor debe estar entre %s y %s.",
-          minlength:      "Este valor es demasiado corto. Debe contener al menos %s caracteres.",
-          maxlength:      "Este valor es demasiado largo. Debe contener %s caracteres o menos.",
-          length:         "Este valor debe tener entre %s y %s caracteres.",
-          mincheck:       "Debes seleccionar al menos %s opción.",
-          maxcheck:       "No puedes seleccionar más de %s opciones.",
-          check:          "Debes seleccionar entre %s y %s opciones.",
-          equalto:        "Este valor debe ser idéntico."
-      });
+    // Configura Parsley para usar el idioma español
+    Parsley.addMessages('es', {
+        defaultMessage: "Este valor parece ser inválido.",
+        type: {
+            email: "Este valor debe ser una dirección de correo electrónico válida.",
+            url: "Este valor debe ser una URL válida.",
+            number: "Este valor debe ser un número válido.",
+            integer: "Este valor debe ser un número entero válido.",
+            digits: "Este valor debe ser un número entero.",
+            alphanum: "Este valor debe ser alfanumérico."
+        },
+        notblank: "Este valor no debe estar en blanco.",
+        required: "Este campo es obligatorio.",
+        pattern: "Este valor es incorrecto.",
+        min: "Este valor debe ser mayor o igual a %s.",
+        max: "Este valor debe ser menor o igual a %s.",
+        range: "Este valor debe estar entre %s y %s.",
+        minlength: "Este valor es demasiado corto. Debe contener al menos %s caracteres.",
+        maxlength: "Este valor es demasiado largo. Debe contener %s caracteres o menos.",
+        length: "Este valor debe tener entre %s y %s caracteres.",
+        mincheck: "Debes seleccionar al menos %s opción.",
+        maxcheck: "No puedes seleccionar más de %s opciones.",
+        check: "Debes seleccionar entre %s y %s opciones.",
+        equalto: "Este valor debe ser idéntico."
+    });
 
-      // Establecer el idioma español como predeterminado
-      Parsley.setLocale('es');
+    // Establecer el idioma español como predeterminado
+    Parsley.setLocale('es');
 
-      // Agregar una validación personalizada para validar un DECIMAL(4,1)
-      window.Parsley.addValidator('decimal41', {
-          validateString: function(value) {
-              // Validar que tenga hasta 3 dígitos enteros y hasta 1 decimal
-              return /^\d{1,3}(\.\d{1})?$/.test(value);
-          },
-          messages: {
-              es: "Debe ser un número con hasta 3 dígitos enteros y 1 decimal."  // Mensaje en español
-          }
-      });
-      // Agregar una validación personalizada para validar que un valor sea mayor o igual a otro
-      window.Parsley.addValidator('gte', {
-          validateString: function(value, requirement) {
-              // Obtener el valor del campo referencia
-              const targetValue = document.querySelector(requirement).value;
-              return parseFloat(value) >= parseFloat(targetValue || 0);
-          },
-          messages: {
-              en: 'This value should be greater than or equal to the previous value.',
-              es: 'La lectura actual debe ser mayor o igual a la lectura anterior.'
-          }
-      });
-  </script>
+    // Agregar una validación personalizada para validar un DECIMAL(4,1)
+    window.Parsley.addValidator('decimal41', {
+        validateString: function(value) {
+            return /^\d{1,3}(\.\d{1})?$/.test(value);
+        },
+        messages: {
+            es: "Debe ser un número con hasta 3 dígitos enteros y 1 decimal."
+        }
+    });
+
+    // Validación personalizada para asegurar que el valor sea mayor o igual
+    window.Parsley.addValidator('gte', {
+        validateString: function(value, requirement) {
+            const targetValue = document.querySelector(requirement).value;
+            return parseFloat(value) >= parseFloat(targetValue || 0);
+        },
+        messages: {
+            en: 'This value should be greater than or equal to the reference value.',
+            es: 'La lectura actual debe ser mayor o igual a la lectura anterior.'
+        },
+        priority: 1 // Alta prioridad
+    });
+
+    // Agregar una validación personalizada para máximo 6 dígitos (incluyendo negativos)
+    window.Parsley.addValidator('maxdigits', {
+        validateString: function(value) {
+            // Validar hasta 6 dígitos ignorando el signo negativo
+            return /^-?\d{1,6}$/.test(value);
+        },
+        messages: {
+            en: 'This value must have at most 6 digits.',
+            es: 'Este valor debe tener como máximo 6 dígitos.'
+        },
+        priority: 32 // Baja prioridad
+    });
+</script>
+
+
+
 
 
 
@@ -405,7 +432,7 @@
           }
         },
         error: function(xhr, status, error) {
-          toastr.error('Error al intentar registrar la lectura. Inténtelo nuevamente.');
+          toastr.error('ERROR, verifique la existencia de una tarifa vigente');
           console.error('Error AJAX:', {
             status: status,
             error: error,

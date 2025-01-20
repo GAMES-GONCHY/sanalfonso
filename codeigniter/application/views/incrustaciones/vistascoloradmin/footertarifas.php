@@ -1,4 +1,4 @@
-  <div id="footer" class="app-footer mx-0 px-0">
+<div id="footer" class="app-footer mx-0 px-0">
     <h5 class="mb-0">&copy; 2024 <b>Aqua</b>ReadPro - by G@mes Rights Reserved</h5>
   </div>
   </div>
@@ -9,6 +9,8 @@
   <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>
   </div>
   <!-- END APP HEADER -->
+
+
 
 
   <!-- jQuery primero -->
@@ -51,12 +53,10 @@
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/pdfmake/build/pdfmake.min.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/pdfmake/build/vfs_fonts.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/jszip/dist/jszip.min.js"></script>
-
-  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo4.js"></script>
+  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
 
-  <!-- toast -->
-  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/toastr.min.js"></script>
+
   <!-- Sweets alerts/Modals scripts -->
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/sweetalert/dist/sweetalert.min.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/ui-modal-notification.demo.js"></script>
@@ -108,6 +108,49 @@
 </script>
 
 
+
+
+
+  <!-- Botones de exportacion dataTable -->
+  <script>
+    var options = {
+      dom: '<"dataTables_wrapper dt-bootstrap"<"row"<"col-xl-7 d-block d-sm-flex d-xl-block justify-content-center"<"d-block d-lg-inline-flex me-0 me-md-3"l><"d-block d-lg-inline-flex"B>><"col-xl-5 d-flex d-xl-block justify-content-center"fr>>t<"row"<"col-md-5"i><"col-md-7"p>>>',
+      buttons: [{
+          extend: 'copy',
+          className: 'btn-sm'
+        },
+        {
+          extend: 'csv',
+          className: 'btn-sm'
+        },
+        {
+          extend: 'excel',
+          className: 'btn-sm'
+        },
+        {
+          extend: 'pdf',
+          className: 'btn-sm'
+        },
+        {
+          extend: 'print',
+          className: 'btn-sm'
+        }
+      ],
+      responsive: true,
+      colReorder: true,
+      keys: true,
+      rowReorder: true,
+      select: true
+    };
+
+    if ($(window).width() <= 1200) {
+      options.rowReorder = false;
+      options.colReorder = false;
+    }
+
+    $('#data-table-combine').DataTable(options);
+  </script>
+
   <!-- Sweet alart cierre de sesión -->
   <script>
     $(document).ready(function() {
@@ -149,82 +192,30 @@
 
 <!-- tarifas/modificar -->
 <script>
-  function cargarLectura(fechaFormateada, lecturaActual, codigoSocio, nombreSocio, ci, idMembresia, cont) {
+function cargarDatos(idTarifa, fechaInicioVigencia) {
+    // Busca la fila correspondiente por su ID
+    var fila = document.getElementById("row_" + idTarifa);
 
-          console.log('Entrando a cargarLectura...');
-          console.log('Datos recibidos:', { fechaFormateada, lecturaActual, codigoSocio, nombreSocio, ci });
-          
-          var form = $('#formNuevaLectura').parsley();
-          form.reset(); // Resetea el estado de validación de Parsley
-          document.getElementById('nuevaLectura').classList.remove('parsley-error'); // Elimina la clase de error si quedó activa
+    // Comprobar si la fila existe
+    if (fila) {
+        // Obtener los valores de las celdas correspondientes
+        var tarifaVigente = fila.cells[1].innerText;
+        var tarifaMinima = fila.cells[2].innerText;
+        // var fechaInicioVigencia = fila.cells[3].innerText;
 
-          // Asignar los valores a los campos del modal
+        // Asignar los valores a los campos del modal
+        document.getElementById('idTarifa').value = idTarifa;
+        document.getElementById('tarifaVigente').value = tarifaVigente.trim();
+        document.getElementById('tarifaMinima').value = tarifaMinima.trim();
 
-          document.getElementById('fecha-lectura').textContent = fechaFormateada;
-          document.getElementById('lectura-actual').textContent = lecturaActual;
-          document.getElementById('codigo-socio').textContent = codigoSocio;
-          document.getElementById('nombre-socio').textContent = nombreSocio;
-          document.getElementById('ci').value = ci;
-          document.getElementById('cont').value = cont;
-          document.getElementById('idMembresia').value = idMembresia;
-          document.getElementById('lecturaActual').value = lecturaActual;
-
-        }
-
-
-        $('#btnRegistrarNuevaLectura').on('click', function()
-        {
-              // Capturar los datos del formulario
-              const formData = {
-                  nuevaLectura: $('#nuevaLectura').val(),
-                  idMembresia: $('#idMembresia').val(),
-                  ci: $('#ci').val(),
-                  lecturaAnterior: $('#lecturaActual').val(),
-                  cont: $('#cont').val(),
-              };
-              // Verificar los datos capturados antes de enviarlos
-              console.log('Datos capturados para el envío:', formData);
-
-              // Enviar los datos mediante AJAX
-              $.ajax({
-                  url: '<?php echo base_url("index.php/lectura/insertarnuevalectura"); ?>',
-                  type: 'POST',
-                  data: formData,
-                  dataType: 'json',
-                  success: function (response) {
-                      if (response.status === 'success') {
-                          toastr.success(response.message);
-                          $('#modalNuevaLectura').modal('hide');
-
-                          // Recargar la tabla con los datos actualizados
-                          window.tablaLecturas.ajax.reload(null, false); // false para mantener la posición actual
-                      } else {
-                          toastr.error(response.message || 'Error al registrar la lectura.');
-                      }
-                  },
-                  error: function(xhr, status, error) {
-                      toastr.error('Error al intentar registrar la lectura. Inténtelo nuevamente.');
-                      console.error('Error AJAX:', {
-                          status: status,
-                          error: error,
-                          response: xhr.responseText
-                      });
-                  }
-              });
-          });
-</script>
-
-
-
-
-<script>
-
+        // Mostrar el modal de modificación
+        $('#modalModificarTarifa').modal('show');
+    } else {
+        console.error("No se encontró la fila: ", idTarifa);
+    }
+}
 
 </script>
-
-
-
-
 
 
 

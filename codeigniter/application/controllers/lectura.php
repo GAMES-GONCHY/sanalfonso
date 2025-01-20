@@ -38,13 +38,22 @@ class Lectura extends CI_Controller
         //         return;
         //     }
         // }
-        // Procesar inserción
-        $consulta = $this->lectura_model->insertarnuevalectura($data);
-    
-        if ($consulta) {
-            echo json_encode(['status' => 'success', 'message' => 'Registro exitoso.']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Error al insertar en la base de datos.']);
+
+
+        try {
+            $consulta = $this->lectura_model->insertarnuevalecturabd($data);
+        
+            if ($consulta) {
+                echo json_encode(['status' => 'success', 'message' => 'Registro exitoso.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Ya existe un registro de lectura para el mes en curso!']);
+            }
+        } catch (Exception $e) {
+            // Manejo del error
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Realice el registro de una tarifa válido e intentelo de nuevo.'
+            ]);
         }
     }
     

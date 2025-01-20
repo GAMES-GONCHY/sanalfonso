@@ -96,4 +96,20 @@ class Tarifa_model extends CI_Model
         return $count > 0;
     }
 
+    //nueva seccion de funciones en tarifa
+
+    public function verificarRegistroValidoDeTarifa()
+    {
+        $this->db->select('1'); // Solo selecciona si existe
+        $this->db->from('tarifa');
+        $this->db->where('estado', 'vigente'); // Comparar el medidor
+        $this->db->limit(1); // Limitar la búsqueda a un registro
+
+        $query = $this->db->get();
+    
+        // Si hay algun registro con estado vigente en la tabla tarifa
+        return $query->num_rows() > 0;
+    
+    }
+    
 }

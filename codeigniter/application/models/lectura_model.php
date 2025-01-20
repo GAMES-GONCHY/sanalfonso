@@ -35,14 +35,43 @@ class Lectura_model extends CI_Model
         // $query = $this->db->get();
         // return $query->result_array();
     }
-    public function insertarnuevalectura($data) 
-    {
-        $data['idAutor']=$this->session->userdata('idUsuario');
-		$this->db->insert('lectura', $data);
-        // Retornar true si la operación fue exitosa, false en caso contrario
-        return $this->db->affected_rows() > 0;
+    // public function insertarnuevalectura($data) 
+    // {
+    //     $data['idAutor']=$this->session->userdata('idUsuario');
+	// 	$this->db->insert('lectura', $data);
+    //     // Retornar true si la operación fue exitosa, false en caso contrario
+    //     return $this->db->affected_rows() > 0;
 
+    // }
+
+    public function insertarnuevalecturabd($data) 
+    {
+        // Calcular el rango de fechas basado en la fecha actual del servidor
+        $inicioMes = date('Y-m-01'); // Primer día del mes actual
+        $finMes = date('Y-m-t');     // Último día del mes actual
+        // Validar si ya existe una lectura para el mismo mes y año
+        $this->db->select('1'); // Solo selecciona si existe
+        $this->db->from('lectura');
+        $this->db->where('idMembresia', $data['idMembresia']); // Comparar el medidor
+        $this->db->where('fechaLectura >=', $inicioMes);        // Rango inicial
+        $this->db->where('fechaLectura <=', $finMes);           // Rango final
+        
+        $query = $this->db->get();
+    
+        // Si ya existe un registro, retornar false
+        // if ($query->num_rows() > 0)
+        // {
+        //     return false; // No se inserta porque ya existe
+        // }
+
+        // Agregar el id del autor (usuario actual) y realizar la inserción
+        $data['idAutor'] = $this->session->userdata('idUsuario');
+        $this->db->insert('lectura', $data);
+
+        // Retornar true si la operación fue exitosa
+        return $this->db->affected_rows() > 0;
     }
+    
     public function modificarLecturabd($idLectura, $lecturaActual)
     {
         // Actualizar la lectura en la base de datos
