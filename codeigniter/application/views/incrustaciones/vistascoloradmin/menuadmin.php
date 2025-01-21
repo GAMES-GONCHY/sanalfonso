@@ -212,8 +212,8 @@
                     <div class="menu-caret"></div>
                 </a>
                 <div class="menu-submenu">
-                    <div class="menu-item <?php echo ($this->uri->segment(2) === 'gestion') ? 'active' : ''; ?>">
-                        <a href="<?php echo base_url('index.php/avisocobranza/gestion'); ?>" class="menu-link">
+                    <div class="menu-item <?php echo ($this->uri->segment(2) === 'avisos') ? 'active' : ''; ?>">
+                        <a href="<?php echo base_url('index.php/avisocobranza/avisos'); ?>" class="menu-link">
                             <div class="menu-text">Gestionar Avisos</div>
                         </a>
                     </div>
