@@ -59,10 +59,10 @@ class Lectura_model extends CI_Model
         $query = $this->db->get();
     
         // Si ya existe un registro, retornar false
-        // if ($query->num_rows() > 0)
-        // {
-        //     return false; // No se inserta porque ya existe
-        // }
+        if ($query->num_rows() > 0)
+        {
+            return false; // No se inserta porque ya existe
+        }
 
         // Agregar el id del autor (usuario actual) y realizar la inserción
         $data['idAutor'] = $this->session->userdata('idUsuario');

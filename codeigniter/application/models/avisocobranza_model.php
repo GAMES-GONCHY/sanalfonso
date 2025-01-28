@@ -3,20 +3,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Avisocobranza_model extends CI_Model
 {
-    public function cargaravisosbd($limit, $offset, $busqueda = '')
+    public function cargaravisosbd($limit, $offset, $busqueda = '', $estado = '')
     {
-        $this->db->select('
-            CONCAT(U.nombre, " ", U.primerApellido, " ", IFNULL(U.segundoApellido, "")) AS nombreSocio,
-            M.codigoSocio,
-            L.lecturaAnterior,
-            L.lecturaActual,
-            L.fechaLectura,
-            A.fechaVencimiento,
-            A.estado,
-            T.tarifaMinima,
-            T.tarifaVigente
-        ', FALSE);
-    
+        $this->db->select('CONCAT(U.nombre, " ", U.primerApellido, " ", IFNULL(U.segundoApellido, "")) AS nombreSocio, 
+                        M.idMembresia, M.codigoSocio, L.lecturaAnterior, L.lecturaActual, L.fechaLectura, A.fechaVencimiento, 
+                        A.estado, A.idAviso, T.tarifaMinima, T.tarifaVigente', FALSE);
         $this->db->from('usuario U');
         $this->db->join('membresia M', 'U.idUsuario = M.idUsuario', 'inner');
         $this->db->join('lectura L', 'M.idMembresia = L.idMembresia', 'inner');
@@ -26,6 +17,7 @@ class Avisocobranza_model extends CI_Model
         $this->db->where('U.estado', 1);
         $this->db->where('U.rol', 0);
     
+        // Filtro de búsqueda
         if (!empty($busqueda)) {
             $this->db->group_start();
             $this->db->like('U.nombre', $busqueda);
@@ -35,12 +27,18 @@ class Avisocobranza_model extends CI_Model
             $this->db->group_end();
         }
     
+        // Filtro de estado
+        if (!empty($estado)) {
+            $this->db->where('A.estado', $estado); // Aplica el filtro de estado
+        }
+    
         $this->db->order_by('L.fechaLectura', 'DESC');
         $this->db->limit($limit, $offset);
     
         $query = $this->db->get();
         return $query->result_array();
     }
+    
     
     public function contarAvisos($busqueda = '')
     {
@@ -64,7 +62,58 @@ class Avisocobranza_model extends CI_Model
     
         return $this->db->count_all_results();
     }
+    public function obtenerAvisoPorId($idAviso)
+    {
+        $this->db->select('A.*, 
+                        CONCAT_WS(" ",U.nombre, U.primerApellido, IFNULL(U.segundoApellido,"")) as nombreSocio, 
+                        M.codigoSocio,
+                        L.fechaLectura,
+                        L.lecturaActual,
+                        L.lecturaAnterior,
+                        T.tarifaVigente, 
+                        T.tarifaMinima');
+        $this->db->from('avisocobranza A');
+        $this->db->join('lectura L', 'A.idLectura = L.idLectura', 'inner');
+        $this->db->join('membresia M', 'L.idMembresia = M.idMembresia', 'inner');
+        $this->db->join('usuario U', 'M.idUsuario = U.idUsuario', 'inner');
+        $this->db->join('tarifa T', 'A.idTarifa = T.idTarifa', 'inner');
+        $this->db->where('A.idAviso', $idAviso);
+
+        $query = $this->db->get();
+
+        // Retornar el resultado como fila única
+        return $query->row_array();
+    }
+    public function evoluConsumo($idMembresia)
+    {
+        $this->db->select('L.fechaLectura,
+                        L.lecturaActual,
+                        L.lecturaAnterior,
+                        T.tarifaVigente, 
+                        T.tarifaMinima');
+        $this->db->from('avisocobranza A');
+        $this->db->join('lectura L', 'A.idLectura = L.idLectura', 'inner');
+        $this->db->join('membresia M', 'L.idMembresia = M.idMembresia', 'inner');
+        $this->db->join('tarifa T', 'A.idTarifa = T.idTarifa', 'inner');
+        $this->db->where('L.idMembresia', $idMembresia);
+        $this->db->where('L.fechaLectura >= DATE_SUB(CURDATE(), INTERVAL 5 MONTH)');
+        $this->db->where('L.fechaLectura <= CURDATE()');
     
+        $query = $this->db->get();
+    
+        // Retornar el resultado como fila única
+        return $query->result_array();
+    }
+    public function actualizarEstado($idAviso, $nuevoEstado)
+    {
+        // Construir la consulta para actualizar el estado
+        $this->db->set('estado', $nuevoEstado);
+        $this->db->where('idAviso', $idAviso);
+        return $this->db->update('avisocobranza');
+    }
+    
+    
+
 }
 
 

@@ -69,41 +69,34 @@
         </div>
     </div>
 
-
-    <!-- Modal para mostrar la imagen QR y subir comprobante de pago -->
-    <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <!-- Modal para mover de estados a los avisos de cobranza -->
+    <div class="modal fade" id="moverAvisos" tabindex="-1" aria-labelledby="modal-label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="qrModalLabel">Paga tus cuentas pendientes aquí</h5>
+                    <h5 class="modal-title" id="modal-label">Desea ejecutar el pago?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center">
-                    <!-- Mostrar imagen QR -->
-                    <img id="modalQrImage" src="" alt="Código QR" class="img-fluid mb-3" />
-
-                    <div class="mb-3 d-flex align-items-center" id="saldo-container" style="display: none;">
-                        <label id="label-saldo" for="saldo" class="form-label" style="font-size: 1.2rem; margin-right: 10px;">Saldo: </label>
-                        <h4 id="saldo" class="form-control" style="border: none; font-size: 1.2rem; font-weight: bold; color: black; display: inline-block; width: auto;"></h4>
-                    </div>
-
-                    <!-- Formulario para subir comprobante de pago -->
-                    <form action="<?php echo base_url('index.php/socio/subir'); ?>" method="post" enctype="multipart/form-data">
-                        <input type="hidden" id="mes" name="mes" value="">
-                        <input type="hidden" id="anio" name="anio" value="">
-                        <input type="hidden" id="codigoSocio" name="codigoSocio" value="">
-                        <input type="hidden" id="idAviso" name="idAviso" value="">
-                        <div class="mb-3">
-                            <label for="comprobantePago" class="form-label">Subir Comprobante de Pago</label>
-                            <input class="form-control" type="file" id="comprobantePago" name="comprobantePago" required style="color: #4CAF50; border: 2px solid #4CAF50;">
+                <div class="modal-body" id="modalBodyContent">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5><b>Socio:</b><span id="socioModal"></span></h5>
+                            <h5><b>Periodo:</b><span id="periodoModal"></span></h5>
                         </div>
-                        <button type="submit" class="btn btn-success">Subir Comprobante</button>
-                    </form>
+                        <div class="col-6">
+                            <h5><b>Código:</b> <span id="codigoModal"></span></h5>
+                            <h5><b>Total a pagar:</b> <span id="totalModal"></span></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-info btn-lg mx-2" id="confirmar-pago-btn">Confirmar</button>
+                    <button type="button" class="btn btn-danger btn-lg mx-2" data-bs-dismiss="modal">Cancelar</button>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <!-- Modal para visualizar el PDF -->
     <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -164,94 +157,96 @@
     <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo2.js"></script>
     <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
 
-
-
-
     <!-- Sweets alerts/Modals scripts -->
     <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/sweetalert/dist/sweetalert.min.js"></script>
     <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/ui-modal-notification.demo.js"></script>
 
+    <!-- toast -->
+    <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/toastr.min.js"></script>
 
-
-
+    <script>
+        const BASE_URL = '<?php echo base_url(); ?>';
+        const CARGAR_AVISOS_URL = '<?php echo base_url("index.php/avisocobranza/cargaravisos"); ?>';
+    </script>
+    <script src="<?php echo base_url('coloradmin/assets/js/funcionesScripts/avisos.js'); ?>"></script>
 
     <!-- forms validations -->
     <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/parsleyjs/dist/parsley.min.js"></script>
     <script>
-    // Configura Parsley para usar el idioma español
-    Parsley.addMessages('es', {
-        defaultMessage: "Este valor parece ser inválido.",
-        type: {
-            email: "Este valor debe ser una dirección de correo electrónico válida.",
-            url: "Este valor debe ser una URL válida.",
-            number: "Este valor debe ser un número válido.",
-            integer: "Este valor debe ser un número entero válido.",
-            digits: "Este valor debe ser un número entero.",
-            alphanum: "Este valor debe ser alfanumérico."
-        },
-        notblank: "Este valor no debe estar en blanco.",
-        required: "Este campo es obligatorio.",
-        pattern: "Este valor es incorrecto.",
-        min: "Este valor debe ser mayor o igual a %s.",
-        max: "Este valor debe ser menor o igual a %s.",
-        range: "Este valor debe estar entre %s y %s.",
-        minlength: "Este valor es demasiado corto. Debe contener al menos %s caracteres.",
-        maxlength: "Este valor es demasiado largo. Debe contener %s caracteres o menos.",
-        length: "Este valor debe tener entre %s y %s caracteres.",
-        mincheck: "Debes seleccionar al menos %s opción.",
-        maxcheck: "No puedes seleccionar más de %s opciones.",
-        check: "Debes seleccionar entre %s y %s opciones.",
-        equalto: "Este valor debe ser idéntico."
-    });
+        // Configura Parsley para usar el idioma español
+        Parsley.addMessages('es', {
+            defaultMessage: "Este valor parece ser inválido.",
+            type: {
+                email: "Este valor debe ser una dirección de correo electrónico válida.",
+                url: "Este valor debe ser una URL válida.",
+                number: "Este valor debe ser un número válido.",
+                integer: "Este valor debe ser un número entero válido.",
+                digits: "Este valor debe ser un número entero.",
+                alphanum: "Este valor debe ser alfanumérico."
+            },
+            notblank: "Este valor no debe estar en blanco.",
+            required: "Este campo es obligatorio.",
+            pattern: "Este valor es incorrecto.",
+            min: "Este valor debe ser mayor o igual a %s.",
+            max: "Este valor debe ser menor o igual a %s.",
+            range: "Este valor debe estar entre %s y %s.",
+            minlength: "Este valor es demasiado corto. Debe contener al menos %s caracteres.",
+            maxlength: "Este valor es demasiado largo. Debe contener %s caracteres o menos.",
+            length: "Este valor debe tener entre %s y %s caracteres.",
+            mincheck: "Debes seleccionar al menos %s opción.",
+            maxcheck: "No puedes seleccionar más de %s opciones.",
+            check: "Debes seleccionar entre %s y %s opciones.",
+            equalto: "Este valor debe ser idéntico."
+        });
 
-    // Establecer el idioma español como predeterminado
-    Parsley.setLocale('es');
+        // Establecer el idioma español como predeterminado
+        Parsley.setLocale('es');
 
-    // Agregar una validación personalizada para validar un DECIMAL(4,1)
-    window.Parsley.addValidator('decimal41', {
-        validateString: function(value) {
-            return /^\d{1,3}(\.\d{1})?$/.test(value);
-        },
-        messages: {
-            es: "Debe ser un número con hasta 3 dígitos enteros y 1 decimal."
-        }
-    });
+        // Agregar una validación personalizada para validar un DECIMAL(4,1)
+        window.Parsley.addValidator('decimal41', {
+            validateString: function(value) {
+                return /^\d{1,3}(\.\d{1})?$/.test(value);
+            },
+            messages: {
+                es: "Debe ser un número con hasta 3 dígitos enteros y 1 decimal."
+            }
+        });
 
-    // Validación personalizada para asegurar que el valor sea mayor o igual
-    window.Parsley.addValidator('gte', {
-        validateString: function(value, requirement) {
-            const targetValue = document.querySelector(requirement).value;
-            return parseFloat(value) >= parseFloat(targetValue || 0);
-        },
-        messages: {
-            en: 'This value should be greater than or equal to the reference value.',
-            es: 'La lectura actual debe ser mayor o igual a la lectura anterior.'
-        },
-        priority: 1 // Alta prioridad
-    });
+        // Validación personalizada para asegurar que el valor sea mayor o igual
+        window.Parsley.addValidator('gte', {
+            validateString: function(value, requirement) {
+                const targetValue = document.querySelector(requirement).value;
+                return parseFloat(value) >= parseFloat(targetValue || 0);
+            },
+            messages: {
+                en: 'This value should be greater than or equal to the reference value.',
+                es: 'La lectura actual debe ser mayor o igual a la lectura anterior.'
+            },
+            priority: 1 // Alta prioridad
+        });
 
-    // Agregar una validación personalizada para máximo 6 dígitos (incluyendo negativos)
-    window.Parsley.addValidator('maxdigits', {
-        validateString: function(value) {
-            // Validar hasta 6 dígitos ignorando el signo negativo
-            return /^-?\d{1,6}$/.test(value);
-        },
-        messages: {
-            en: 'This value must have at most 6 digits.',
-            es: 'Este valor debe tener como máximo 6 dígitos.'
-        },
-        priority: 32 // Baja prioridad
-    });
-</script>
-
-
+        // Agregar una validación personalizada para máximo 6 dígitos (incluyendo negativos)
+        window.Parsley.addValidator('maxdigits', {
+            validateString: function(value) {
+                // Validar hasta 6 dígitos ignorando el signo negativo
+                return /^-?\d{1,6}$/.test(value);
+            },
+            messages: {
+                en: 'This value must have at most 6 digits.',
+                es: 'Este valor debe tener como máximo 6 dígitos.'
+            },
+            priority: 32 // Baja prioridad
+        });
+    </script>
 
 
 
 
 
- <!-- Sweet alart cierre de sesión -->
-  <script>
+
+
+    <!-- Sweet alart cierre de sesión -->
+    <script>
         $(document).ready(function() {
         $('#showAlert').on('click', function() {
             swal({
@@ -287,172 +282,178 @@
             });
         });
         });
-  </script>
-
-
-
-
-
-
-
-
-
-<!-- script para funcionalidad drop down del selector de avisos de cobranza socios -->
-
-
+    </script>
 
 <!-- script para mostrar los registros de avisos de cobranza -->
 <script>
-$(document).ready(function () {
-    let debounceTimer; // Variable para gestionar el debounce (evitar múltiples llamadas rápidas)
+    $(document).ready(function () {
+    let debounceTimer;
 
-    function cargarAvisos(pagina, busqueda = '') {
-        $.ajax({
-            url: '<?php echo base_url("index.php/avisocobranza/cargaravisos"); ?>',
-            type: 'GET',
-            data: { pagina: pagina, busqueda: busqueda },
-            dataType: 'json',
-            success: function (response) {
-                let resultList = $('#result-list');
-                let pagination = $('#pagination');
+    $(document).on('click', '#dropdown-avisos .dropdown-item', function () {
+        let estado = $(this).data('estado'); // Capturar el estado seleccionado
+        console.log('Estado seleccionado:', estado); // Confirmar captura del estado
 
-                // Limpiar contenedores
-                resultList.empty();
-                pagination.empty();
-
-                // Renderizar avisos
-                if (response.avisos.length > 0) {
-                    response.avisos.forEach(function (aviso) {
-                        // Formatear la fecha al estilo ENERO-2025
-                        let fechaLecturaObj = new Date(aviso.fechaLectura);
-                        let meses = [
-                            'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
-                            'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'
-                        ];
-                        let mes = meses[fechaLecturaObj.getMonth()]; // Obtiene el nombre del mes
-                        let anio = fechaLecturaObj.getFullYear(); // Obtiene el año
-                        let fechaFormateada = `${mes}-${anio}`; // Combina mes y año
-
-                        // Formatear fechaVencimiento al estilo 20-01-2025
-                        let fechaVencimientoObj = new Date(aviso.fechaVencimiento);
-                        let dia = fechaVencimientoObj.getDate().toString().padStart(2, '0'); // Formatea el día con 2 dígitos
-                        let mesVenc = (fechaVencimientoObj.getMonth() + 1).toString().padStart(2, '0'); // Mes (1-12) con 2 dígitos
-                        let anioVenc = fechaVencimientoObj.getFullYear(); // Año
-                        let fechaFormateadaVenc = `${dia}-${mesVenc}-${anioVenc}`; // Combina día, mes y año
-                        
-                        let total = (aviso.lecturaActual - aviso.lecturaAnterior)/100;
-                        if(total<10)
-                        {
-                            total=aviso.tarifaMinima;
-                        }
-                        else
-                        {
-                            total=total*tarifaVigente;
-                        }
-
-                        resultList.append(`
-                            <div class="result-item">
-                                <!-- Imagen -->
-                                <div class="result-image"></div>
-
-                                <!-- Informacion -->
-                                <div class="result-info">
-                                    <h4 class="text-white">${aviso.nombreSocio}</h4>
-
-                                    <!-- Primera fila -->
-                                    <div class="group">
-                                        <p><strong>Código:</strong> ${aviso.codigoSocio}</p>
-                                        <p><strong>Lectura Actual:</strong> ${aviso.lecturaActual}</p>
-                                        <p><strong>Lectura Anterior:</strong> ${aviso.lecturaAnterior}</p>
-                                        
-                                    </div>
-                                    <div class="group">
-                                        <p><strong>Periodo:</strong> ${fechaFormateada}</p>
-                                        <p><strong>Tarifa Vigente:</strong> ${aviso.tarifaVigente} Bs.</p>
-                                        <p><strong>Tarifa Mínima:</strong> ${aviso.tarifaMinima} Bs.</p>
-                                    </div>
-
-                                    <!-- Segunda fila -->
-                                    <div class="group">
-                                        <p class="text-white"><strong>Vencimiento:</strong> ${fechaFormateadaVenc}</p>
-                                    </div>
-                                </div>
-
-
-                                
-                                <!-- Precio y Botón -->
-                                <div class="result-price text-end">
-                                    Bs ${total}
-                                    <a href="javascript:;" class="btn btn-yellow d-block w-100">Ver Detalles</a>
-                                </div>
-                            </div>
-                        `);
-                    });
-
-                    // Generar botones de paginación dinámicos
-                    for (let i = 1; i <= response.total_paginas; i++) {
-                        pagination.append(`
-                            <button class="btn btn-primary page-btn" data-page="${i}" data-busqueda="${busqueda}">
-                                ${i}
-                            </button>
-                        `);
-                    }
-                } else {
-                    resultList.append('<p>No hay avisos disponibles.</p>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al cargar los datos:', error);
-            }
-        });
-    }
-
-
-    // Evento al hacer clic en el botón de búsqueda
-    $('#search-button').on('click', function () {
-        let busqueda = $('#search-query').val(); // Obtener el texto del input
-        cargarAvisos(1, busqueda); // Cargar avisos con la búsqueda
+        // Cambiar la etiqueta del dropdown específico
+        $('#dropdown-avisos').siblings('.btn.dropdown-toggle').html(`${$(this).text()} <b class="caret"></b>`).addClass('btn-primary');
+        cargarAvisos(1, '', estado); // Llamar a cargarAvisos con el estado como filtro
     });
 
-    // Evento al presionar Enter en el input
+    // Eventos existentes para búsqueda, paginación, etc.
+    $('#search-button').on('click', function () {
+        let busqueda = $('#search-query').val();
+        cargarAvisos(1, busqueda);
+    });
+
     $('#search-query').on('keypress', function (e) {
-        if (e.which === 13) { // Verificar si la tecla presionada es Enter (código 13)
-            let busqueda = $(this).val(); // Obtener el texto del input
-            cargarAvisos(1, busqueda); // Cargar avisos con la búsqueda
+        if (e.which === 13) {
+            let busqueda = $(this).val();
+            cargarAvisos(1, busqueda);
         }
     });
 
-    // Evento al escribir en el input (filtrado dinámico)
     $('#search-query').on('input', function () {
-        clearTimeout(debounceTimer); // Reiniciar el temporizador de debounce
-        let busqueda = $(this).val(); // Obtener el texto del input
+        clearTimeout(debounceTimer);
+        let busqueda = $(this).val();
         debounceTimer = setTimeout(() => {
-            cargarAvisos(1, busqueda); // Cargar avisos con la búsqueda después del debounce
-        }, 300); // Esperar 300ms antes de ejecutar la búsqueda
+            cargarAvisos(1, busqueda);
+        }, 300);
     });
 
-    // Manejar clic en los botones de paginación
     $(document).on('click', '.page-btn', function () {
         let pagina = $(this).data('page');
         let busqueda = $(this).data('busqueda') || '';
-        cargarAvisos(pagina, busqueda);
+        let filtro = $(this).data('filtro') || '';
+        cargarAvisos(pagina, busqueda, filtro);
     });
 
+    //funcionalidad del boton ver detalle
+    $(document).on('click', '.ver-detalle', function () {
+        let idAviso = $(this).data('id'); // Obtener el id del aviso del atributo data-id
+        console.log('ID del aviso seleccionado:', idAviso); // Confirmar que el id se está capturando
+    });
     // Cargar la primera página al iniciar
     cargarAvisos(1);
 });
-
 </script>
 
+<!-- script para confirmar pagos de avisos de cobranza -->
+<script>
+    let idAvisoParam;
+
+    // Función para cargar detalles en el modal
+    function cargarDetalle(codigoSocio, nombreSocio, periodo, total, idAviso, estado){
+        // document.getElementById("socioModal").textContent = nombreSocio;
+        // document.getElementById("periodoModal").textContent = periodo;
+        // document.getElementById("codigoModal").textContent = codigoSocio;
+        // document.getElementById("totalModal").textContent = total + " Bs";
+        actualizarContenidoModal(codigoSocio, nombreSocio, periodo, total, estado);
+        idAvisoParam = idAviso; 
+    }
+
+    function actualizarContenidoModal(codigoSocio, nombreSocio, periodo, total, estado) {
+        const modalBody = document.getElementById("modalBodyContent");
+        let contenido = "";
+
+        // Generar el contenido dinámico según el estado del aviso
+        if (estado === "ENVIADO") {
+            contenido = `
+                <div class="row">
+                    <div class="col-6">
+                        <p><b>Código:</b> ${codigoSocio}</p>
+                        <p><b>Socio:</b> ${nombreSocio}</p>
+                    </div>
+                    <div class="col-6">
+                        <p><b>Periodo:</b> ${periodo}</p>
+                        <p><b>Total a pagar:</b> ${total} Bs</p>
+                    </div>
+                </div>
+            `;
+        } else if (estado === "PAGADO") {
+            contenido = `
+                <div class="row">
+                    <div class="col-6">
+                        <p><b>Código:</b> ${codigoSocio}</p>
+                        <p><b>Socio:</b> ${nombreSocio}</p>
+                    </div>
+                    <div class="col-6">
+                        <p><b>Periodo:</b> ${periodo}</p>
+                        <p><b>Total pagado:</b> ${total} Bs</p>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h5 class="text-success"><b>Este aviso ya fue pagado.</b></h5>
+                </div>
+            `;
+        } else if (estado === "VENCIDO") {
+            contenido = `
+                <div class="row">
+                    <div class="col-6">
+                        <p><b>Código:</b> ${codigoSocio}</p>
+                        <p><b>Socio:</b> ${nombreSocio}</p>
+                    </div>
+                    <div class="col-6">
+                        <p><b>Periodo:</b> ${periodo}</p>
+                        <p><b>Deuda total:</b> ${total} Bs</p>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <h5 class="text-danger"><b>Este aviso está vencido.</b></h5>
+                    <p><i>Contacte con la administración para regularizar su deuda.</i></p>
+                </div>
+            `;
+        } else {
+            contenido = `
+                <div class="text-center">
+                    <h5><b>Estado desconocido.</b></h5>
+                </div>
+            `;
+        }
+
+        // Actualizar el contenido del modal
+        modalBody.innerHTML = contenido;
+    }
 
 
+    // Manejar el evento del botón Confirmar
+    document.getElementById("confirmar-pago-btn").addEventListener("click", function () {
+        if (idAvisoParam) {
+            console.log("Confirmar clic detectado. ID Aviso:", idAvisoParam);
 
+            fetch('<?php echo base_url("index.php/avisocobranza/cambiarEstadoAviso"); ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ idAviso: idAvisoParam, nuevoEstado: "PAGADO" }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Mostrar mensaje de éxito con toastr
+                    toastr.success(data.message);
 
+                    // Cerrar el modal
+                    $('#moverAvisos').modal('hide');
 
-
-
-
-
+                    // Recargar dinámicamente la lista de avisos
+                    const busqueda = $('#search-query').val(); // Obtener el término de búsqueda actual
+                    const filtro = $('#dropdown-avisos .dropdown-item.active').data('estado') || ''; // Obtener el filtro actual
+                    const pagina = $('.page-btn.active').data('page') || 1; // Obtener la página actual
+                    cargarAvisos(pagina, busqueda, filtro); // Llamar a cargarAvisos con los filtros actuales
+                } else {
+                    toastr.error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error en la solicitud:", error);
+                toastr.error("Ocurrió un error al procesar la solicitud.");
+            });
+        } else {
+            console.error("No se encontró el ID Aviso.");
+            toastr.error("ID Aviso no válido.");
+        }
+    });
+</script>
 
 </body>
 

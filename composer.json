@@ -1,6 +1,7 @@
 {
     "require": {
         "phpmailer/phpmailer": "^6.9",
-        "aldas/modbus-tcp-client": "^3.5"
+        "aldas/modbus-tcp-client": "^3.5",
+        "dompdf/dompdf": "^3.1"
     }
 }

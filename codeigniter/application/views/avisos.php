@@ -12,37 +12,30 @@
 				<button type="button" id="search-button" class="btn btn-primary">
 					<i class="fa fa-search fa-fw"></i> Buscar
 				</button>
-
-				<!-- Menú desplegable adicional -->
-				<!-- <button type="button" class="btn btn-primary dropdown-toggle no-caret" data-bs-toggle="dropdown">
-					<i class="fa fa-cog fa-fw"></i>
-				</button> -->
-				<!-- <div class="dropdown-menu dropdown-menu-end">
-					<a href="javascript:;" class="dropdown-item">Action</a>
-					<a href="javascript:;" class="dropdown-item">Another action</a>
-					<a href="javascript:;" class="dropdown-item">Something else here</a>
-					<div class="dropdown-divider"></div>
-					<a href="javascript:;" class="dropdown-item">Separated link</a>
-				</div> -->
 			</div>
 
 
-            <!-- <div class="d-block d-md-flex align-items-center mb-3">
+            <div class="d-block d-md-flex align-items-center mb-3">
                 <div class="d-flex">
                     <div class="dropdown me-2">
                         <a href="#" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown">
-                            Filters by <b class="caret"></b>
+                            Filtrar por<b class="caret"></b>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-start" role="menu">
-                            <a href="javascript:;" class="dropdown-item">Posted Date</a>
-                            <a href="javascript:;" class="dropdown-item">View Count</a>
-                            <a href="javascript:;" class="dropdown-item">Total View</a>
-                            <div class="dropdown-divider"></div>
-                            <a href="javascript:;" class="dropdown-item">Location</a>
+                        <!-- <div class="dropdown-menu dropdown-menu-start" role="menu">
+                            <a href="javascript:;" class="dropdown-item">Enviados</a>
+                            <a href="javascript:;" class="dropdown-item">Pagados</a>
+                            <a href="javascript:;" class="dropdown-item">Vencidos</a>
+                        </div> -->
+
+                        <div id="dropdown-avisos" class="dropdown-menu dropdown-menu-start" role="menu">
+                            <a href="javascript:;" class="dropdown-item" data-estado="">TODOS</a>
+                            <a href="javascript:;" class="dropdown-item" data-estado="ENVIADO">ENVIADOS</a>
+                            <a href="javascript:;" class="dropdown-item" data-estado="PAGADO">PAGADOS</a>
+                            <a href="javascript:;" class="dropdown-item" data-estado="VENCIDO">VENCIDOS</a>
                         </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
 
             <!-- Contenedor dinámico para los avisos -->
             <div id="result-list" class="result-list">

@@ -9,12 +9,14 @@
 	<meta content="" name="author" />
 
 
-  <!-- Vendor CSS -->
-  <link href="<?php echo base_url(); ?>coloradmin/assets/css/vendor.min.css" rel="stylesheet" />
+    <!-- Vendor CSS -->
+    <link href="<?php echo base_url(); ?>coloradmin/assets/css/vendor.min.css" rel="stylesheet" />
 
-  <!-- App CSS -->
-  <link href="<?php echo base_url(); ?>coloradmin/assets/css/transparent/app.min.css" rel="stylesheet" />
+    <!-- App CSS -->
+    <link href="<?php echo base_url(); ?>coloradmin/assets/css/transparent/app.min.css" rel="stylesheet" />
 
+    <!-- toast -->
+    <link href="<?php echo base_url(); ?>coloradmin/assets/plugins/toastr/toastr.min.css" rel="stylesheet"/>
 
 
 <!-- stilos para modal -->
@@ -95,7 +97,7 @@
 	</style>
 
 
-
+<!-- estilos para la seccion de registros de avisos de cobranza -->
     <style>
         .text-white {
             text-align: center; /* Centrado del texto */
@@ -132,7 +134,73 @@
         .result-info p strong {
             font-weight: bold;
         }
-        
+
+        .result-image {
+            border-radius: 50% !important; /* Hace que el contenedor sea circular */
+            overflow: hidden !important; /* Recorta el contenido fuera del círculo */
+            width: 150px; /* Define un ancho fijo igual al círculo */
+            height: 150px; /* Define una altura fija igual al círculo */
+            background-size: contain !important; /* Asegura que la imagen no se deforme */
+            background-position: center center !important; /* Centra la imagen dentro del círculo */
+            background-repeat: no-repeat !important; /* Evita repeticiones */
+            margin: 0 auto; /* Centra el círculo horizontalmente */
+            display: block; /* Asegura que el contenedor respete sus dimensiones */
+        }
+        @media (max-width: 768px) {
+            .result-image {
+                width: 100px;
+                height: 100px;
+            }
+        }
+        .result-link {
+            display: inline-block; /* Asegura que el enlace respete las dimensiones del contenido */
+            text-decoration: none; /* Elimina el subrayado predeterminado de los enlaces */
+        }
+        .result-link:hover .result-image {
+            filter: brightness(0.9); /* Efecto visual al pasar el cursor */
+        }
+    </style>
+    <!-- estilos para el modal q cambia los estados de los avisos de cobranza -->
+    <style>
+        .custom-modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .modal-footer .btn {
+            width: 120px; /* Define un ancho fijo para los botones */
+        }
+        .modal-footer .btn {
+            min-width: 120px; /* Asegura un ancho mínimo uniforme */
+            font-weight: bold; /* Hace que el texto sea más legible */
+        }
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
     </style>
 
 

@@ -1,12 +1,24 @@
 <?php
     function formatearFecha($fecha)
     {
-        //2024-06-24 21:39:20
-        $dia=substr($fecha,8,2);
-        $mes=substr($fecha,5,2);
-        $anio=substr($fecha,0,4);
+        // Array de meses en formato literal abreviado
+        $meses = [
+            "01" => "ENE", "02" => "FEB", "03" => "MAR", 
+            "04" => "ABR", "05" => "MAY", "06" => "JUN", 
+            "07" => "JUL", "08" => "AGO", "09" => "SEP", 
+            "10" => "OCT", "11" => "NOV", "12" => "DIC"
+        ];
 
-        $fechaformateada=$dia."/".$mes."/".$anio;
+        // Extraer día, mes y año
+        $dia = substr($fecha, 8, 2);
+        $mes = substr($fecha, 5, 2);
+        $anio = substr($fecha, 0, 4);
+
+        // Convertir el mes a su forma literal
+        $mesLiteral = isset($meses[$mes]) ? $meses[$mes] : $mes;
+
+        // Formatear la fecha
+        $fechaformateada = $dia . "/" . $mesLiteral . "/" . $anio;
 
         return $fechaformateada;
     }
