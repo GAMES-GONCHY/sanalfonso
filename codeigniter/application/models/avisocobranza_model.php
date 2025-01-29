@@ -89,6 +89,7 @@ class Avisocobranza_model extends CI_Model
         $this->db->select('L.fechaLectura,
                         L.lecturaActual,
                         L.lecturaAnterior,
+                        A.estado,
                         T.tarifaVigente, 
                         T.tarifaMinima');
         $this->db->from('avisocobranza A');
@@ -96,7 +97,7 @@ class Avisocobranza_model extends CI_Model
         $this->db->join('membresia M', 'L.idMembresia = M.idMembresia', 'inner');
         $this->db->join('tarifa T', 'A.idTarifa = T.idTarifa', 'inner');
         $this->db->where('L.idMembresia', $idMembresia);
-        $this->db->where('L.fechaLectura >= DATE_SUB(CURDATE(), INTERVAL 5 MONTH)');
+        $this->db->where('L.fechaLectura >= DATE_SUB(CURDATE(), INTERVAL 4 MONTH)');
         $this->db->where('L.fechaLectura <= CURDATE()');
     
         $query = $this->db->get();
@@ -107,9 +108,24 @@ class Avisocobranza_model extends CI_Model
     public function actualizarEstado($idAviso, $nuevoEstado)
     {
         // Construir la consulta para actualizar el estado
-        $this->db->set('estado', $nuevoEstado);
+        $data['idAutor']= $this->session->userdata('idUsuario');
+        $data['estado'] = $nuevoEstado;
+        $data['fechaActualizacion'] = date('Y-m-d H:i:s');
+
+        if($nuevoEstado == 'PAGADO')
+        {
+            $data['fechaPago'] = date('Y-m-d H:i:s');
+        }
+        else
+        {
+            // if($nuevoEstado == 'VENCIDO' && $)
+            // {
+
+            // }
+            $data['fechaPago'] = null;
+        }
         $this->db->where('idAviso', $idAviso);
-        return $this->db->update('avisocobranza');
+        return $this->db->update('avisocobranza',$data);
     }
     
     

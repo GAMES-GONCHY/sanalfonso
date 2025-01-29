@@ -352,10 +352,14 @@
 
     function actualizarContenidoModal(codigoSocio, nombreSocio, periodo, total, estado) {
         const modalBody = document.getElementById("modalBodyContent");
+        const modalTitle = document.getElementById("modal-label");
+        const btnConfirmar = document.getElementById("confirmar-pago-btn");
+        const btnCancelar = document.querySelector(".modal-footer button[data-bs-dismiss]");
+
         let contenido = "";
 
-        // Generar el contenido dinámico según el estado del aviso
         if (estado === "ENVIADO") {
+            modalTitle.innerHTML = "Desea ejecutar el pago?";
             contenido = `
                 <div class="row">
                     <div class="col-6">
@@ -368,8 +372,18 @@
                     </div>
                 </div>
             `;
-        } else if (estado === "PAGADO") {
+
+            // Mostrar botones forzadamente
+            btnConfirmar.style.display = "block";
+            btnCancelar.style.display = "block";
+        } 
+        else if (estado === "PAGADO") {
+            modalTitle.innerHTML = "Desea revertir la acción?";
             contenido = `
+                <div class="text-center">
+                    <h5 class="text-success"><b>Este aviso ya fue pagado.</b></h5>
+                </div>
+                <br>
                 <div class="row">
                     <div class="col-6">
                         <p><b>Código:</b> ${codigoSocio}</p>
@@ -377,14 +391,24 @@
                     </div>
                     <div class="col-6">
                         <p><b>Periodo:</b> ${periodo}</p>
-                        <p><b>Total pagado:</b> ${total} Bs</p>
+                        <p><b>Total a pagar:</b> ${total} Bs</p>
                     </div>
                 </div>
-                <div class="text-center">
-                    <h5 class="text-success"><b>Este aviso ya fue pagado.</b></h5>
+                <div class="switch-container">
+                    <div class="switch-slider" id="estadoSwitch">
+                        <span data-estado="ENVIADO">Enviado</span>
+                        <span data-estado="PAGADO">Pagado</span>
+                        <span data-estado="VENCIDO">Vencido</span>
+                    </div>
                 </div>
             `;
-        } else if (estado === "VENCIDO") {
+
+            // OCULTAR BOTONES FORZADAMENTE
+            btnConfirmar.style.display = "none";
+            btnCancelar.style.display = "none";
+        } 
+        else if (estado === "VENCIDO") {
+            modalTitle.innerHTML = "Desea ejecutar el pago?";
             contenido = `
                 <div class="row">
                     <div class="col-6">
@@ -398,21 +422,96 @@
                 </div>
                 <div class="text-center">
                     <h5 class="text-danger"><b>Este aviso está vencido.</b></h5>
-                    <p><i>Contacte con la administración para regularizar su deuda.</i></p>
                 </div>
             `;
-        } else {
+
+            // Asegurar que los botones sean visibles nuevamente
+            btnConfirmar.style.display = "block";
+            btnCancelar.style.display = "block";
+        } 
+        else {
+            modalTitle.innerHTML = "Estado Desconocido";
             contenido = `
                 <div class="text-center">
-                    <h5><b>Estado desconocido.</b></h5>
+                    <h5><b>No se reconoce el estado de este aviso.</b></h5>
                 </div>
             `;
+
+            // Mostrar botones por seguridad
+            btnConfirmar.style.display = "block";
+            btnCancelar.style.display = "block";
         }
 
         // Actualizar el contenido del modal
         modalBody.innerHTML = contenido;
+
+        // Inicializar el switch deslizable si el estado es "PAGADO"
+        if (estado === "PAGADO") {
+            inicializarSwitch(estado);
+        }
     }
 
+
+    function inicializarSwitch(estadoActual) {
+        const switchSlider = document.getElementById("estadoSwitch");
+        const opciones = switchSlider.querySelectorAll("span");
+
+        // Eliminar event listeners anteriores para evitar duplicaciones
+        opciones.forEach(opcion => {
+            let nuevoElemento = opcion.cloneNode(true);
+            opcion.parentNode.replaceChild(nuevoElemento, opcion);
+        });
+
+        // Seleccionar la opción activa al abrir el modal
+        opciones.forEach(o => o.classList.remove("active"));
+        const opcionSeleccionada = Array.from(switchSlider.querySelectorAll("span")).find(o => o.getAttribute("data-estado") === estadoActual);
+        if (opcionSeleccionada) {
+            opcionSeleccionada.classList.add("active");
+            moverFondoSwitch(opcionSeleccionada);
+        }
+
+        // Agregar el evento click a las nuevas opciones
+        switchSlider.querySelectorAll("span").forEach(opcion => {
+            opcion.addEventListener("click", function () {
+                switchSlider.querySelectorAll("span").forEach(o => o.classList.remove("active"));
+                this.classList.add("active");
+
+                let nuevoEstado = this.getAttribute("data-estado");
+
+                // Mover el fondo del switch
+                moverFondoSwitch(this);
+
+                // Enviar actualización vía AJAX
+                fetch('<?php echo base_url("index.php/avisocobranza/cambiarEstadoAviso"); ?>', {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ idAviso: idAvisoParam, nuevoEstado: nuevoEstado })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        toastr.success("Estado actualizado correctamente.");
+                        cargarAvisos(1); // Recargar la lista de avisos
+                    } else {
+                        toastr.error("Error al actualizar el estado.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error en la actualización:", error);
+                    toastr.error("Ocurrió un error.");
+                });
+            });
+        });
+    }
+
+
+    // Función para mover el fondo del switch correctamente
+    function moverFondoSwitch(elementoSeleccionado) {
+        const switchSlider = document.getElementById("estadoSwitch");
+        const opciones = switchSlider.querySelectorAll("span");
+        let index = Array.from(opciones).indexOf(elementoSeleccionado);
+        switchSlider.style.setProperty("--switch-position", `${index * 85}px`);
+    }
 
     // Manejar el evento del botón Confirmar
     document.getElementById("confirmar-pago-btn").addEventListener("click", function () {

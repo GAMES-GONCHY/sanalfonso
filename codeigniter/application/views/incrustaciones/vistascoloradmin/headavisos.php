@@ -81,20 +81,67 @@
     border-color: #6c757d;
 }
 </style>
+<!-- estilos para el switch deslizante del modal para cambio de estados. -->
+<style>
+.switch-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.switch-slider {
+    display: flex;
+    width: 250px;
+    background: #222;
+    border-radius: 25px;
+    padding: 5px;
+    position: relative;
+    transition: background 0.3s ease;
+}
+
+.switch-slider span {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+}
+
+.switch-slider .active {
+    color: #000;
+    font-weight: bold;
+}
+
+.switch-slider::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: var(--switch-position, 5px);
+    width: 80px;
+    height: 35px;
+    background: #4CAF50;
+    border-radius: 20px;
+    transition: left 0.3s ease;
+}
 
 
+</style>
 
 <!-- Estilo para cambiar de backgroud -->
 <style>
-		.app-cover.new-background 
-		{
-			background: 
-			linear-gradient(rgba(0.5, 0.5, 0.5, 0), rgba(0, 0, 0, 0.7)), /* Capa de oscurecimiento */
-			url('<?php echo base_url(); ?>coloradmin/assets/img/login-bg/agua2.png'); /* Nueva imagen */
-			background-size: cover; /* Ajusta la imagen al contenedor */
-			background-position: center; /* Centra la imagen */
-		}
-	</style>
+    .app-cover.new-background 
+    {
+        background: 
+        linear-gradient(rgba(0.5, 0.5, 0.5, 0), rgba(0, 0, 0, 0.7)), /* Capa de oscurecimiento */
+        url('<?php echo base_url(); ?>coloradmin/assets/img/login-bg/agua2.png'); /* Nueva imagen */
+        background-size: cover; /* Ajusta la imagen al contenedor */
+        background-position: center; /* Centra la imagen */
+    }
+</style>
 
 
 <!-- estilos para la seccion de registros de avisos de cobranza -->

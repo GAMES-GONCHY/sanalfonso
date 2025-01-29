@@ -1,6 +1,6 @@
 function cargarAvisos(pagina, busqueda = '', filtro = '') {
     $.ajax({
-        url: CARGAR_AVISOS_URL, // Usamos la variable global definida en la vista PHP
+        url: CARGAR_AVISOS_URL,
         type: 'GET',
         data: { pagina: pagina, busqueda: busqueda, filtro: filtro },
         dataType: 'json',
@@ -8,14 +8,11 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
             let resultList = $('#result-list');
             let pagination = $('#pagination');
 
-            // Limpiar contenedores
             resultList.empty();
             pagination.empty();
 
-            // Renderizar avisos
             if (response.avisos.length > 0) {
                 response.avisos.forEach(function (aviso) {
-                    // Formatear fechas y otros datos según sea necesario
                     let fechaLecturaObj = new Date(aviso.fechaLectura);
                     let meses = [
                         'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
@@ -36,21 +33,18 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
 
                     resultList.append(`
                         <div class="result-item">
-                            <!-- Imagen -->
                             <a href="#moverAvisos" class="result-link" data-bs-toggle="modal"
-								onclick="cargarDetalle('${aviso.codigoSocio}', 
-														'${aviso.nombreSocio}', 
-														'${fechaFormateada}', 
-														'${total}',
-														'${aviso.idAviso}',
-														'${aviso.estado}')">
-								<div class="result-image"
-									style="background-image: url('${BASE_URL}uploads/img/${aviso.estado.toLowerCase()}.png');">
-								</div>
-							</a>
+                                onclick="cargarDetalle('${aviso.codigoSocio}', 
+                                                        '${aviso.nombreSocio}', 
+                                                        '${fechaFormateada}', 
+                                                        '${total}',
+                                                        '${aviso.idAviso}',
+                                                        '${aviso.estado}')">
+                                <div class="result-image"
+                                    style="background-image: url('${BASE_URL}uploads/img/${aviso.estado.toLowerCase()}.png');">
+                                </div>
+                            </a>
 
-
-                            <!-- Información -->
                             <div class="result-info">
                                 <h4 class="text-white">${aviso.nombreSocio}</h4>
                                 <div class="group">
@@ -68,10 +62,8 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
                                 </div>
                             </div>
 
-                            <!-- Precio y Botón -->
                             <div class="result-price text-end">
                                 Bs ${total}
-                                
                                 <a href="${BASE_URL}index.php/avisocobranza/generarPDFAviso/${aviso.idAviso}/${aviso.idMembresia}" target="_blank" class="btn btn-yellow d-block w-100">Ver Detalles</a>
                             </div>
                         </div>
@@ -81,7 +73,8 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
                 // Generar botones de paginación dinámicos
                 for (let i = 1; i <= response.total_paginas; i++) {
                     pagination.append(`
-                        <button class="btn btn-primary page-btn" data-page="${i}" data-busqueda="${busqueda}" data-filtro="${filtro}">
+                        <button class="btn page-btn ${i === pagina ? 'btn-primary' : 'btn-outline-primary'}"
+                            data-page="${i}" data-busqueda="${busqueda}" data-filtro="${filtro}">
                             ${i}
                         </button>
                     `);

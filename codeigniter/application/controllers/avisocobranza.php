@@ -40,7 +40,7 @@ class Avisocobranza extends CI_Controller
             foreach ($data['evolucionConsumo'] as &$consumo) {
                 if (isset($consumo['fechaLectura'])) {
                     // Formatear las fechas para la salida
-                    $consumo['fechaLectura'] = formatearFecha($consumo['fechaLectura']);
+                    $consumo['fechaLectura'] = fechaSoloMesAnio($consumo['fechaLectura']);
                 }
             }
         }
@@ -94,7 +94,7 @@ class Avisocobranza extends CI_Controller
         $dompdf->loadHtml($html);
     
         // Configurar el tamaño y orientación del papel
-        $customPaper = array(0, 0, 595.28, 430); // Ancho y alto en puntos
+        $customPaper = array(0, 0, 595.28, 500); // Ancho y alto en puntos
         $dompdf->setPaper($customPaper, 'portrait');
     
         // Renderizar el PDF
@@ -103,7 +103,6 @@ class Avisocobranza extends CI_Controller
         // Generar el archivo PDF para abrir en el navegador
         $dompdf->stream("aviso_cobranza_$idAviso.pdf", array("Attachment" => 0)); // Attachment = 0 lo abre en nueva pestaña
     }
-    
     public function cambiarEstadoAviso()
     {
         // Recibir los datos enviados por AJAX
