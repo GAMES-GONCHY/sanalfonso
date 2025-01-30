@@ -58,7 +58,7 @@
                 <?php if (!empty($evolucionConsumo) && is_array($evolucionConsumo)): ?>
                     <?php foreach ($evolucionConsumo as $consumo): ?>
                         <?php
-                            $diferenciaLecturas = round(($consumo['lecturaActual'] - $consumo['lecturaAnterior']) / 100, 2);
+                            $diferenciaLecturas = round(($consumo['lecturaActual'] - $consumo['lecturaAnterior']) / 100, 1);
                             $tarifaAplicada = ($diferenciaLecturas > 10) ? $consumo['tarifaVigente'] : $consumo['tarifaMinima'];
                             // Determinar la observación en función de $diferenciaLecturas
                             if ($diferenciaLecturas < 10) {
@@ -78,7 +78,7 @@
                             <td><?= $diferenciaLecturas; ?></td>
                             <td><?= $tarifaAplicada; ?></td>
                             <td><?= $observacion; ?></td>
-                            <td class="numeric"><?= round(($diferenciaLecturas * $tarifaAplicada), 2); ?></td>
+                            <td class="numeric"><?= round(($diferenciaLecturas * $tarifaAplicada), 1); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -90,53 +90,73 @@
         </table>
 
         <div class="footer">
-            <div class="facturaAdeudada">
-                <table class="table-adeudados">
-                    <thead>
-                        <tr>
-                            <th>Meses Adeudados</th>
-                            <th>Sub total Bs.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                            $totalAdeudado = 0;
-                            if (!empty($evolucionConsumo) && is_array($evolucionConsumo)): 
-                                foreach ($evolucionConsumo as $consumoMes): 
-                                    if ($consumoMes['estado'] !== 'PAGADO'): 
-                                        $diferenciaLecturas = round(($consumoMes['lecturaActual'] - $consumoMes['lecturaAnterior']) / 100, 2);
-                                        $tarifaAplicada = ($diferenciaLecturas < 10) ? $consumoMes['tarifaMinima'] : $consumoMes['tarifaVigente'];
-                                        $subTotal = round($diferenciaLecturas * $tarifaAplicada, 2);
-                                        $totalAdeudado += $subTotal;
-                        ?>
+            <?php if ($aviso['estado'] === 'PAGADO' || $aviso['estado'] === 'VENCIDO'): ?>
+                <div class="facturaActual">
+                    <p><b>Periodo: <?= $aviso['fechaLectura']; ?></b></p>
+                    <p><b>Consumo: <?= $consumo = round(($aviso['lecturaActual'] - $aviso['lecturaAnterior']) / 100, 1); ?> m3</b></p>
+                    <p>
+                        <b>
+                            Total factura Actual: 
+                            <?php 
+                            // Lógica para calcular el total de la factura
+                            if ($consumo < 10) {
+                                $totalFactura = $consumo * $aviso['tarifaMinima'];
+                            } else {
+                                $totalFactura = $consumo * $aviso['tarifaVigente'];
+                            }
+                            echo number_format($totalFactura, 1) . " Bs.";
+                            ?>
+                        </b>
+                    </p>
+                </div>
+            <?php else: ?>
+                <div class="facturaAdeudada">
+                    <table class="table-adeudados">
+                        <thead>
                             <tr>
-                                <td><?= $consumoMes['fechaLectura']; ?></td>
-                                <td class="numeric"><?= number_format($subTotal, 2); ?></td>
+                                <th>Meses Adeudados</th>
+                                <th>Sub total Bs.</th>
                             </tr>
-                        <?php 
-                                    endif;
-                                endforeach; 
-                            else: 
-                        ?>
-                            <tr>
-                                <td colspan="2" class="text-center">No hay deudas pendientes.</td>
+                        </thead>
+                        <tbody>
+                            <?php 
+                                $totalAdeudado = 0;
+                                if (!empty($evolucionConsumo) && is_array($evolucionConsumo)): 
+                                    foreach ($evolucionConsumo as $consumoMes): 
+                                        if ($consumoMes['estado'] !== 'PAGADO'): 
+                                            $diferenciaLecturas = round(($consumoMes['lecturaActual'] - $consumoMes['lecturaAnterior']) / 100, 1);
+                                            $tarifaAplicada = ($diferenciaLecturas < 10) ? $consumoMes['tarifaMinima'] : $consumoMes['tarifaVigente'];
+                                            $subTotal = round($diferenciaLecturas * $tarifaAplicada, 1);
+                                            $totalAdeudado += $subTotal;
+                            ?>
+                                <tr>
+                                    <td><?= $consumoMes['fechaLectura']; ?></td>
+                                    <td class="numeric"><?= number_format($subTotal, 1); ?></td>
+                                </tr>
+                            <?php 
+                                        endif;
+                                    endforeach; 
+                                else: 
+                            ?>
+                                <tr>
+                                    <td colspan="2" class="text-center">No hay deudas pendientes.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                        <?php if ($totalAdeudado > 0): ?>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td><b>Total a pagar</b></td>
+                                <td class="numeric"><b><?= number_format($totalAdeudado, 1); ?> Bs.</b></td>
                             </tr>
+                        </tfoot>
                         <?php endif; ?>
-                    </tbody>
-                    <?php if ($totalAdeudado > 0): ?>
-                    <tfoot>
-                        <tr class="total-row">
-                            <td><b>Total a pagar</b></td>
-                            <td class="numeric"><b><?= number_format($totalAdeudado, 2); ?> Bs.</b></td>
-                        </tr>
-                    </tfoot>
-                    <?php endif; ?>
-                </table>
-            </div>
-            
+                    </table>
+                </div>
+            <?php endif; ?>
+
             <div class="facturaInfo">
-                <br>
-                <br>
+                <br><br>
                 <ul>
                     <li><strong>Consumo Mínimo:</strong> Menor a 10 m³ → Tarifa mínima</li>
                     <li><strong>Consumo Moderado:</strong> Menor a 20 m³ → Tarifa vigente</li>
@@ -145,10 +165,7 @@
                     <li><strong>Consumo Muy Elevado:</strong> Mayor o igual a 40 m³ → Tarifa vigente</li>
                 </ul>
             </div>
-            
         </div>
-        
-
 
     </div>
     <p style="text-align: center;">Gracias por su pago puntual.</p>

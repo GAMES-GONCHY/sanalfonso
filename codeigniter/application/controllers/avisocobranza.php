@@ -34,7 +34,7 @@ class Avisocobranza extends CI_Controller
     {
         // Cargar los datos del aviso desde el modelo
         $data['aviso'] = $this->avisocobranza_model->obtenerAvisoPorId($idAviso);
-        $data['evolucionConsumo'] = $this->avisocobranza_model->evoluConsumo($idMembresia);
+        $data['evolucionConsumo'] = $this->avisocobranza_model->evoluConsumo($idMembresia, $data['aviso']['fechaLectura']);
 
         if (!empty($data['evolucionConsumo']) && is_array($data['evolucionConsumo'])) {
             foreach ($data['evolucionConsumo'] as &$consumo) {
@@ -64,7 +64,7 @@ class Avisocobranza extends CI_Controller
             $fechaOriginal = $data['aviso']['fechaLectura']; // Fecha original sin formatear
         
             // Formatear las fechas para la salida
-            $data['aviso']['fechaLectura'] = formatearFecha($fechaOriginal);
+            $data['aviso']['fechaLectura'] = fechaSoloMesAnio($fechaOriginal);
             $data['aviso']['fechaVencimiento'] = formatearFecha($data['aviso']['fechaVencimiento']);
         
             if($data['aviso']['lecturaAnterior']!=0 && $data['aviso']['lecturaActual']!=0)
@@ -109,16 +109,17 @@ class Avisocobranza extends CI_Controller
         $input = json_decode(file_get_contents('php://input'), true);
     
         // Validar que se recibió el idAviso y el nuevoEstado
-        if (!isset($input['idAviso']) || !isset($input['nuevoEstado'])) {
+        if (!isset($input['idAviso']) || !isset($input['nuevoEstado']) || !isset($input['fechaVencimiento'])) {
             echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
             return;
         }
     
         $idAviso = $input['idAviso'];
-        $nuevoEstado = $input['nuevoEstado'];
+        $data['estado'] = $input['nuevoEstado'];
+        $data['fechaVencimiento'] = $input['fechaVencimiento'];
     
         // Actualizar el estado en la base de datos
-        $resultado = $this->avisocobranza_model->actualizarEstado($idAviso, $nuevoEstado);
+        $resultado = $this->avisocobranza_model->actualizarEstado($idAviso, $data);
     
         if ($resultado) {
             // Éxito: devolver respuesta positiva

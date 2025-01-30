@@ -29,7 +29,7 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
                     let fechaFormateadaVenc = `${dia}-${mesVenc}-${anioVenc}`;
 
                     let total = (aviso.lecturaActual - aviso.lecturaAnterior) / 100;
-                    total = total < 10 ? aviso.tarifaMinima : (total * aviso.tarifaVigente).toFixed(2);
+                    total = total < 10 ? aviso.tarifaMinima : (total * aviso.tarifaVigente).toFixed(1);
 
                     resultList.append(`
                         <div class="result-item">
@@ -39,6 +39,7 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
                                                         '${fechaFormateada}', 
                                                         '${total}',
                                                         '${aviso.idAviso}',
+                                                        '${aviso.fechaVencimiento}',
                                                         '${aviso.estado}')">
                                 <div class="result-image"
                                     style="background-image: url('${BASE_URL}uploads/img/${aviso.estado.toLowerCase()}.png');">

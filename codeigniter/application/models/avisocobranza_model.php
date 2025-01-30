@@ -84,7 +84,7 @@ class Avisocobranza_model extends CI_Model
         // Retornar el resultado como fila única
         return $query->row_array();
     }
-    public function evoluConsumo($idMembresia)
+    public function evoluConsumo($idMembresia, $fechaLectura)
     {
         $this->db->select('L.fechaLectura,
                         L.lecturaActual,
@@ -97,39 +97,35 @@ class Avisocobranza_model extends CI_Model
         $this->db->join('membresia M', 'L.idMembresia = M.idMembresia', 'inner');
         $this->db->join('tarifa T', 'A.idTarifa = T.idTarifa', 'inner');
         $this->db->where('L.idMembresia', $idMembresia);
-        $this->db->where('L.fechaLectura >= DATE_SUB(CURDATE(), INTERVAL 4 MONTH)');
-        $this->db->where('L.fechaLectura <= CURDATE()');
+        $this->db->where('L.fechaLectura >=', "DATE_SUB('$fechaLectura', INTERVAL 3 MONTH)", false);
+        $this->db->where('L.fechaLectura <=', $fechaLectura);
     
         $query = $this->db->get();
     
         // Retornar el resultado como fila única
         return $query->result_array();
     }
-    public function actualizarEstado($idAviso, $nuevoEstado)
+    public function actualizarEstado($idAviso, $data)
     {
-        // Construir la consulta para actualizar el estado
-        $data['idAutor']= $this->session->userdata('idUsuario');
-        $data['estado'] = $nuevoEstado;
+        $data['idAutor'] = $this->session->userdata('idUsuario');
         $data['fechaActualizacion'] = date('Y-m-d H:i:s');
-
-        if($nuevoEstado == 'PAGADO')
-        {
+    
+        // Obtener la fecha actual con hora 00:00:00
+        $fechaActual = date('Y-m-d') . ' 00:00:00';
+    
+        // Validaciones de estado
+        if ($data['estado'] === 'PAGADO') {
             $data['fechaPago'] = date('Y-m-d H:i:s');
-        }
-        else
+        } elseif (($data['estado'] === 'VENCIDO' && $data['fechaVencimiento'] > $fechaActual) || ($data['estado'] === 'ENVIADO' && $data['fechaVencimiento'] <= $fechaActual))
         {
-            // if($nuevoEstado == 'VENCIDO' && $)
-            // {
-
-            // }
+            return false;
+        } else {
             $data['fechaPago'] = null;
         }
-        $this->db->where('idAviso', $idAviso);
-        return $this->db->update('avisocobranza',$data);
+    
+        // Actualizar en la base de datos
+        return $this->db->where('idAviso', $idAviso)->update('avisocobranza', $data);
     }
-    
-    
-
 }
 
 

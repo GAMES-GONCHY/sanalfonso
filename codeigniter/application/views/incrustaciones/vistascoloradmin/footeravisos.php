@@ -339,18 +339,20 @@
 <!-- script para confirmar pagos de avisos de cobranza -->
 <script>
     let idAvisoParam;
+    let fechaVencimientoParam;
 
     // Función para cargar detalles en el modal
-    function cargarDetalle(codigoSocio, nombreSocio, periodo, total, idAviso, estado){
+    function cargarDetalle(codigoSocio, nombreSocio, periodo, total, idAviso, fechaVencimiento, estado){
         // document.getElementById("socioModal").textContent = nombreSocio;
         // document.getElementById("periodoModal").textContent = periodo;
         // document.getElementById("codigoModal").textContent = codigoSocio;
         // document.getElementById("totalModal").textContent = total + " Bs";
-        actualizarContenidoModal(codigoSocio, nombreSocio, periodo, total, estado);
-        idAvisoParam = idAviso; 
+        actualizarContenidoModal(codigoSocio, nombreSocio, periodo, total, fechaVencimiento, estado);
+        idAvisoParam = idAviso;
+        fechaVencimientoParam = fechaVencimiento; 
     }
 
-    function actualizarContenidoModal(codigoSocio, nombreSocio, periodo, total, estado) {
+    function actualizarContenidoModal(codigoSocio, nombreSocio, periodo, total, fechaVencimiento, estado) {
         const modalBody = document.getElementById("modalBodyContent");
         const modalTitle = document.getElementById("modal-label");
         const btnConfirmar = document.getElementById("confirmar-pago-btn");
@@ -456,6 +458,9 @@
         const switchSlider = document.getElementById("estadoSwitch");
         const opciones = switchSlider.querySelectorAll("span");
 
+        // Guardar el estado anterior antes de cambiarlo
+        let estadoAnterior = estadoActual;
+
         // Eliminar event listeners anteriores para evitar duplicaciones
         opciones.forEach(opcion => {
             let nuevoElemento = opcion.cloneNode(true);
@@ -473,10 +478,14 @@
         // Agregar el evento click a las nuevas opciones
         switchSlider.querySelectorAll("span").forEach(opcion => {
             opcion.addEventListener("click", function () {
+                let nuevoEstado = this.getAttribute("data-estado");
+
+                // Guardar el estado anterior antes de cambiarlo
+                let estadoPrevio = switchSlider.querySelector(".active").getAttribute("data-estado");
+
+                // Quitar la clase active de todos y aplicar solo al seleccionado
                 switchSlider.querySelectorAll("span").forEach(o => o.classList.remove("active"));
                 this.classList.add("active");
-
-                let nuevoEstado = this.getAttribute("data-estado");
 
                 // Mover el fondo del switch
                 moverFondoSwitch(this);
@@ -485,7 +494,7 @@
                 fetch('<?php echo base_url("index.php/avisocobranza/cambiarEstadoAviso"); ?>', {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ idAviso: idAvisoParam, nuevoEstado: nuevoEstado })
+                    body: JSON.stringify({ idAviso: idAvisoParam, fechaVencimiento: fechaVencimientoParam, nuevoEstado: nuevoEstado })
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -493,15 +502,36 @@
                         toastr.success("Estado actualizado correctamente.");
                         cargarAvisos(1); // Recargar la lista de avisos
                     } else {
-                        toastr.error("Error al actualizar el estado.");
+                        toastr.error("Error al actualizar el estado. Verifique la Fecha de Vencimiento");
+                        
+                        // **Restaurar el estado anterior si hay error**
+                        restaurarSwitch(estadoPrevio);
                     }
                 })
                 .catch(error => {
                     console.error("Error en la actualización:", error);
                     toastr.error("Ocurrió un error.");
+
+                    // **Restaurar el estado anterior si hay error de conexión**
+                    restaurarSwitch(estadoPrevio);
                 });
             });
         });
+    }
+
+    function restaurarSwitch(estadoPrevio) {
+        const switchSlider = document.getElementById("estadoSwitch");
+        const opciones = switchSlider.querySelectorAll("span");
+
+        // Quitar la clase "active" de todos los estados
+        opciones.forEach(o => o.classList.remove("active"));
+
+        // Encontrar y activar el estado anterior
+        const opcionAnterior = Array.from(opciones).find(o => o.getAttribute("data-estado") === estadoPrevio);
+        if (opcionAnterior) {
+            opcionAnterior.classList.add("active");
+            moverFondoSwitch(opcionAnterior);
+        }
     }
 
 
@@ -523,7 +553,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idAviso: idAvisoParam, nuevoEstado: "PAGADO" }),
+                body: JSON.stringify({ idAviso: idAvisoParam, fechaVencimiento: fechaVencimientoParam, nuevoEstado: "PAGADO" }),
             })
             .then(response => response.json())
             .then(data => {
