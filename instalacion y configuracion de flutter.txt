@@ -1,0 +1,23 @@
+1 paso 
+no dirigimos a la pagina principal de flutter= https://docs.flutter.dev/get-started/install/windows/mobile 
+
+descargamos el archivo zip  de la version actual y descomprimimos la carpeta
+
+2 paso
+
+ ubicamos el archivo en  =  C:\flutter
+
+3 paso
+
+ ingresamos a ruta (C:\flutter\bin) de flutter en las variables de entorno del sistema y de usuario , en la variable path anadimos la ruta donde se encuentra el sdk de flutter.
+
+4 paso
+ una ves ingresada la ruta verificamos en la consola (CMD) estos comando= flutter ->que deberia mostar los detalles de flutter
+si ejecutamos el comando de flutter doctor= nos muestra un lista de todos los errores que tiene flutter.
+
+5to paso nos dirigimos a visual code e instalmos las extenciones de flutter, awesome flutter snippe creamos el proyecto 
+en lfutter en visual code, y por comandos.
+
+6to paso
+
+instale el paquete de http  enlas dependencias en el archivo de pubpecs.yaml  y Tambien el paquete de  webview  para ver las vistas del sistema web en la app movil.

@@ -147,61 +147,6 @@ class Usuario extends CI_Controller
 	}
 
 	//ANADI UN NUEVO METODO PARA LA APP MOVIL PUEDA LOGEARSE
-	public function api_login() {
-		// Leer los datos enviados en formato JSON
-		$data = json_decode($this->input->raw_input_stream, true);
 	
-		// Validar que llegan los datos requeridos
-		if (!isset($data['nickname']) || !isset($data['password'])) {
-			return $this->output
-				->set_content_type('application/json')
-				->set_status_header(400)
-				->set_output(json_encode(['error' => 'Faltan datos: nickname o password.']));
-		}
-	
-		$nickname = $data['nickname'];
-		$password = hash("sha256", $data['password']);
-	
-		// Validar credenciales con el modelo
-		$consulta = $this->usuario_model->validar($nickname, $password);
-	
-		if ($consulta->num_rows() > 0) {
-			$user = $consulta->row();
-	
-			if ($user->estado == 1 || $user->estado == 2) {
-				// Cargar la librería JWT
-				$this->load->library('jwt');
-	
-				// Generar un token JWT
-				$token = $this->jwt->generate([
-					'idUsuario' => $user->idUsuario,
-					'nickname' => $user->nickName,
-					'rol' => $user->rol
-				]);
-	
-				// Responder con el token y datos del usuario
-				return $this->output
-					->set_content_type('application/json')
-					->set_output(json_encode([
-						'token' => $token,
-						'user' => [
-							'idUsuario' => $user->idUsuario,
-							'nickName' => $user->nickName,
-							'rol' => $user->rol
-						]
-					]));
-			} else {
-				return $this->output
-					->set_content_type('application/json')
-					->set_status_header(403)
-					->set_output(json_encode(['error' => 'Usuario no autorizado.']));
-			}
-		} else {
-			return $this->output
-				->set_content_type('application/json')
-				->set_status_header(401)
-				->set_output(json_encode(['error' => 'Credenciales incorrectas.']));
-		}
-	}
 	
 }

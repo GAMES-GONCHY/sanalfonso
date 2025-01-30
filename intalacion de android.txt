@@ -1,0 +1,19 @@
+1paso
+ nos dirigimos a la pagina oficial de android
+descargamos e instalamos android
+2 paso
+una ves descargado  ejecutamos l instalador haciendo click derecho ejecutar como administrador, y le damos next, next y aceptamos las licencias y esperamos a que termine de instalar y esperar.
+ 3 paso
+
+configurar un  dispositivo emulador  en android
+*more actions ->virtual device manager-> y hay uno por defecto y lo hacemos correr y esperamos  a que se Habra un emulador de android
+  4to paso
+
+more actions-> sdk manager->selecionamos show package details-> selecionamos play -> en la api que esta marcada que seria la 35  ahora marcamos 2 opciones google play intel x86_64atom system image y la otra seria ->google api ARM x86_64system image-> aply todo esto se hace en la pestana de-> SDK platforms
+
+ahora nos dirigimos a la pestana de SDK tools
+selecionamos show package details->ANDROID SDK COMAND LINE TOOLS LATES Y APLICAMOS PARA QUE SE DESCARGUE Y LE DAMOS OK UNA VES YA DESCARGADO.
+ 
+5TO PASO
+
+PLUGINS-> BUSCAMOS FLUTTER->install y Tambien dart install-> restart IDE LE DAMOS  Y ESPERAMOS A QUE SE REINICIE Y CERRAMOS

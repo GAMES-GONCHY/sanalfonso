@@ -16,4 +16,12 @@ class Lectura_model extends CI_Model
         return $query->result_array();
     }
     
+    public function obtenerDatosSocio($codigo) {
+        $this->db->select('*');
+        $this->db->from('socios');
+        $this->db->where('codigo_socio', $codigo);  // o 'ci' si es por cédula de identidad
+        $query = $this->db->get();
+        return $query->row_array();
+    }
+    
 }

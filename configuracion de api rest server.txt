@@ -576,5 +576,823 @@ php
 Copiar
 Editar
 
+******************************************************************
+PRUEBAS DE ELTOKEN Y CRACION DE LA PAGINA DE LOGEO
+
+
+¡Perfecto! 🎉 El resultado indica que la librería firebase/php-jwt está funcionando correctamente.
+
+Detalles del resultado:
+Token generado:
+
+El token eyJ0eXA... es un JWT válido que contiene los datos especificados en el payload:
+php
+Copiar
+Editar
+[
+    'idUsuario' => 1,
+    'nickname' => 'usuario_demo'
+]
+Decodificación exitosa:
+
+El objeto decodificado (stdClass Object) confirma que el token puede ser leído correctamente, devolviendo los mismos datos que se usaron para crearlo.
+Siguientes pasos:
+Ahora que has probado la librería, puedes integrarla en tu controlador usuario.php o cualquier controlador de CodeIgniter para manejar la autenticación de usuarios en tu API REST. Por ejemplo:
+
+1. Controlador usuario.php
+Agrega un método para manejar el login desde la app móvil:
+
+php
+Copiar
+Editar
+public function api_login() {
+    // Leer datos enviados por POST
+    $data = json_decode($this->input->raw_input_stream, true);
+
+    if (!isset($data['nickname']) || !isset($data['password'])) {
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header(400)
+            ->set_output(json_encode(['error' => 'Faltan datos: nickname o password.']));
+    }
+
+    $nickname = $data['nickname'];
+    $password = hash("sha256", $data['password']);
+
+    // Validar las credenciales en el modelo
+    $user = $this->usuario_model->validar($nickname, $password);
+
+    if ($user->num_rows() > 0) {
+        $user_data = $user->row();
+
+        // Generar el token JWT
+        $this->load->library('jwt');
+        $token = $this->jwt->generate([
+            'idUsuario' => $user_data->idUsuario,
+            'nickname' => $user_data->nickName
+        ]);
+
+        // Responder con el token y datos del usuario
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode([
+                'token' => $token,
+                'user' => [
+                    'idUsuario' => $user_data->idUsuario,
+                    'nickname' => $user_data->nickName
+                ]
+            ]));
+    } else {
+        // Credenciales inválidas
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header(401)
+            ->set_output(json_encode(['error' => 'Credenciales incorrectas.']));
+    }
+}
+Prueba el API
+Una vez implementado este método en el controlador, puedes probarlo con una herramienta como Postman o cURL.
+URL para probar:
+bash
+Copiar
+Editar
+http://localhost/tercerAnio/sanalfonso/codeigniter/index.php/usuario/api_login
+Enviar un POST con un body JSON:
+json
+Copiar
+Editar
+{
+    "nickname": "usuario_demo",
+    "password": "123456"
+}
+
+
+
+
+
+
+Ubicación del código de generación del token
+En el backend:
+
+El código para generar el token debe ubicarse en el controlador de tu backend, por ejemplo, en usuario.php.
+De esta forma, cuando el usuario envía las credenciales desde Flutter, el servidor genera el token y lo devuelve al cliente.
+Ejemplo en el controlador usuario.php:
+
+php
+Copiar
+Editar
+public function api_login() {
+    $data = json_decode($this->input->raw_input_stream, true);
+
+    if (!isset($data['username']) || !isset($data['password'])) {
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header(400)
+            ->set_output(json_encode(['error' => 'Faltan datos.']));
+    }
+
+    $username = $data['username'];
+    $password = hash("sha256", $data['password']);
+
+    // Validar usuario en la base de datos
+    $user = $this->usuario_model->validar($username, $password);
+
+    if ($user->num_rows() > 0) {
+        $user_data = $user->row();
+
+        // Generar el token
+        $this->load->library('jwt');
+        $token = $this->jwt->generate([
+            'idUsuario' => $user_data->idUsuario,
+            'nickname' => $user_data->nickName
+        ]);
+
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode([
+                'token' => $token,
+                'user' => [
+                    'idUsuario' => $user_data->idUsuario,
+                    'nickname' => $user_data->nickName
+                ]
+            ]));
+    } else {
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header(401)
+            ->set_output(json_encode(['error' => 'Credenciales inválidas.']));
+    }
+}
+Este método sería accesible desde la ruta:
+
+bash
+Copiar
+Editar
+http://localhost/tercerAnio/sanalfonso/codeigniter/index.php/usuario/api_login
+Elimina test_post.php o úsalo solo como referencia:
+
+Este archivo es para pruebas y no debe estar en producción.
+El código del token se debe integrar al controlador de tu sistema web.
+En Flutter: Interfaz para enviar credenciales
+En Flutter, usarás el formulario de inicio de sesión (LoginPage) que compartiste, pero asegúrate de que envíe las credenciales al backend, que luego generará y devolverá el token.
+
+Código correcto en Flutter:
+dart
+Copiar
+Editar
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> login() async {
+    final response = await http.post(
+      Uri.parse('http://localhost/tercerAnio/sanalfonso/codeigniter/index.php/usuario/api_login'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'username': _usernameController.text,
+        'password': _passwordController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print('Token recibido: ${data['token']}');
+      // Aquí puedes guardar el token para futuras solicitudes
+    } else {
+      print('Error: ${response.body}');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Login')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _usernameController,
+              decoration: InputDecoration(labelText: 'Usuario'),
+            ),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(labelText: 'Contraseña'),
+              obscureText: true,
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: login,
+              child: Text('Iniciar sesión'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+Flujo completo
+Backend (CodeIgniter):
+
+El usuario envía sus credenciales al endpoint del controlador usuario.php.
+El servidor valida las credenciales, genera el token y lo devuelve al cliente.
+Cliente (Flutter):
+
+La app Flutter envía las credenciales al backend usando el formulario de login.
+El backend responde con un token JWT.
+La app almacena el token (por ejemplo, en SharedPreferences) para futuras solicitudes autenticadas.
+¿Dónde va cada archivo?
+Backend (api_login):
+
+Implementa el código en tu controlador usuario.php.
+Flutter (LoginPage):
+
+Crea un archivo nuevo, por ejemplo, login_page.dart, y define allí tu pantalla de login.
+
+Importa esta pantalla en tu archivo main.dart y úsala como la pantalla inicial:
+
+dart
+Copiar
+Editar
+void main() => runApp(MaterialApp(home: LoginPage()));
+
+
+
+
+*********************************************************************************
+Verificación del archivo index.php
+El archivo index.php debería incluir el autoload de Composer. Asegúrate de que tienes esta línea al inicio del archivo:
+
+php
+Copiar
+Editar
+require_once __DIR__ . '/vendor/autoload.php';
+Qué debes revisar:
+Si esta línea no está presente, agrégala justo después de la línea que configura la zona horaria:
+
+php
+Copiar
+Editar
+date_default_timezone_set('America/La_Paz');
+require_once __DIR__ . '/vendor/autoload.php';
+Después de agregar esto, realiza una prueba para ver si el autoload de Composer incluye la clase RestController.
+
+
+
+
+********************************************************************************
+anadi la ultma line en e archivo setting del proyecto de flutter
+
+
+pluginManagement {
+    def flutterSdkPath = {
+        def properties = new Properties()
+        file("local.properties").withInputStream { properties.load(it) }
+        def flutterSdkPath = properties.getProperty("flutter.sdk")
+        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+        return flutterSdkPath
+    }()
+
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    id "com.android.application" version "8.1.0" apply false
+    id "org.jetbrains.kotlin.android" version "1.8.22" apply false
+}
+
+include ":app", ':webview_flutter_android'
+
+*******************************************************************
+crear proyecto en flutter
+
+
+Próximos pasos: Ejecutar tu proyecto
+Navega al directorio de tu proyecto recién creado:
+
+bash
+Copiar
+Editar
+cd C:\Users\Cinthia\Documents\aquaREADflutter\aquaread_flutter
+Limpia y prepara tu proyecto:
+
+Limpia la configuración previa (opcional):
+bash
+Copiar
+Editar
+flutter clean
+Instala las dependencias necesarias:
+bash
+Copiar
+Editar
+flutter pub get
+Ejecuta tu proyecto:
+
+Inicia el proyecto en un emulador o dispositivo físico conectado:
+bash
+Copiar
+Editar
+flutter run
+*****************************************************************************
+verificion de la configuracion para android
+
+
+1. Verifica la configuración para Android
+Si vas a compilar la aplicación para Android, asegúrate de que:
+
+Android Studio esté instalado y configurado con el SDK correcto.
+
+Abre Android Studio y verifica que tienes instalado:
+Android SDK (versión mínima recomendada: API 21 o superior).
+Herramientas de compilación de Gradle.
+Actualiza la configuración del archivo build.gradle:
+
+Asegúrate de que el archivo android/app/build.gradle tenga configurada la versión de SDK correcta:
+gradle
+Copiar
+Editar
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 33
+    }
+}
+Estas versiones son compatibles con la mayoría de los dispositivos Android.
+
+
+
+****************************************************************************
+
+
+
+comando que nos proporciona la clave firma
+->>    keytool -genkey -v -keystore keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias your-key-alias
+Configúrala en el archivo android/key.properties.
+
+
+************************************************************************
+1. Verifica la configuración del SDK
+Como ya revisaste la configuración en Android Studio y está correcta, asegúrate de lo siguiente:
+
+Las versiones del SDK recomendadas están instaladas (API 33, 32 o superiores).
+Las herramientas necesarias (Build-Tools, Platform-Tools) están instaladas.
+2. Configura el SDK para Flutter
+Si no lo has hecho, configura la ubicación del Android SDK en Flutter:
+
+Abre la terminal de Visual Studio Code (CTRL + `).
+Ejecuta:
+bash
+Copiar
+Editar
+flutter config --android-sdk "C:\Users\Cinthia\AppData\Local\Android\Sdk"
+Verifica que Flutter reconozca el SDK con:
+bash
+Copiar
+Editar
+flutter doctor
+
+
+********************************************************************************
+
+Archivos y configuraciones importantes
+Al cambiar entre versiones de Java SDK, verifica o ajusta los siguientes archivos y configuraciones:
+
+1. Ruta de Java en variables de entorno
+Windows:
+
+Ajusta las rutas en las variables de entorno JAVA_HOME y PATH para apuntar a la instalación de Java SDK 11.
+Por ejemplo:
+JAVA_HOME: C:\Program Files\Java\jdk-11
+Agrega C:\Program Files\Java\jdk-11\bin a PATH.
+Verifica la versión activa: Abre una terminal y ejecuta:
+
+bash
+Copiar
+Editar
+java -version
+Debería mostrar la versión de Java SDK 11.
+
+2. Configuración de Gradle
+Revisa el archivo gradle.properties en tu proyecto (generalmente en la carpeta raíz del proyecto o en .android/ si usas Flutter).
+Agrega o ajusta la línea:
+properties
+Copiar
+Editar
+org.gradle.java.home=C:/Program Files/Java/jdk-11
+3. Archivo build.gradle
+En el archivo build.gradle (generalmente en el directorio del módulo app), verifica las versiones de Gradle y del plugin de Android. Asegúrate de usar versiones compatibles con Java 11:
+gradle
+Copiar
+Editar
+// build.gradle (nivel del proyecto)
+dependencies {
+    classpath 'com.android.tools.build:gradle:7.0.4' // Asegúrate de que sea compatible
+}
+4. Versión de Gradle Wrapper
+Abre el archivo gradle-wrapper.properties (ubicado en gradle/wrapper/):
+properties
+Copiar
+Editar
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.0-all.zip
+Usa una versión de Gradle compatible con Java 11 (por ejemplo, Gradle 7.x).
+5. Android Studio
+Ajusta la versión de Java en Android Studio:
+Ve a File > Project Structure > SDK Location.
+Cambia el SDK de Java para que apunte a la instalación de Java SDK 11.
+Pasos para volver a Java SDK 11
+Desinstala Java SDK 17:
+
+Ve al Panel de Control o usa un gestor de paquetes como choco (en Windows).
+Instala Java SDK 11:
+
+Descárgalo desde el sitio oficial de Oracle o adoptium.net.
+Configura las variables de entorno (JAVA_HOME y PATH) para apuntar a esta versión.
+Verifica el cambio: Ejecuta:
+
+bash
+Copiar
+Editar
+java -version
+Debe mostrar Java 11.
+
+Configura Android Studio:
+
+Cambia la ubicación del JDK en Android Studio para que apunte al nuevo SDK (File > Project Structure > SDK Location).
+Reconstruye tu proyecto Flutter:
+
+Abre una terminal y ejecuta:
+bash
+Copiar
+Editar
+flutter clean
+flutter pub get
+flutter run
+
+
+*************************************************************************************
+CODIGO FLUTTER MAIN.DART
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: LoginPage(),
+    );
+  }
+}
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> login() async {
+    if (_nicknameController.text.isEmpty || _passwordController.text.isEmpty) {
+      _showError('Nickname y password son requeridos.');
+      return;
+    }
+
+    final String url =
+        'http://192.168.1.108/tercerAnio/sanalfonso/codeigniter/index.php/api/login';
+    final Map<String, dynamic> body = {
+      'nickname': _nicknameController.text,
+      'password': _passwordController.text
+    };
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http
+          .post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(body),
+      )
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        throw Exception('El servidor no respondió en el tiempo esperado');
+      });
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status']) {
+          _showSuccessMessage('Login exitoso. Bienvenido!');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SocioSearchPage()),
+          );
+        } else {
+          _showError(data['error']);
+        }
+      } else {
+        final data = json.decode(response.body);
+        _showError(data['error'] ?? 'Error desconocido');
+      }
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showSuccessMessage(String message) {
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _showError(String message) {
+    final snackBar =
+        SnackBar(content: Text(message), backgroundColor: Colors.red);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Login')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _nicknameController,
+              decoration: InputDecoration(
+                labelText: 'Nickname',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              ),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock),
+              ),
+              obscureText: true,
+            ),
+            SizedBox(height: 20),
+            _isLoading
+                ? CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: login,
+                    child: Text('Login'),
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SocioSearchPage extends StatefulWidget {
+  const SocioSearchPage({super.key});
+
+  @override
+  _SocioSearchPageState createState() => _SocioSearchPageState();
+}
+
+class _SocioSearchPageState extends State<SocioSearchPage> {
+  final TextEditingController _searchController = TextEditingController();
+  bool _isLoading = false;
+  String _nombreSocio = '';
+  String _codigoSocio = '';
+  int _lecturaActual = 0;
+
+  Future<void> buscarSocio() async {
+    if (_searchController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Ingrese un código de socio'),
+            backgroundColor: Colors.red),
+      );
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'http://192.168.1.108/api/buscarSocio?codigo=${_searchController.text}'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data != null) {
+          setState(() {
+            _nombreSocio = data['nombre'];
+            _codigoSocio = data['codigo_socio'];
+            _lecturaActual = data['lectura_actual'];
+          });
+        }
+      } else {
+        _showError('No se encontraron datos');
+      }
+    } catch (e) {
+      _showError('Error de conexión: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Buscar Socio")),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Código Socio',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: buscarSocio,
+                ),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          _isLoading
+              ? CircularProgressIndicator()
+              : Expanded(
+                  child: _nombreSocio.isNotEmpty
+                      ? Column(
+                          children: [
+                            Text('Socio: $_nombreSocio'),
+                            Text('Código: $_codigoSocio'),
+                            Text('Lectura Actual: $_lecturaActual'),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Implementar funcionalidad para registrar nueva lectura
+                              },
+                              child: Text('Registrar Nueva Lectura'),
+                            ),
+                          ],
+                        )
+                      : Center(
+                          child: Text('No se encontraron resultados'),
+                        ),
+                ),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+
+************************************************************************************
+
+CODIGO LOGIN.DART
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  // Controladores para los campos de texto
+  final TextEditingController nicknameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // Variable para mostrar el indicador de carga
+  final bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Login')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: nicknameController,
+              decoration: InputDecoration(labelText: 'Nickname'),
+            ),
+            TextField(
+              controller: passwordController,
+              decoration: InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            SizedBox(height: 20),
+            _isLoading
+                ? CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: login,
+                    child: Text('Iniciar sesión'),
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> login() async {
+    final String url =
+        'http://192.168.1.108/tercerAnio/sanalfonso/codeigniter/index.php/api/login';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'nickname': nicknameController.text,
+          'password': passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status']) {
+          print('Login exitoso: ${data['user']['nombre']}');
+        } else {
+          print('Error: ${data['error']}');
+        }
+      } else {
+        print('Error del servidor: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error de conexión: $e');
+      _showError('Error de conexión: $e');
+    }
+  }
+}
 
 
