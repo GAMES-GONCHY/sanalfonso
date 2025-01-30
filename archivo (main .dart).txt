@@ -242,16 +242,3 @@ class _SocioSearchPageState extends State<SocioSearchPage> {
   }
 }
 */
-
-//////
-///
-///
-import 'package:flutter/material.dart';
-import 'webview.dart';
-
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: WebViewScreen(), // Abre la WebView directamente
-  ));
-}
