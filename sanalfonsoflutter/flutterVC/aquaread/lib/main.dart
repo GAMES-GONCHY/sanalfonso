@@ -1,191 +1,57 @@
 /*import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(AquaReadApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class AquaReadApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-    );
-  }
-}
-
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _nicknameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
-
-  Future<void> login() async {
-    if (_nicknameController.text.isEmpty || _passwordController.text.isEmpty) {
-      _showError('Nickname y password son requeridos.');
-      return;
-    }
-
-    final String url =
-        'http://192.168.1.108/tercerAnio/sanalfonso/codeigniter/index.php/api/login';
-    final Map<String, dynamic> body = {
-      'nickname': _nicknameController.text,
-      'password': _passwordController.text
-    };
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final response = await http
-          .post(
-        Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(body),
-      )
-          .timeout(const Duration(seconds: 10), onTimeout: () {
-        throw Exception('El servidor no respondió en el tiempo esperado');
-      });
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['status']) {
-          _showSuccessMessage('Login exitoso. Bienvenido!');
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => SocioSearchPage()),
-          );
-        } else {
-          _showError(data['error']);
-        }
-      } else {
-        final data = json.decode(response.body);
-        _showError(data['error'] ?? 'Error desconocido');
-      }
-    } catch (e) {
-      _showError(e.toString());
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _showSuccessMessage(String message) {
-    final snackBar = SnackBar(content: Text(message));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void _showError(String message) {
-    final snackBar =
-        SnackBar(content: Text(message), backgroundColor: Colors.red);
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _nicknameController,
-              decoration: InputDecoration(
-                labelText: 'Nickname',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
-              ),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
-              ),
-              obscureText: true,
-            ),
-            SizedBox(height: 20),
-            _isLoading
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: login,
-                    child: Text('Login'),
-                  ),
-          ],
-        ),
-      ),
+      title: 'AquaReadPro',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: SocioSearchPage(),
     );
   }
 }
 
 class SocioSearchPage extends StatefulWidget {
-  const SocioSearchPage({super.key});
-
   @override
   _SocioSearchPageState createState() => _SocioSearchPageState();
 }
 
 class _SocioSearchPageState extends State<SocioSearchPage> {
-  final TextEditingController _searchController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
   bool _isLoading = false;
-  String _nombreSocio = '';
-  String _codigoSocio = '';
-  int _lecturaActual = 0;
+  Map<String, dynamic>? _socioData;
 
   Future<void> buscarSocio() async {
     if (_searchController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Ingrese un código de socio'),
-            backgroundColor: Colors.red),
+        SnackBar(content: Text('Ingrese un código de socio o CI'), backgroundColor: Colors.red),
       );
       return;
     }
-    setState(() {
-      _isLoading = true;
-    });
-
+    
+    setState(() => _isLoading = true);
     try {
       final response = await http.get(
-        Uri.parse(
-            'http://192.168.1.108/api/buscarSocio?codigo=${_searchController.text}'),
+        Uri.parse('http://192.168.1.108/api/buscarSocio?codigo=${_searchController.text}'),
       );
-
+      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        if (data != null) {
-          setState(() {
-            _nombreSocio = data['nombre'];
-            _codigoSocio = data['codigo_socio'];
-            _lecturaActual = data['lectura_actual'];
-          });
-        }
+        setState(() => _socioData = data);
       } else {
         _showError('No se encontraron datos');
       }
     } catch (e) {
       _showError('Error de conexión: $e');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 
@@ -195,49 +61,143 @@ class _SocioSearchPageState extends State<SocioSearchPage> {
     );
   }
 
+  void _cerrarSesion() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Cerrar Sesión'),
+        content: Text('¿Está seguro de que desea cerrar sesión?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancelar')),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+                (route) => false,
+              );
+            },
+            child: Text('Confirmar'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Buscar Socio")),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Código Socio',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: buscarSocio,
-                ),
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-          _isLoading
-              ? CircularProgressIndicator()
-              : Expanded(
-                  child: _nombreSocio.isNotEmpty
-                      ? Column(
-                          children: [
-                            Text('Socio: $_nombreSocio'),
-                            Text('Código: $_codigoSocio'),
-                            Text('Lectura Actual: $_lecturaActual'),
-                            ElevatedButton(
-                              onPressed: () {
-                                // Implementar funcionalidad para registrar nueva lectura
-                              },
-                              child: Text('Registrar Nueva Lectura'),
-                            ),
-                          ],
-                        )
-                      : Center(
-                          child: Text('No se encontraron resultados'),
-                        ),
-                ),
+      appBar: AppBar(
+        title: Text('Buscar Socio'),
+        actions: [
+          IconButton(icon: Icon(Icons.logout), onPressed: _cerrarSesion),
         ],
       ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _searchController,
+              decoration: InputDecoration(labelText: 'Código Socio', suffixIcon: IconButton(icon: Icon(Icons.search), onPressed: buscarSocio)),
+            ),
+            SizedBox(height: 20),
+            _isLoading
+                ? CircularProgressIndicator()
+                : _socioData == null
+                    ? Text('No se encontraron datos')
+                    : SocioDetalle(socioData: _socioData!),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SocioDetalle extends StatelessWidget {
+  final Map<String, dynamic> socioData;
+  SocioDetalle({required this.socioData});
+
+  void _mostrarModalLectura(BuildContext context, {bool modificar = false}) {
+    showDialog(
+      context: context,
+      builder: (context) => NuevaLecturaScreen(
+        codigoSocio: socioData['codigo_socio'],
+        lecturaAnterior: socioData['lectura_actual'],
+        modificar: modificar,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Código: ${socioData['codigo_socio']}', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('Socio: ${socioData['nombre']}'),
+            Text('Lectura Actual: ${socioData['lectura_actual']}'),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                ElevatedButton(onPressed: () => _mostrarModalLectura(context), child: Text('Registrar Lectura')),
+                SizedBox(width: 10),
+                ElevatedButton(onPressed: () => _mostrarModalLectura(context, modificar: true), child: Text('Modificar Lectura')),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NuevaLecturaScreen extends StatelessWidget {
+  final String codigoSocio;
+  final int lecturaAnterior;
+  final bool modificar;
+  
+  NuevaLecturaScreen({required this.codigoSocio, required this.lecturaAnterior, this.modificar = false});
+
+  final TextEditingController _lecturaController = TextEditingController();
+
+  Future<void> registrarLectura(BuildContext context) async {
+    if (_lecturaController.text.isEmpty) return;
+    
+    final url = modificar
+        ? 'http://192.168.1.108/api/modificarLectura'
+        : 'http://192.168.1.108/api/registrarLectura';
+    
+    await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'codigo_socio': codigoSocio, 'lectura_actual': int.parse(_lecturaController.text)}),
+    );
+    Navigator.pop(context, true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(modificar ? 'Modificar Lectura' : 'Ingresar Nueva Lectura'),
+      content: TextField(controller: _lecturaController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Lectura Nueva')),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancelar')),
+        ElevatedButton(onPressed: () => registrarLectura(context), child: Text(modificar ? 'Modificar' : 'Registrar')),
+      ],
+    );
+  }
+}
+
+class LoginPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Login')),
+      body: Center(child: Text('Aquí irá la pantalla de Login')),
     );
   }
 }
