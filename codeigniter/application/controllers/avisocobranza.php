@@ -35,7 +35,7 @@ class Avisocobranza extends CI_Controller
         // Cargar los datos del aviso desde el modelo
         $data['aviso'] = $this->avisocobranza_model->obtenerAvisoPorId($idAviso);
         $data['evolucionConsumo'] = $this->avisocobranza_model->evoluConsumo($idMembresia, $data['aviso']['fechaLectura']);
-
+    
         if (!empty($data['evolucionConsumo']) && is_array($data['evolucionConsumo'])) {
             foreach ($data['evolucionConsumo'] as &$consumo) {
                 if (isset($consumo['fechaLectura'])) {
@@ -44,7 +44,7 @@ class Avisocobranza extends CI_Controller
                 }
             }
         }
-        // log_message('debug', 'Datos recibidos en el controlador: ' . json_encode($data['evolucionConsumo']));
+    
         // Verificar si el aviso existe
         if (empty($data['aviso'])) {
             show_404(); // Si el aviso no existe, muestra error 404
@@ -58,51 +58,37 @@ class Avisocobranza extends CI_Controller
         } else {
             $data['logo'] = ''; // Si no existe, dejar vacío
         }
-        
+    
         if (isset($data['aviso']['fechaLectura']) && isset($data['aviso']['fechaVencimiento'])) {
             // Usar la fecha original para operaciones de DateTime
             $fechaOriginal = $data['aviso']['fechaLectura']; // Fecha original sin formatear
-        
+    
             // Formatear las fechas para la salida
             $data['aviso']['fechaLectura'] = fechaSoloMesAnio($fechaOriginal);
             $data['aviso']['fechaVencimiento'] = formatearFecha($data['aviso']['fechaVencimiento']);
-        
-            if($data['aviso']['lecturaAnterior']!=0 && $data['aviso']['lecturaActual']!=0)
-            {
+    
+            if ($data['aviso']['lecturaAnterior'] != 0 && $data['aviso']['lecturaActual'] != 0) {
                 // Restar un mes usando DateTime y la fecha original
                 $fecha = new DateTime($fechaOriginal); // Usar fecha sin formatear
                 $fecha->modify('-1 month'); // Restar un mes
-            
+    
                 // Formatear la fecha ajustada
                 $data['aviso']['fechaAnterior'] = formatearFecha($fecha->format('Y-m-d')); // Ajustar formato final
-            }
-            else
-            {
+            } else {
                 $data['aviso']['fechaAnterior'] = "Sin fecha";
             }
         }
-
-        
-        
+    
         // Cargar la vista para generar el contenido del PDF
         $html = $this->load->view('pdf/aviso_detalle', $data, true);
     
-        // Inicializar Dompdf con opciones para habilitar URLs remotas
-        $options = new \Dompdf\Options();
-        $options->set('isRemoteEnabled', true);
-        $dompdf = new \Dompdf\Dompdf($options);
-        $dompdf->loadHtml($html);
+        // Definir tamaño personalizado en puntos (ancho x alto)
+        $customPaper = array(0, 0, 595.28, 500); // Mismo tamaño que antes
     
-        // Configurar el tamaño y orientación del papel
-        $customPaper = array(0, 0, 595.28, 500); // Ancho y alto en puntos
-        $dompdf->setPaper($customPaper, 'portrait');
-    
-        // Renderizar el PDF
-        $dompdf->render();
-    
-        // Generar el archivo PDF para abrir en el navegador
-        $dompdf->stream("aviso_cobranza_$idAviso.pdf", array("Attachment" => 0)); // Attachment = 0 lo abre en nueva pestaña
+        // Generar el PDF sin descargar (para que se abra en el navegador)
+        $this->dompdf_lib->generar_pdf($html, "aviso_cobranza_$idAviso.pdf", false, $customPaper, 'portrait');
     }
+    
     public function cambiarEstadoAviso()
     {
         // Recibir los datos enviados por AJAX

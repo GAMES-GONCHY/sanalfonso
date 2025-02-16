@@ -6,29 +6,29 @@ class Reporte extends CI_Controller
     public function historialpagos()
     {
         // Llamada a la función `ufcPorcentajeAvisos` en MySQL
-        $data['porcentaje'] = $this->reporte_model->porcentaje_vencidos_rechazados();
-        log_message('debug', 'porcentaje: ' . print_r($data['porcentaje'], true));
+        // $data['porcentaje'] = $this->reporte_model->porcentaje_vencidos_rechazados();
+        // log_message('debug', 'porcentaje: ' . print_r($data['porcentaje'], true));
 
-        $data['top1'] = $this->reporte_model->obtener_top1();
+        // $data['top1'] = $this->reporte_model->obtener_top1();
 
-        $data['consumo'] = $this->reporte_model->consumo_total_ultima_lectura();
-        log_message('debug', 'consumo-pago erratico: ' . print_r($data['consumo'], true));
-        // Establece el locale en español
-        setlocale(LC_TIME, 'es_ES.UTF-8');
+        // $data['consumo'] = $this->reporte_model->consumo_total_ultima_lectura();
+        // log_message('debug', 'consumo-pago erratico: ' . print_r($data['consumo'], true));
+        // // Establece el locale en español
+        // setlocale(LC_TIME, 'es_ES.UTF-8');
 
-        // Verifica si hay una fecha en $data['top1']
-        if ($data['top1'] && isset($data['top1']['fechaLectura'])) {
-            $fecha = new DateTime($data['top1']['fechaLectura']);
+        // // Verifica si hay una fecha en $data['top1']
+        // if ($data['top1'] && isset($data['top1']['fechaLectura'])) {
+        //     $fecha = new DateTime($data['top1']['fechaLectura']);
             
-            // Usa IntlDateFormatter para obtener el mes en español
-            $formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'MMMM');
-            $mesEnMinuscula = $formatter->format($fecha);
+        //     // Usa IntlDateFormatter para obtener el mes en español
+        //     $formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'MMMM');
+        //     $mesEnMinuscula = $formatter->format($fecha);
 
-            // Capitaliza la primera letra del mes
-            $data['top1']['fechaLectura'] = ucfirst($mesEnMinuscula);
-        }
+        //     // Capitaliza la primera letra del mes
+        //     $data['top1']['fechaLectura'] = ucfirst($mesEnMinuscula);
+        // }
 
-        log_message('debug', 'top 1: ' . print_r($data['top1'], true));
+        // log_message('debug', 'top 1: ' . print_r($data['top1'], true));
 
 
         
@@ -37,7 +37,7 @@ class Reporte extends CI_Controller
         //$data['historial'] = $this->reporte_model->get_pagos();
         $this->load->view('incrustaciones/vistascoloradmin/headreportes');
         $this->load->view('incrustaciones/vistascoloradmin/menuadmin');
-        $this->load->view('historialreportes', $data);
+        $this->load->view('historialreportes');
         $this->load->view('incrustaciones/vistascoloradmin/footerreportes');
 
     }
@@ -343,111 +343,51 @@ class Reporte extends CI_Controller
         $data['fechaFin'] = $this->input->post('fechaFin');
         $data['tipoReporte'] = $this->input->post('tipoReporte');
         log_message('info', 'Tipo de reporte recibido en controlador: ' . $data['tipoReporte']);
-        $socio = $this->input->post('socio');
-        
-        // Llamar al modelo para obtener el historial de consumos
-        $consumos = $this->reporte_model->historial_consumo($data);
-        
-        // Crear la instancia de PDF y configurar la orientación y márgenes
-        $pdf = new Pdf('P', 'mm', 'Letter');
-        $pdf->AliasNbPages();
-        $pdf->SetLeftMargin(20);
-        $pdf->AddPage();
-        
-        // Encabezado principal
-        $pdf->SetFillColor(200, 200, 200);
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', 'B', 16);
-        
-        // Calcular el ancho disponible para la celda
-        $pageWidth = $pdf->GetPageWidth();
-        $margenIzquierdo = 45;
-        $margenDerecho = 30;
-        $anchoDisponible = $pageWidth - $margenIzquierdo - $margenDerecho;
-        
-        // Título del reporte
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell($anchoDisponible, 15, utf8_decode('Historial de Consumos'), 0, 1, 'C', true);
-        $pdf->Ln(5);
-        
-        // Subtítulo "AquaReadPro"
-        $pdf->SetFont('Arial', 'B', 12);
-        $pdf->SetY(25);
-        $pdf->SetX(10);
-        $pdf->Cell(50, 10, 'AquaReadPro', 0, 1, 'L');
-        $pdf->Ln(5);
-        
-        // Detalles del socio y periodo
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetY(50);
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell(0, 5, utf8_decode('Código: ') . $data['codigoSocio'], 0, 1, 'L');
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell(0, 5, utf8_decode('Socio: ') . $socio, 0, 1, 'L');
-        
-        // Formateo de fechas con día, mes en literal y año en español
-        $fmt = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
-        $fmt->setPattern("d MMMM y");
-
-        $fechaInicioFormateada = ucfirst($fmt->format(new DateTime($data['fechaInicio'])));
-        $fechaFinFormateada = ucfirst($fmt->format(new DateTime($data['fechaFin'])));
-
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell(0, 5, 'Periodo: ' . $fechaInicioFormateada . ' a ' . $fechaFinFormateada, 0, 1, 'L');
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell(0, 5, utf8_decode('Fecha de emisión: ') . date('d/m/Y'), 0, 1, 'L');
-        $pdf->Ln(10);
-        
-        // Configuración de la tabla de consumos
-        $tableStartX = $margenIzquierdo;
-        
-        // Encabezado de la tabla
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->SetFillColor(220, 220, 220);
-        $pdf->SetX($tableStartX);
-        $pdf->Cell(10, 10, '#', 0, 0, 'C', true);
-        $pdf->Cell(40, 10, utf8_decode('Mes - Año'), 0, 0, 'C', true);
-        $pdf->Cell(40, 10, 'Consumo [m3]', 0, 0, 'C', true);
-        $pdf->Cell(40, 10, utf8_decode('Observación'), 0, 1, 'C', true);
-        
-        // Datos de la tabla de consumos
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetFillColor(240, 240, 240);
-        $fill = false;
-        $contador = 1;
-        $totalConsumo = 0;  // Variable para almacenar el total de consumo
-        
-        foreach ($consumos as $consumo) {
-            $pdf->SetX($tableStartX);
-            $pdf->Cell(10, 10, $contador++, 0, 0, 'C', $fill);
-        
-            $fechaLectura = strtotime($consumo['fechaLectura']);
-            $mesLiteral = $fmt->format(new DateTime($consumo['fechaLectura']));
-            
-            $pdf->Cell(40, 10, ucfirst($mesLiteral), 0, 0, 'C', $fill);
-            $pdf->Cell(40, 10, number_format($consumo['consumo'], 2), 0, 0, 'C', $fill);
-            $pdf->Cell(40, 10, utf8_decode($consumo['observacion']), 0, 1, 'C', $fill);
-            
-            $totalConsumo += $consumo['consumo'];  // Sumar el consumo al total
-            $fill = !$fill;
+        $data['socio'] = $this->input->post('socio');
+    
+        // Obtener el historial de consumos
+        $data['consumos'] = $this->reporte_model->historial_consumo($data);
+    
+        // Verificar si hay consumos disponibles
+        if (empty($data['consumos'])) {
+            show_error('No hay datos disponibles para generar el reporte.', 500);
+        }
+    
+        // Formateo de fechas con mes y año en español
+        // $fmt = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+        // $fmt->setPattern("d MMMM y");
+    
+        $data['fechaInicioFormateada'] = formatearFecha($data['fechaInicio']);
+        $data['fechaFinFormateada'] = formatearFecha($data['fechaFin']);
+    
+        // 🔹 **Carga del Logo desde el Controlador**
+        $logoPath = FCPATH . 'uploads/img/sanalfonso.png';
+        if (file_exists($logoPath)) {
+            // Convertir la imagen a Base64 para asegurar compatibilidad con Dompdf
+            $data['logo'] = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        } else {
+            $data['logo'] = ''; // En caso de que no exista el logo
         }
         
-        // Agregar fila de totales
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->SetFillColor(220, 220, 220);  // Color de fondo para la fila de totales
-        $pdf->SetX($tableStartX);
-        $pdf->Cell(10, 10, '', 0, 0, 'C', true);                // Columna de número vacía
-        $pdf->Cell(40, 10, 'Total', 0, 0, 'C', true);           // Etiqueta de total
-        $pdf->Cell(40, 10, number_format($totalConsumo, 2), 0, 0, 'C', true);  // Total de consumo
-        $pdf->Cell(40, 10, '', 0, 1, 'C', true);                // Columna de observación vacía
-        
-        // Establecer el título del PDF
-        $pdf->SetTitle('Historial_Consumo_' . $socio);
 
-        // Salida del PDF
-        $pdf->Output('Historial_Consumo_' . $socio . '.pdf', 'I');
+        // Añadir pie de página con paginación
+        $data['footer_script'] = '<script type="text/php">
+                                    if (isset($pdf)) { 
+                                        $pdf->page_script(\'if ($PAGE_COUNT > 1) { 
+                                            $pdf->text(500, 780, "Página " . $PAGE_NUM . " de " . $PAGE_COUNT, "Arial", 10);
+                                        }\');
+                                    }
+                                </script>';
+
+        // Cargar la vista con los datos y convertirla en HTML
+        $html = $this->load->view('pdf/historial_consumo_pdf', $data, true);
+    
+        // Generar el PDF en tamaño carta y abrirlo en el navegador
+        $this->dompdf_lib->generar_pdf($html, "Historial_Consumo_{$data['socio']}.pdf", false, 'Letter', 'portrait');
     }
+    
+    
+
     
     public function generar_pdf_avisos()
     {

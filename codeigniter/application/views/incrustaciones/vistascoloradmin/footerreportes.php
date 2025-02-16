@@ -193,7 +193,7 @@
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/pdfmake/build/pdfmake.min.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/pdfmake/build/vfs_fonts.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/jszip/dist/jszip.min.js"></script>
-  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo.js"></script>
+  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine-reportes.demo.js"></script>
   <!-- <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo-exportacion-pdf.js"></script> -->
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
 
@@ -851,7 +851,7 @@ $(document).ready(function() {
                                 $('#datatable').DataTable().row.add([
                                     contador++,
                                     mesLiteralAnoConsumo,
-                                    parseFloat(fila[2]).toFixed(2),  // Formatear a dos decimales
+                                    parseFloat(fila[2]).toFixed(1),  // Formatear a dos decimales
                                     fila[3]
                                 ]).draw();
                             } 

@@ -61,7 +61,7 @@ class Reporte_model extends CI_Model
 		// Construir consulta con Active Record en CodeIgniter
 		$this->db->select("CONCAT_WS(' ', U.nombre, U.primerApellido, IFNULL(U.segundoApellido, '')) AS socio", FALSE);
 		$this->db->select('(L.lecturaActual - L.lecturaAnterior)/100 AS consumo', FALSE);
-		$this->db->select('ME.codigoSocio, L.fechaLectura');
+		$this->db->select('M.codigoSocio, L.fechaLectura');
 		$this->db->select("
 			CASE
 				WHEN (L.lecturaActual - L.lecturaAnterior)/100 < 10 THEN 'Consumo mínimo'
@@ -72,11 +72,10 @@ class Reporte_model extends CI_Model
 			END AS observacion", FALSE);
 		$this->db->from('avisocobranza A');
 		$this->db->join('lectura L', 'A.idLectura = L.idLectura', 'inner');
-		$this->db->join('medidor M', 'L.idMedidor = M.idMedidor', 'inner');
-		$this->db->join('membresia ME', 'M.idMembresia = ME.idMembresia', 'inner');
-		$this->db->join('usuario U', 'ME.idUsuario = U.idUsuario', 'inner');
-		$this->db->where('ME.idMembresia', $data['idMembresia']);
-		$this->db->where('A.estado <>', 'deshabilitado');
+		$this->db->join('membresia M', 'L.idMembresia = M.idMembresia', 'inner');
+		$this->db->join('usuario U', 'M.idUsuario = U.idUsuario', 'inner');
+		$this->db->where('M.idMembresia', $data['idMembresia']);
+		//$this->db->where('A.estado <>', 'deshabilitado');
 		$this->db->where('L.fechaLectura >=', $data['fechaInicio']);
 		$this->db->where('L.fechaLectura <=', $data['fechaFin']);
 		$this->db->order_by('L.fechaLectura', 'ASC');

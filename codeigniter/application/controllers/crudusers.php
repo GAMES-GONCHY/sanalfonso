@@ -160,7 +160,7 @@ class Crudusers extends CI_Controller
 			}
 
 			
-			$this->enviaremail($data);
+			//$this->enviaremail($data);
 			
 			redirect('crudusers/agregar/'. $data['rol']);
 		}
@@ -169,7 +169,7 @@ class Crudusers extends CI_Controller
 	private function enviaremail($data)
 	{
 		// Cargar el autoloader de Composer
-		require 'C:/xampp/htdocs/tercerAnio/aquaReadPro/vendor/autoload.php';
+		require 'C:/xampp/htdocs/tercerAnio/sanalfonso/vendor/autoload.php';
 
 		$mail = new PHPMailer(true);
 		try {

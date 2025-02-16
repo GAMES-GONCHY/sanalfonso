@@ -28,9 +28,14 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
                     let anioVenc = fechaVencimientoObj.getFullYear();
                     let fechaFormateadaVenc = `${dia}-${mesVenc}-${anioVenc}`;
 
+                    
                     let total = (aviso.lecturaActual - aviso.lecturaAnterior) / 100;
-                    total = total < 10 ? aviso.tarifaMinima : (total * aviso.tarifaVigente).toFixed(1);
 
+                    total = total < 10 
+                    ? parseFloat(aviso.tarifaMinima) 
+                    : Math.round((Math.round(total * aviso.tarifaVigente * 100) / 100) * 10) / 10;
+                    
+                    
                     resultList.append(`
                         <div class="result-item">
                             <a href="#moverAvisos" class="result-link" data-bs-toggle="modal"
