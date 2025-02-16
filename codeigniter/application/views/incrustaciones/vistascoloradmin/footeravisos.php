@@ -287,54 +287,78 @@
 <!-- script para mostrar los registros de avisos de cobranza -->
 <script>
     $(document).ready(function () {
-    let debounceTimer;
+        let debounceTimer;
+        let isLoading = false; // Bandera para evitar llamadas múltiples simultáneas
 
-    $(document).on('click', '#dropdown-avisos .dropdown-item', function () {
-        let estado = $(this).data('estado'); // Capturar el estado seleccionado
-        console.log('Estado seleccionado:', estado); // Confirmar captura del estado
-
-        // Cambiar la etiqueta del dropdown específico
-        $('#dropdown-avisos').siblings('.btn.dropdown-toggle').html(`${$(this).text()} <b class="caret"></b>`).addClass('btn-primary');
-        cargarAvisos(1, '', estado); // Llamar a cargarAvisos con el estado como filtro
-    });
-
-    // Eventos existentes para búsqueda, paginación, etc.
-    $('#search-button').on('click', function () {
-        let busqueda = $('#search-query').val();
-        cargarAvisos(1, busqueda);
-    });
-
-    $('#search-query').on('keypress', function (e) {
-        if (e.which === 13) {
-            let busqueda = $(this).val();
-            cargarAvisos(1, busqueda);
+        // Función de debounce para evitar llamadas excesivas
+        function debounce(func, wait) {
+            return function (...args) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(this, args), wait);
+            };
         }
-    });
 
-    $('#search-query').on('input', function () {
-        clearTimeout(debounceTimer);
-        let busqueda = $(this).val();
-        debounceTimer = setTimeout(() => {
-            cargarAvisos(1, busqueda);
-        }, 300);
-    });
+        // Función segura para evitar múltiples ejecuciones simultáneas
+        function cargarAvisosSeguro(pagina, busqueda = '', filtro = '') {
+            if (isLoading) return;
+            isLoading = true;
+            cargarAvisos(pagina, busqueda, filtro);
+            setTimeout(() => { isLoading = false; }, 500); // Evita múltiples llamadas en 500ms
+        }
 
-    $(document).on('click', '.page-btn', function () {
-        let pagina = $(this).data('page');
-        let busqueda = $(this).data('busqueda') || '';
-        let filtro = $(this).data('filtro') || '';
-        cargarAvisos(pagina, busqueda, filtro);
-    });
+        // Filtrado por estado desde el dropdown
+        $(document).on('click', '#dropdown-avisos .dropdown-item', function () {
+            let estado = $(this).data('estado'); // Capturar el estado seleccionado
+            console.log('Estado seleccionado:', estado);
 
-    //funcionalidad del boton ver detalle
-    $(document).on('click', '.ver-detalle', function () {
-        let idAviso = $(this).data('id'); // Obtener el id del aviso del atributo data-id
-        console.log('ID del aviso seleccionado:', idAviso); // Confirmar que el id se está capturando
+            // Cambiar la etiqueta del dropdown sin volver a repintar innecesariamente
+            let dropdownBtn = $('#dropdown-avisos').siblings('.btn.dropdown-toggle');
+            if (dropdownBtn.text().trim() !== $(this).text().trim()) {
+                dropdownBtn.html(`${$(this).text()} <b class="caret"></b>`).addClass('btn-primary');
+            }
+
+            cargarAvisosSeguro(1, '', estado);
+        });
+
+        // Evento de búsqueda con botón
+        $('#search-button').on('click', function () {
+            let busqueda = $('#search-query').val().trim();
+            cargarAvisosSeguro(1, busqueda);
+        });
+
+        // Evento de búsqueda con Enter
+        $('#search-query').on('keypress', function (e) {
+            if (e.which === 13) {
+                let busqueda = $(this).val().trim();
+                cargarAvisosSeguro(1, busqueda);
+            }
+        });
+
+        // Evento de búsqueda con input (con debounce)
+        $('#search-query').on('input', debounce(function () {
+            let busqueda = $(this).val().trim();
+            cargarAvisosSeguro(1, busqueda);
+        }, 300));
+
+        // Paginación
+        $(document).on('click', '.page-btn', function () {
+            let pagina = $(this).data('page');
+            let busqueda = $(this).data('busqueda') || '';
+            let filtro = $(this).data('filtro') || '';
+            cargarAvisosSeguro(pagina, busqueda, filtro);
+        });
+
+        // Capturar el ID de aviso en "Ver Detalle"
+        $(document).on('click', '.ver-detalle', function () {
+            let idAviso = $(this).data('id');
+            console.log('ID del aviso seleccionado:', idAviso);
+        });
+
+        // Cargar la primera página al iniciar
+        cargarAvisosSeguro(1);
     });
-    // Cargar la primera página al iniciar
-    cargarAvisos(1);
-});
 </script>
+
 
 <!-- script para confirmar pagos de avisos de cobranza -->
 <script>

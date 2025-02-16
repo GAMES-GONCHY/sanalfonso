@@ -29,11 +29,11 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
                     let fechaFormateadaVenc = `${dia}-${mesVenc}-${anioVenc}`;
 
                     
-                    let total = (aviso.lecturaActual - aviso.lecturaAnterior) / 100;
+                    // let total = (aviso.lecturaActual - aviso.lecturaAnterior) / 100;
 
-                    total = total < 10 
-                    ? parseFloat(aviso.tarifaMinima) 
-                    : Math.round((Math.round(total * aviso.tarifaVigente * 100) / 100) * 10) / 10;
+                    // total = total < 10 
+                    // ? parseFloat(aviso.tarifaMinima) 
+                    // : Math.round((Math.round(total * aviso.tarifaVigente * 100) / 100) * 10) / 10;
                     
                     
                     resultList.append(`
@@ -42,7 +42,7 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
                                 onclick="cargarDetalle('${aviso.codigoSocio}', 
                                                         '${aviso.nombreSocio}', 
                                                         '${fechaFormateada}', 
-                                                        '${total}',
+                                                        '${aviso.total}',
                                                         '${aviso.idAviso}',
                                                         '${aviso.fechaVencimiento}',
                                                         '${aviso.estado}')">
@@ -69,7 +69,7 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
                             </div>
 
                             <div class="result-price text-end">
-                                Bs ${total}
+                                Bs ${aviso.total}
                                 <a href="${BASE_URL}index.php/avisocobranza/generarPDFAviso/${aviso.idAviso}/${aviso.idMembresia}" target="_blank" class="btn btn-yellow d-block w-100">Ver Detalles</a>
                             </div>
                         </div>
@@ -77,14 +77,24 @@ function cargarAvisos(pagina, busqueda = '', filtro = '') {
                 });
 
                 // Generar botones de paginación dinámicos
-                for (let i = 1; i <= response.total_paginas; i++) {
-                    pagination.append(`
-                        <button class="btn page-btn ${i === pagina ? 'btn-primary' : 'btn-outline-primary'}"
-                            data-page="${i}" data-busqueda="${busqueda}" data-filtro="${filtro}">
-                            ${i}
-                        </button>
-                    `);
-                }
+                // for (let i = 1; i <= response.total_paginas; i++) {
+                //     pagination.append(`
+                //         <button class="btn page-btn ${i === pagina ? 'btn-primary' : 'btn-outline-primary'}"
+                //             data-page="${i}" data-busqueda="${busqueda}" data-filtro="${filtro}">
+                //             ${i}
+                //         </button>
+                //     `);
+                // }
+                if (response.total_paginas > 1 && response.avisos.length > 0) { // ✅ Solo genera paginación si hay más de 1 página y hay datos
+                    for (let i = 1; i <= response.total_paginas; i++) {
+                        pagination.append(`
+                            <button class="btn page-btn ${i === pagina ? 'btn-primary' : 'btn-outline-primary'}"
+                                data-page="${i}" data-busqueda="${busqueda}" data-filtro="${filtro}">
+                                ${i}
+                            </button>
+                        `);
+                    }
+                }                
             } else {
                 resultList.append('<p>No hay avisos disponibles.</p>');
             }

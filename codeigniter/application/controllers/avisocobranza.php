@@ -10,26 +10,43 @@ class Avisocobranza extends CI_Controller
         $this->load->view('avisos'); // Carga la vista con las pestañas y datos
         $this->load->view('incrustaciones/vistascoloradmin/footeravisos');
     }
+    // public function cargaravisos()
+    // {
+    //     $pagina = $this->input->get('pagina') ?? 1; // Recoge la página desde el frontend
+    //     $busqueda = $this->input->get('busqueda') ?? ''; // Recoge la búsqueda desde el frontend
+    //     $estado = $this->input->get('filtro') ?? ''; // Recoge el estado desde el frontend (filtro seleccionado)
+    
+    //     $limit = 10; // Registros por página
+    //     $offset = ($pagina - 1) * $limit; // Calcula desde dónde empezar
+    
+    //     // Obtener los avisos filtrados desde el modelo
+    //     $avisos = $this->avisocobranza_model->cargaravisosbd($limit, $offset, $busqueda, $estado);
+    //     $total_paginas = ceil($this->avisocobranza_model->contarAvisos($busqueda, $estado) / $limit);
+        
+    //     // Respuesta JSON
+    //     echo json_encode([
+    //         'avisos' => $avisos,
+    //         'total_paginas' => $total_paginas,
+    //     ]);
+    // }
     public function cargaravisos()
     {
-        $pagina = $this->input->get('pagina') ?? 1; // Recoge la página desde el frontend
-        $busqueda = $this->input->get('busqueda') ?? ''; // Recoge la búsqueda desde el frontend
-        $estado = $this->input->get('filtro') ?? ''; // Recoge el estado desde el frontend (filtro seleccionado)
-    
-        $limit = 10; // Registros por página
-        $offset = ($pagina - 1) * $limit; // Calcula desde dónde empezar
-    
-        // Obtener los avisos filtrados desde el modelo
+        $pagina = $this->input->get('pagina') ?? 1;
+        $busqueda = $this->input->get('busqueda') ?? '';
+        $estado = $this->input->get('filtro') ?? '';
+
+        $limit = 10;
+        $offset = ($pagina - 1) * $limit;
+
         $avisos = $this->avisocobranza_model->cargaravisosbd($limit, $offset, $busqueda, $estado);
-        $total_paginas = ceil($this->avisocobranza_model->contarAvisos($busqueda, $estado) / $limit);
-        
-        // Respuesta JSON
+        $total_paginas = ceil($this->avisocobranza_model->contarAvisos($busqueda, $estado) / $limit); // ✅ Ahora total_paginas es correcto
+
         echo json_encode([
             'avisos' => $avisos,
             'total_paginas' => $total_paginas,
         ]);
     }
-    
+
     public function generarPDFAviso($idAviso, $idMembresia)
     {
         // Cargar los datos del aviso desde el modelo

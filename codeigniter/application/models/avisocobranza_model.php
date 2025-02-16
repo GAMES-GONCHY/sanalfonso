@@ -7,7 +7,13 @@ class Avisocobranza_model extends CI_Model
     {
         $this->db->select('CONCAT(U.nombre, " ", U.primerApellido, " ", IFNULL(U.segundoApellido, "")) AS nombreSocio, 
                         M.idMembresia, M.codigoSocio, L.lecturaAnterior, L.lecturaActual, L.fechaLectura, A.fechaVencimiento, 
-                        A.estado, A.idAviso, T.tarifaMinima, T.tarifaVigente', FALSE);
+                        A.estado, A.idAviso, T.tarifaMinima, T.tarifaVigente, 
+                        ROUND(
+                            IF((L.lecturaActual - L.lecturaAnterior) / 100 < 10, 
+                                    T.tarifaMinima, 
+                                    ((L.lecturaActual - L.lecturaAnterior) / 100) * T.tarifaVigente
+                                ), 1
+                        ) AS total', FALSE);
         $this->db->from('usuario U');
         $this->db->join('membresia M', 'U.idUsuario = M.idUsuario', 'inner');
         $this->db->join('lectura L', 'M.idMembresia = L.idMembresia', 'inner');
@@ -38,19 +44,43 @@ class Avisocobranza_model extends CI_Model
         $query = $this->db->get();
         return $query->result_array();
     }
+    // public function contarAvisos($busqueda = '')
+    // {
+    //     $this->db->from('usuario U');
+    //     $this->db->join('membresia M', 'U.idUsuario = M.idUsuario', 'inner');
+    //     $this->db->join('lectura L', 'M.idMembresia = L.idMembresia', 'inner');
+    //     $this->db->join('avisocobranza A', 'L.idLectura = A.idLectura', 'inner');
+    //     $this->db->join('tarifa T', 'A.idTarifa = T.idTarifa', 'inner');
     
+    //     $this->db->where('U.estado', 1);
+    //     $this->db->where('U.rol', 0);
     
-    public function contarAvisos($busqueda = '')
+    //     if (!empty($busqueda)) {
+    //         $this->db->group_start();
+    //         $this->db->like('U.nombre', $busqueda);
+    //         $this->db->or_like('U.primerApellido', $busqueda);
+    //         $this->db->or_like('U.segundoApellido', $busqueda);
+    //         $this->db->or_like('M.codigoSocio', $busqueda);
+    //         $this->db->group_end();
+    //     }
+    
+    //     return $this->db->count_all_results();
+    // }
+    public function contarAvisos($busqueda = '', $estado = '')
     {
         $this->db->from('usuario U');
         $this->db->join('membresia M', 'U.idUsuario = M.idUsuario', 'inner');
         $this->db->join('lectura L', 'M.idMembresia = L.idMembresia', 'inner');
         $this->db->join('avisocobranza A', 'L.idLectura = A.idLectura', 'inner');
         $this->db->join('tarifa T', 'A.idTarifa = T.idTarifa', 'inner');
-    
+
         $this->db->where('U.estado', 1);
         $this->db->where('U.rol', 0);
-    
+
+        if (!empty($estado)) {
+            $this->db->where('A.estado', $estado); // ✅ Aplica el filtro del estado correctamente
+        }
+
         if (!empty($busqueda)) {
             $this->db->group_start();
             $this->db->like('U.nombre', $busqueda);
@@ -59,9 +89,10 @@ class Avisocobranza_model extends CI_Model
             $this->db->or_like('M.codigoSocio', $busqueda);
             $this->db->group_end();
         }
-    
-        return $this->db->count_all_results();
+
+        return $this->db->count_all_results(); // ✅ Ahora cuenta solo los avisos filtrados
     }
+
     public function obtenerAvisoPorId($idAviso)
     {
         $this->db->select('A.*, 
