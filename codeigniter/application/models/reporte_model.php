@@ -56,6 +56,26 @@ class Reporte_model extends CI_Model
 			return [];
 		}
 	}
+	public function historial_pagos($data)
+	{
+		$this->db->select('idMembresia, idAviso, codigoSocio, socio, monto, periodo, fechaPago');
+		$this->db->from('reportepagos');
+		
+		$this->db->where('idMembresia', $data['idMembresia']);
+		$this->db->where('estado', 'habilitado');  // Historial de pagos: estado = 'pagado'
+		$this->db->where('fechaPago >=', $data['fechaInicio']);
+		$this->db->where('fechaPago <=', $data['fechaFin']);
+		$this->db->order_by('periodo', 'ASC');
+
+		$query = $this->db->get();
+
+		// Retorna los resultados como un array de objetos
+		if ($query->num_rows() > 0) {
+			return $query->result_array(); 
+		} else {
+			return [];
+		}
+	}
 	public function historial_consumo($data)
 	{
 		// Construir consulta con Active Record en CodeIgniter
@@ -90,32 +110,31 @@ class Reporte_model extends CI_Model
 	}
 	public function historial_avisos($data)
 	{
-		$estados = ['rechazado','vencido'];
 		$this->db->select("CONCAT_WS(' ', U.nombre, U.primerApellido, IFNULL(U.segundoApellido, '')) AS socio", FALSE);
-		$this->db->select('ME.codigoSocio, L.fechaLectura');
+		$this->db->select('M.codigoSocio, L.fechaLectura');
 		//$this->db->select('(L.lecturaActual - L.lecturaAnterior)*T.tarifaVigente/100 AS total', FALSE);
 		$this->db->select("IF((L.lecturaActual - L.lecturaAnterior) / 100 >= 10, 
-                            (L.lecturaActual - L.lecturaAnterior)*T.tarifaVigente/100, 
+                            (L.lecturaActual - L.lecturaAnterior)*T.tarifaVigente/100,
 							T.tarifaMinima) AS total", FALSE);
-		$this->db->select('IFNULL(A.saldo, 0) AS saldo', FALSE);
+		//$this->db->select('IFNULL(A.saldo, 0) AS saldo', FALSE);
 		$this->db->select('A.estado AS estado');
 		$this->db->from('avisocobranza A');
 		$this->db->join('lectura L', 'A.idLectura = L.idLectura', 'inner');
-		$this->db->join('medidor M', 'L.idMedidor = M.idMedidor', 'inner');
-		$this->db->join('membresia ME', 'M.idMembresia = ME.idMembresia', 'inner');
-		$this->db->join('usuario U', 'ME.idUsuario = U.idUsuario', 'inner');
+		//$this->db->join('medidor M', 'L.idMedidor = M.idMedidor', 'inner');
+		$this->db->join('membresia M', 'L.idMembresia = M.idMembresia', 'inner');
+		$this->db->join('usuario U', 'M.idUsuario = U.idUsuario', 'inner');
 		$this->db->join('tarifa T', 'A.idTarifa = T.idTarifa', 'inner');
 		if (!empty($data['idMembresia'])&&!empty($data['codigoSocio']))
 		{
-			$this->db->where('ME.idMembresia', $data['idMembresia']);
+			$this->db->where('M.idMembresia', $data['idMembresia']);
 		}
-		$this->db->where_in('A.estado', $estados);
+		$this->db->where_in('A.estado', 'VENCIDO');
 
 		$this->db->where('A.fechaVencimiento >=', $data['fechaInicio']);
 		$this->db->where('A.fechaVencimiento <=', $data['fechaFin']);
 
 		// Ordenar primero por codigoSocio y luego por fechaLectura en orden descendente
-		$this->db->order_by('ME.codigoSocio', 'ASC');
+		$this->db->order_by('M.codigoSocio', 'ASC');
 		$this->db->order_by('L.fechaLectura', 'ASC');
 
 

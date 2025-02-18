@@ -38,7 +38,7 @@
 
     <!-- Button 4: Historial de Avisos vencidos -->
     <div class="col-xl-3 col-md-6">
-      <a href="#" data-bs-toggle="modal" data-bs-target="#modalPosBooking" data-reporte="avisos" data-title="Historial de avisos Vencidos - Rechazados" class="table-booking">
+      <a href="#" data-bs-toggle="modal" data-bs-target="#modalPosBooking" data-reporte="avisos" data-title="Historial de Avisos Vencidos" class="table-booking">
         <div class="widget widget-stats bg-gradient-green">
           <div class="stats-icon stats-icon-lg"><i class="fa fa-exclamation-circle fa-fw"></i></div>
           <div class="stats-content">

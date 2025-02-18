@@ -103,7 +103,7 @@ class Reporte extends CI_Controller
             $response['headers'] = ["No.", "Mes - Año", "Total [Bs.]", "Fecha pago"];
 
             // Obtener datos del modelo
-            $historialPagos = $this->reporte_model->obtener_datos_historicos($data);
+            $historialPagos = $this->reporte_model->historial_pagos($data);
 
             if (!empty($historialPagos))
             {
@@ -112,8 +112,8 @@ class Reporte extends CI_Controller
                 {
                     return [
                         $index + 1, // Número de fila
-                        $pago['fechaLectura'], // Ejemplo: "Mayo 2024"
-                        $pago['totalPagado'], // Ejemplo: "80.00"
+                        $pago['periodo'], // Ejemplo: "Mayo 2024"
+                        $pago['monto'], // Ejemplo: "80.00"
                         $pago['fechaPago'] // Ejemplo: "25/10/2024"
                     ];
                 }, $historialPagos, array_keys($historialPagos));

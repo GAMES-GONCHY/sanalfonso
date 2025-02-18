@@ -147,7 +147,8 @@ class Avisocobranza_model extends CI_Model
         // Validaciones de estado
         if ($data['estado'] === 'PAGADO') {
             $data['fechaPago'] = date('Y-m-d H:i:s');
-        } elseif (($data['estado'] === 'VENCIDO' && $data['fechaVencimiento'] > $fechaActual) || ($data['estado'] === 'ENVIADO' && $data['fechaVencimiento'] <= $fechaActual))
+        } elseif (($data['estado'] === 'VENCIDO' && $data['fechaVencimiento'] > $fechaActual)
+                || ($data['estado'] === 'ENVIADO' && $data['fechaVencimiento'] <= $fechaActual))
         {
             return false;
         } else {
