@@ -54,7 +54,6 @@ class Reporte extends CI_Controller
         // Registrar el contenido de $socio en el log para depuración
         log_message('info', 'Contenido de socio: ' . print_r($socio, true));
 
-
         if ($socio)
         {
             echo json_encode($socio);  // Retornar el socio encontrado en formato JSON
@@ -151,7 +150,7 @@ class Reporte extends CI_Controller
         }
         elseif($tipoReporte == 'avisos')
         {
-            $response['headers'] = ["No.", "Socio", "Código", "Mes", "Total [Bs]", "Saldo [Bs]", "Estado"];
+            $response['headers'] = ["No.", "Socio", "Código", "Mes-Año", "Total [Bs]", "Estado"];
              // Obtener datos del modelo
             $historialAvisos = $this->reporte_model->historial_avisos($data);
             log_message('debug', 'Datos de historial_avisos: ' . print_r($historialAvisos, true)); // Verifica si saldo aparece en todos los registros
@@ -166,8 +165,8 @@ class Reporte extends CI_Controller
                         $aviso['codigoSocio'],
                         $aviso['fechaLectura'],// Ejemplo: "Mayo"
                         $aviso['total'],
-                        $aviso['saldo'], // Saldo pendiente
-                        $aviso['estado'], // Estado del aviso
+                        // $aviso['saldo'], // Saldo pendiente
+                        $aviso['estado'] // Estado del aviso
                     ];
                 }, $historialAvisos, array_keys($historialAvisos));
             } 
@@ -224,116 +223,45 @@ class Reporte extends CI_Controller
         $data['fechaFin'] = $this->input->post('fechaFin');
         $data['tipoReporte'] = $this->input->post('tipoReporte');
         log_message('info', 'Tipo de reporte recibido en controlador: ' . $data['tipoReporte']);
-        $socio = $this->input->post('socio');
-        
-        // Llamar al modelo para obtener el historial de pagos
-        $pagos = $this->reporte_model->obtener_datos_historicos($data);
+        $data['socio'] = $this->input->post('socio');
     
-        // Crear la instancia de PDF y configurar la orientación y márgenes
-        $pdf = new Pdf('P', 'mm', 'Letter');
-        $pdf->AliasNbPages();
-        $pdf->SetLeftMargin(20);
-        $pdf->AddPage();
-        
-        // Encabezado principal
-        $pdf->SetFillColor(200, 200, 200);
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', 'B', 16);
+        // Obtener el historial de pagos
+        $data['pagos'] = $this->reporte_model->historial_pagos($data);
     
-        // Calcular el ancho disponible para la celda
-        $pageWidth = $pdf->GetPageWidth();
-        $margenIzquierdo = 45; // Ajuste para desplazar la tabla más hacia la derecha
-        $margenDerecho = 30;
-        $anchoDisponible = $pageWidth - $margenIzquierdo - $margenDerecho;
-    
-        // Centrar el texto usando el ancho disponible
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell($anchoDisponible, 15, utf8_decode('Historial de Pagos'), 0, 1, 'C', true);
-        $pdf->Ln(5);
-    
-        // Subtítulo "AquaReadPro"
-        $pdf->SetFont('Arial', 'B', 12);
-        $pdf->SetY(25);
-        $pdf->SetX(10);
-        $pdf->Cell(50, 10, 'AquaReadPro', 0, 1, 'L');
-        $pdf->Ln(5);
-    
-        // Detalles del socio y periodo
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetY(50);
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell(0, 5, utf8_decode('Código: ') . $data['codigoSocio'], 0, 1, 'L');
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell(0, 5, utf8_decode('Socio: ') . $socio, 0, 1, 'L');
-
-        // Formateo de fechas con día, mes en literal y año en español
-        $fmt = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
-        $fmt->setPattern("d MMMM y");
-
-        $fechaInicioFormateada = ucfirst($fmt->format(new DateTime($data['fechaInicio'])));
-        $fechaFinFormateada = ucfirst($fmt->format(new DateTime($data['fechaFin'])));
-
-
-
-
-        // Imprimir el periodo en el formato deseado
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell(0, 5, 'Periodo: ' .$fechaInicioFormateada. ' a ' . $fechaFinFormateada, 0, 1, 'L');
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell(0, 5, utf8_decode('Fecha de emisión: ') . date('d/m/Y'), 0, 1, 'L');
-        $pdf->Ln(10);
-    
-        // Configuración de la tabla y centrado horizontal
-        $tableStartX = $margenIzquierdo; // Usar el mismo margen para la tabla
-    
-        // Encabezado de la tabla
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->SetFillColor(220, 220, 220);
-        $pdf->SetX($tableStartX);
-        $pdf->Cell(10, 10, '#', 0, 0, 'C', true);
-        $pdf->Cell(40, 10, 'Avisos pagados', 0, 0, 'C', true);
-        $pdf->Cell(40, 10, 'Total Pagado [Bs.]', 0, 0, 'C', true);
-        $pdf->Cell(40, 10, 'Fecha Pago', 0, 1, 'C', true);
-    
-        // Datos de la tabla
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetFillColor(240, 240, 240);
-        $fill = false;
-        $totalPagado = 0;
-        $contador = 1;
-    
-        $meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-    
-        foreach ($pagos as $pago) {
-            $pdf->SetX($tableStartX);
-            $pdf->Cell(10, 10, $contador++, 0, 0, 'C', $fill);
-    
-            $fechaLectura = strtotime($pago['fechaLectura']);
-            $mesLiteral = $meses[date('n', $fechaLectura) - 1];
-            $anio = date('Y', $fechaLectura);
-    
-            $pdf->Cell(40, 10, ucfirst($mesLiteral) . ' ' . $anio, 0, 0, 'C', $fill);
-            $pdf->Cell(40, 10, number_format($pago['totalPagado'], 2), 0, 0, 'C', $fill);
-            $pdf->Cell(40, 10, date('d/m/Y', strtotime($pago['fechaPago'])), 0, 1, 'C', $fill);
-            $totalPagado += $pago['totalPagado'];
-            $fill = !$fill;
+        // Verificar si hay datos disponibles
+        if (empty($data['pagos'])) {
+            show_error('No hay datos disponibles para generar el reporte.', 500);
         }
     
-        // Fila de Totales
-        $pdf->SetX($tableStartX);
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->SetFillColor(220, 220, 220);
-        $pdf->Cell(10, 8, '', 0, 0, 'C', true);
-        $pdf->Cell(40, 8, 'Totales:', 0, 0, 'L', true);
-        $pdf->Cell(40, 8, number_format($totalPagado, 2), 0, 0, 'C', true);
-        $pdf->Cell(40, 8, '', 0, 1, 'C', true);
-        
-        // Establecer el título del PDF
-        $pdf->SetTitle('Historial_Pagos_' . $socio);
-        // Salida del PDF
-        $pdf->Output('Historial_Pagos_' . $data['codigoSocio'] . '.pdf', 'I');
+        // Formatear las fechas en español
+        $data['fechaInicioFormateada'] = formatearFecha($data['fechaInicio']);
+        $data['fechaFinFormateada'] = formatearFecha($data['fechaFin']);
+    
+        // 🔹 **Carga del Logo desde el Controlador**
+        $logoPath = FCPATH . 'uploads/img/sanalfonso.png';
+        if (file_exists($logoPath)) {
+            // Convertir la imagen a Base64 para asegurar compatibilidad con Dompdf
+            $data['logo'] = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        } else {
+            $data['logo'] = ''; // En caso de que no exista el logo
+        }
+    
+        // Añadir pie de página con paginación
+        $data['footer_script'] = '<script type="text/php">
+                                    if (isset($pdf)) { 
+                                        $pdf->page_script(\'if ($PAGE_COUNT > 1) { 
+                                            $pdf->text(500, 780, "Página " . $PAGE_NUM . " de " . $PAGE_COUNT, "Arial", 10);
+                                        }\');
+                                    }
+                                </script>';
+    
+        // Cargar la vista con los datos y convertirla en HTML
+        $html = $this->load->view('pdf/historial_pagos_pdf', $data, true);
+    
+        // Generar el PDF en tamaño carta y abrirlo en el navegador
+        $this->dompdf_lib->generar_pdf($html, "Historial_Pagos_{$data['socio']}.pdf", false, 'Letter', 'portrait');
     }
+    
     public function generar_pdf_consumo()
     {
         // Obtener los parámetros desde la solicitud
@@ -385,10 +313,6 @@ class Reporte extends CI_Controller
         // Generar el PDF en tamaño carta y abrirlo en el navegador
         $this->dompdf_lib->generar_pdf($html, "Historial_Consumo_{$data['socio']}.pdf", false, 'Letter', 'portrait');
     }
-    
-    
-
-    
     public function generar_pdf_avisos()
     {
         // Obtener los parámetros desde la solicitud
@@ -396,144 +320,49 @@ class Reporte extends CI_Controller
         {
             $data['codigoSocio'] = $this->input->post('codigoSocio');
             $data['idMembresia'] = $this->input->post('idMembresia');
-            $socio = $this->input->post('socio');
+            $data['socio'] = $this->input->post('socio');
         }
+    
         $data['fechaInicio'] = $this->input->post('fechaInicio');
         $data['fechaFin'] = $this->input->post('fechaFin');
         $data['tipoReporte'] = $this->input->post('tipoReporte');
-        
-        // Llamar al modelo para obtener el historial de avisos
-        $avisos = $this->reporte_model->historial_avisos($data);
     
-        // Crear la instancia de PDF y configurar la orientación y márgenes
-        $pdf = new Pdf('P', 'mm', 'Letter');
-        $pdf->AliasNbPages();
-        $pdf->SetLeftMargin(20);
-        $pdf->AddPage();
+        // Llamar al modelo para obtener el historial de avisos vencidos
+        $data['avisos'] = $this->reporte_model->historial_avisos($data);
     
-        // Encabezado principal
-        $pdf->SetFillColor(200, 200, 200);
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', 'B', 16);
-    
-        // Calcular el ancho disponible para la celda
-        $pageWidth = $pdf->GetPageWidth();
-        $margenIzquierdo = 45;
-        $margenDerecho = 30;
-        $anchoDisponible = $pageWidth - $margenIzquierdo - $margenDerecho;
-    
-        // Título del reporte
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell($anchoDisponible, 15, utf8_decode('Historial de Avisos Vencidos'), 0, 1, 'C', true);
-        $pdf->Ln(5);
-    
-        // Subtítulo "AquaReadPro"
-        $pdf->SetFont('Arial', 'B', 12);
-        $pdf->SetY(25);
-        $pdf->SetX(10);
-        $pdf->Cell(50, 10, 'AquaReadPro', 0, 1, 'L');
-        $pdf->Ln(5);
-    
-        // Detalles del socio y periodo
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetY(50);
-    
-        // Validar y mostrar el código del socio solo si está definido
-        if (!empty($data['codigoSocio'])) {
-            $pdf->SetX($margenIzquierdo - 20);
-            $pdf->Cell(0, 5, utf8_decode('Código: ') . $data['codigoSocio'], 0, 1, 'L');
+        // Verificar si hay datos disponibles
+        if (empty($data['avisos'])) {
+            show_error('No hay datos disponibles para generar el reporte.', 500);
         }
     
-        // Validar y mostrar el nombre del socio solo si está definido
-        if (!empty($socio)) {
-            $pdf->SetX($margenIzquierdo - 20);
-            $pdf->Cell(0, 5, utf8_decode('Socio: ') . $socio, 0, 1, 'L');
+        // Formatear las fechas en español
+        $data['fechaInicioFormateada'] = formatearFecha($data['fechaInicio']);
+        $data['fechaFinFormateada'] = formatearFecha($data['fechaFin']);
+    
+        // Cargar el logo en formato base64
+        $logoPath = FCPATH . 'uploads/img/sanalfonso.png';
+        if (file_exists($logoPath)) {
+            $data['logo'] = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        } else {
+            $data['logo'] = '';
         }
     
-
-        // Formateo de fechas con día, mes en literal y año en español
-        $fmt = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
-        $fmt->setPattern("d MMMM y");
-
-        $fechaInicioFormateada = ucfirst($fmt->format(new DateTime($data['fechaInicio'])));
-        $fechaFinFormateada = ucfirst($fmt->format(new DateTime($data['fechaFin'])));
-
-        $pdf->SetX($margenIzquierdo - 20);
-        $pdf->Cell(0, 5, 'Periodo: ' . $fechaInicioFormateada . ' a ' . $fechaFinFormateada, 0, 1, 'L');
-        $pdf->SetX($margenIzquierdo - 20);
-        $pdf->Cell(0, 5, utf8_decode('Fecha de emisión: ') . date('d/m/Y'), 0, 1, 'L');
-        $pdf->Ln(10);
+        // Pie de página con paginación
+        $data['footer_script'] = '<script type="text/php">
+                                    if (isset($pdf)) { 
+                                        $pdf->page_script(\'if ($PAGE_COUNT > 1) { 
+                                            $pdf->text(500, 780, "Página " . $PAGE_NUM . " de " . $PAGE_COUNT, "Arial", 10);
+                                        }\');
+                                    }
+                                </script>';
     
-        // Configuración de la tabla de avisos
-        $tableStartX = $margenIzquierdo - 20;
+        // Cargar la vista con los datos y convertirla en HTML
+        $html = $this->load->view('pdf/historial_avisos_pdf', $data, true);
     
-        // Encabezado de la tabla para avisos
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->SetFillColor(220, 220, 220);
-        $pdf->SetX($tableStartX);
-        $pdf->Cell(10, 10, '#', 0, 0, 'C', true);
-        $pdf->Cell(20, 10, utf8_decode('Código'), 0, 0, 'C', true); // Columna para Código
-        $pdf->Cell(60, 10, utf8_decode('Socio'), 0, 0, 'L', true); // Columna para Socio
-        $pdf->Cell(20, 10, utf8_decode('Mes'), 0, 0, 'R', true);
-        $pdf->Cell(20, 10, 'Total [Bs]', 0, 0, 'C', true);
-        $pdf->Cell(20, 10, 'Saldo [Bs]', 0, 0, 'C', true);
-        $pdf->Cell(20, 10, 'Estado', 0, 1, 'R', true);
-    
-        // Datos de la tabla de avisos
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetFillColor(240, 240, 240);
-        $fill = false;
-        $contador = 1;
-        $totalTotal = 0;
-        $totalSaldo = 0;
-    
-        // Crear un formateador solo para el mes en literal
-        $fmtMesLiteral = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
-        $fmtMesLiteral->setPattern("MMMM");
-    
-        foreach ($avisos as $aviso) {
-            $pdf->SetX($tableStartX);
-            $pdf->Cell(10, 10, $contador++, 0, 0, 'C', $fill);
-    
-            // Agregar el valor de `codigoSocio`
-            $pdf->Cell(20, 10, $aviso['codigoSocio'], 0, 0, 'C', $fill);
-    
-            // Agregar el valor de `socio`
-            $pdf->Cell(60, 10, utf8_decode($aviso['socio']), 0, 0, 'L', $fill);
-    
-            // Convertir la fecha a solo el mes en texto literal usando el nuevo formateador
-            $mesLiteral = $fmtMesLiteral->format(new DateTime($aviso['fechaLectura']));
-            
-            $pdf->Cell(20, 10, ucfirst($mesLiteral), 0, 0, 'R', $fill);
-            $pdf->Cell(20, 10, number_format($aviso['total'], 2), 0, 0, 'C', $fill);
-            $pdf->Cell(20, 10, number_format($aviso['saldo'], 2), 0, 0, 'C', $fill);
-            $pdf->Cell(20, 10, ucfirst(utf8_decode($aviso['estado'])), 0, 1, 'R', $fill);
-    
-            // Sumar los totales
-            $totalTotal += $aviso['total'];
-            $totalSaldo += $aviso['saldo'];
-    
-            // Alternar el color de fondo
-            $fill = !$fill;
-        }
-    
-        // Fila de totales
-        $pdf->SetX($tableStartX);
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->SetFillColor(220, 220, 220);
-        $pdf->Cell(10, 10, '', 0, 0, 'C', true);
-        $pdf->Cell(20, 10, 'Totales', 0, 0, 'C', true);
-        $pdf->Cell(60, 10, '', 0, 0, 'C', true);
-        $pdf->Cell(20, 10, '', 0, 0, 'C', true);
-        $pdf->Cell(20, 10, number_format($totalTotal, 2), 0, 0, 'C', true);// Total en columna 'Saldo [Bs]'
-        $pdf->Cell(20, 10, number_format($totalSaldo, 2), 0, 0, 'C', true); // Total en columna 'Total [Bs]'
-        $pdf->Cell(20, 10, '', 0, 0, 'C', true); 
-        
-        // Salida del PDF
-        $codigoSocio = !empty($data['codigoSocio']) ? $data['codigoSocio'] : 'General';
-        $pdf->Output('Historial_Avisos_' . $codigoSocio . '.pdf', 'I');
+        // Generar el PDF en tamaño carta y abrirlo en el navegador
+        $this->dompdf_lib->generar_pdf($html, "Historial_Avisos_Vencidos.pdf", false, 'Letter', 'portrait');
     }
+    
     public function generar_pdf_ranking()
     {
         $data['tipoReporte'] = $this->input->post('tipoReporte');

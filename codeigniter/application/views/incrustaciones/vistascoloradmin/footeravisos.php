@@ -518,16 +518,20 @@
                 fetch('<?php echo base_url("index.php/avisocobranza/cambiarEstadoAviso"); ?>', {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ idAviso: idAvisoParam, fechaVencimiento: fechaVencimientoParam, nuevoEstado: nuevoEstado })
+                    body: JSON.stringify({ idAviso: idAvisoParam, fechaVencimiento: fechaVencimientoParam, nuevoEstado: nuevoEstado, estadoPrevio: estadoPrevio})
                 })
                 .then(response => response.json())
                 .then(data => {
+                    if (data.noChange) {
+                        // No hacer nada si no hubo cambios en el estado
+                        return;
+                    }
                     if (data.success) {
-                        toastr.success("Estado actualizado correctamente.");
+                        toastr.success(data.message || "Estado actualizado correctamente.");
                         cargarAvisos(1); // Recargar la lista de avisos
                     } else {
-                        toastr.error("Error al actualizar el estado. Verifique la Fecha de Vencimiento");
-                        
+                        toastr.error(data.message || "Error al actualizar el estado. Verifique la Fecha de Vencimiento");
+                        //toastr.error("Error al actualizar el estado. Verifique la Fecha de Vencimiento");
                         // **Restaurar el estado anterior si hay error**
                         restaurarSwitch(estadoPrevio);
                     }
@@ -535,7 +539,6 @@
                 .catch(error => {
                     console.error("Error en la actualización:", error);
                     toastr.error("Ocurrió un error.");
-
                     // **Restaurar el estado anterior si hay error de conexión**
                     restaurarSwitch(estadoPrevio);
                 });

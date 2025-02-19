@@ -608,9 +608,8 @@ $(document).ready(function() {
                   <th>No.</th>
                   <th>Socio</th>
                   <th>Código</th>
-                  <th>Mes</th>
+                  <th>Mes - Año</th>
                   <th>Total [Bs.]</th>
-                  <th>Saldo [Bs.]</th>
                   <th>Estado</th>
               </tr>`;
       } else if (tipoReporte === 'pagos') {
@@ -863,8 +862,8 @@ $(document).ready(function() {
                                 var fechaLecturaAviso = new Date(fila[3]);
                                 var mesLiteralAnoLectura = meses[fechaLecturaAviso.getMonth()];
                                 var total = parseFloat(fila[4]).toFixed(2); // Total con 2 decimales
-                                var saldo = parseFloat(fila[5]).toFixed(2); // Saldo con 2 decimales
-                                var estado = fila[6];                       // Estado del aviso
+                                // var saldo = parseFloat(fila[5]).toFixed(2);
+                                var estado = fila[5];                       // Estado del aviso
 
                                 // Añadir la fila al DataTable
                                 $('#datatable').DataTable().row.add([
@@ -873,7 +872,7 @@ $(document).ready(function() {
                                     codigoSocio,
                                     mesLiteralAnoLectura,
                                     total,
-                                    saldo,
+                                    // saldo,
                                     estado
                                 ]).draw();
                             }

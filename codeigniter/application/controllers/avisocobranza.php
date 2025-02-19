@@ -112,26 +112,29 @@ class Avisocobranza extends CI_Controller
         $input = json_decode(file_get_contents('php://input'), true);
     
         // Validar que se recibió el idAviso y el nuevoEstado
-        if (!isset($input['idAviso']) || !isset($input['nuevoEstado']) || !isset($input['fechaVencimiento'])) {
+        if (!isset($input['idAviso']) || !isset($input['nuevoEstado']) || !isset($input['fechaVencimiento']) || !isset($input['estadoPrevio'])) {
             echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
             return;
         }
     
         $idAviso = $input['idAviso'];
         $data['estado'] = $input['nuevoEstado'];
+        $estadoPrevio = $input['estadoPrevio'];
         $data['fechaVencimiento'] = $input['fechaVencimiento'];
+
+        // Si el nuevo estado es igual al estado previo, no hacer nada
+        if ($data['estado'] == $estadoPrevio) {
+            echo json_encode(['success' => false, 'noChange' => true]); // Devuelve un indicador sin mensaje
+            return;
+        }
     
         // Actualizar el estado en la base de datos
         $resultado = $this->avisocobranza_model->actualizarEstado($idAviso, $data);
-    
+
         if ($resultado) {
-            // Éxito: devolver respuesta positiva
             echo json_encode(['success' => true, 'message' => 'Estado actualizado correctamente.']);
         } else {
-            // Error: devolver respuesta negativa
-            echo json_encode(['success' => false, 'message' => 'Error al actualizar el estado.']);
+            echo json_encode(['success' => false, 'message' => 'Error al actualizar el estado. Verifique la Fecha de Vencimiento.']);
         }
     }
-    
-    
 }
