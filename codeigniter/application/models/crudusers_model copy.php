@@ -5,19 +5,26 @@ class Crudusers_model extends CI_Model
 {
 	public function habilitados($rol)
 	{
-		$this->db->select('*');
-		$this->db->from('usuario');
-		$this->db->where('estado', 1);
-		$this->db->where('rol', $rol);
-		$this->db->order_by('fechaRegistro', 'DESC');
-	
-		$query = $this->db->get(); // Devuelve un objeto de consulta
-	
-		return $query; // No convertimos a array aquí
+		if($rol==2)
+		{
+			$this->db->select('*');
+			$this->db->from('usuario');
+			$this->db->where('estado', 1);
+			$this->db->where('rol', $rol);
+			$this->db->order_by('fechaRegistro', 'DESC');
+		}
+		else
+		{
+			$this->db->select('usuario.*, membresia.idMembresia, membresia.codigoSocio');
+			$this->db->from('usuario');
+			$this->db->join('membresia', 'membresia.idUsuario = usuario.idUsuario', 'inner');
+			$this->db->where('usuario.estado', 1);
+			$this->db->where('usuario.rol', $rol);
+			$this->db->order_by('usuario.fechaRegistro', 'DESC');
+		}
+		return $this->db->get();
+
 	}
-	
-	
-	
 	public function deshabilitados($rol)
 	{
 		$this->db->select('*');
@@ -29,8 +36,6 @@ class Crudusers_model extends CI_Model
 	public function agregar($data)
 	{
 		$data['idAutor']=$this->session->userdata('idUsuario');
-		$data['rol']=2;
-		$data['estado']=1;
 		$this->db->insert('usuario', $data);
 	}
 	public function modificar($id, $data)

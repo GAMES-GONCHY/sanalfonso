@@ -495,7 +495,8 @@
         type: 'POST',
         data: formData,
         dataType: 'json',
-        success: function(response) {
+        success: function(response)
+        {
           if (response.status === 'success') {
             toastr.success(response.message);
             $('#modalModificarLectura').modal('hide');
@@ -506,7 +507,8 @@
             toastr.error(response.message || 'Error al modificar la lectura.');
           }
         },
-        error: function(xhr, status, error) {
+        error: function(xhr, status, error)
+        {
           toastr.error('Error al intentar modificar la lectura. Inténtelo nuevamente.');
           console.error('Error AJAX:', {
             status: status,
@@ -515,7 +517,9 @@
           });
         }
       });
-    } else {
+    }
+    else
+    {
       console.log('Formulario no válido. Por favor, corrige los errores.');
       toastr.error('Por favor, ingrese datos válidos.');
     }

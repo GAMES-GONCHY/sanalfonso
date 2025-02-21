@@ -151,7 +151,7 @@ class Reporte_model extends CI_Model
 	}
 	public function obtener_top_consumidores($data)
 	{
-		$this->db->select('ME.codigoSocio AS codigo');
+		$this->db->select('M.codigoSocio AS codigo');
 		$this->db->select("CONCAT_WS(' ', U.nombre, U.primerApellido, IFNULL(U.segundoApellido, '')) AS socio", FALSE);
 		$this->db->select('SUM((L.lecturaActual - L.lecturaAnterior)/100) AS consumo', FALSE); // Suma del consumo anual
 		$this->db->select("SUM(
@@ -161,11 +161,9 @@ class Reporte_model extends CI_Model
 		) AS total", FALSE); // Suma del total anual o mensual según corresponda
 		$this->db->from('avisocobranza A');
 		$this->db->join('lectura L', 'A.idLectura = L.idLectura', 'inner');
-		$this->db->join('medidor M', 'L.idMedidor = M.idMedidor', 'inner');
-		$this->db->join('membresia ME', 'M.idMembresia = ME.idMembresia', 'inner');
-		$this->db->join('usuario U', 'ME.idUsuario = U.idUsuario', 'inner');
+		$this->db->join('membresia M', 'L.idMembresia = M.idMembresia', 'inner');
+		$this->db->join('usuario U', 'M.idUsuario = U.idUsuario', 'inner');
 		$this->db->join('tarifa T', 'A.idTarifa = T.idTarifa', 'inner');
-		$this->db->where('A.estado <>', 'deshabilitado');
 	
 		// Filtrar por año y mes si están definidos
 		if (!empty($data['anio'])) {
@@ -179,7 +177,7 @@ class Reporte_model extends CI_Model
 	
 		// Agrupar por código de socio
 		$this->db->group_by([
-			'ME.codigoSocio',
+			'M.codigoSocio',
 			'U.nombre',
 			'U.primerApellido',
 			'U.segundoApellido'

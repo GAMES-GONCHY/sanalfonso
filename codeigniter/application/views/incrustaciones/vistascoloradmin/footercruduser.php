@@ -10,42 +10,86 @@
   </div>
   <!-- END APP HEADER -->
 
-<!-- modal para configuraciones de datalogger -->
-<div class="modal modal-pos-booking fade" id="modalPosBooking">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
-            <div class="modal-header text-white" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
-                <h5 class="modal-title d-flex align-items-center" style="font-size: 1.4rem; font-weight: bold;">
-                    <img src="<?php echo base_url(); ?>coloradmin/assets/img/logo/logomenu.png" height="30" class="me-2" />
-                    Configuraciones
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="background-color: #f4f6f9; padding: 30px;">
-                <form id="form-config-datalogger">
-                    <!-- Input oculto para idDatalogger -->
-                    <input type="hidden" id="idDatalogger" name="idDatalogger" value="">
+  <div class="modal fade" id="modalAgregarAdmin">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0">
+      <!-- Encabezado del modal -->
+      <div class="modal-header">
+        <h4 class="modal-title">Registro</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
 
-                    <!-- Input para IP -->
-                    <div class="form-floating mb-4">
-                        <input type="text" class="form-control modern-input" id="IP" name="IP">
-                        <label for="ipDatalogger" class="text-muted">Dirección IP</label>
-                    </div>
+      <!-- Cuerpo del modal -->
+      <div class="modal-body">
+        <form id="formAgregarAdmin">
+          <div class="row">
+            <!-- Columna izquierda -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Nickname *</label>
+                <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Nickname" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nombre *</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Primer Apellido *</label>
+                <input type="text" class="form-control" id="primerapellido" name="primerApellido" placeholder="Primer Apellido" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Segundo Apellido</label>
+                <input type="text" class="form-control" id="segundoapellido" name="segundoApellido" placeholder="Segundo Apellido">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">CI*</label>
+                <input type="text" class="form-control" id="ci" name="ci" placeholder="Cédula de identidad">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email *</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+              </div>
+            </div>
 
-                    <!-- Input para Puerto -->
-                    <div class="form-floating mb-4">
-                        <input type="text" class="form-control modern-input" id="puerto" name="puerto">
-                        <label for="puertoDatalogger" class="text-muted">Puerto</label>
-                    </div>
-                </form>
+            <!-- Columna derecha -->
+            <div class="col-md-6">
+              <!-- <div class="mb-3">
+                <label class="form-label">Tipo Usuario *</label>
+                <select class="form-select" id="rol" name="rol">
+                  <option value="2" selected>ADMINISTRADOR</option>
+                </select>
+              </div> -->
+              <div class="mb-3">
+                <label class="form-label">Fono *</label>
+                <input type="text" class="form-control" id="fono" name="fono" placeholder="Número" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Género *</label>
+                <div class="d-flex">
+                  <div class="form-check me-3">
+                    <input class="form-check-input" type="radio" id="generoM" name="genero" value="M" required>
+                    <label class="form-check-label" for="generoM">Masculino</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" id="generoF" name="genero" value="F">
+                    <label class="form-check-label" for="generoF">Femenino</label>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="modal-footer bg-light border-0 d-flex justify-content-end" style="padding: 20px;">
-                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal" style="font-size: 1rem; padding: 10px 20px; border-radius: 8px;">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnGuardarConfiguracion" style="font-size: 1rem; padding: 10px 20px; border-radius: 8px;">Guardar</button>
-            </div>
-        </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Pie del modal -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success w-100" id="btnGuardarAdmin">AGREGAR</button>
+      </div>
     </div>
+  </div>
 </div>
+
+
 
 
 
@@ -144,6 +188,9 @@
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/pdfmake/build/pdfmake.min.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/pdfmake/build/vfs_fonts.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/jszip/dist/jszip.min.js"></script>
+  <script>
+    var baseUrl = "<?php echo base_url('index.php/crudusers/'); ?>";
+  </script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo.js"></script>
 
   <!-- toast -->
@@ -514,54 +561,113 @@
         }
     </script>
 
-    <!-- habilitar medidores -->
+    <!-- SCRIPT PARA CRUD DE ADMINISTRADORES -->
     <script>
-        function habilitarMedidor(idMedidor)
-        {
-            $.ajax({
-                url: "<?php echo base_url('index.php/medidor/habilitar_medidor'); ?>",
-                type: "POST",
-                data: { id: idMedidor },
-                dataType: 'json',
-                success: function(response)
-                {
-                    if (response.status === 'success')
-                    {
-                        toastr.success("Medidor restaurado con éxito");
-                        // Verifica si el DataTable está definido
-                        if (window.tablaMedidor)
-                        {
-                            // Encuentra y elimina la fila correspondiente si existe
-                            var row = $('#datatable tbody').find('tr[data-id="' + idMedidor + '"]');
-                            if (row.length)
-                            {
-                                window.tablaMedidor.row(row).remove().draw(false); // Actualiza la tabla sin recargar
-                            }
-                            else
-                            {
-                                console.error('La fila con ID ' + idMedidor + ' no se encontró en la tabla.');
-                            }
+        $(document).ready(function () {
+            function cargarAdministradores() {
+                console.log("Intentando cargar administradores...");
+                $.ajax({
+                    url: '<?php echo base_url("index.php/crudusers/obtener_habilitados/2"); ?>',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log("Respuesta recibida:", response);
+                        let tbody = '';
+                        if (response.status === 'success' && response.data.length > 0) {
+                            let count = 1;
+                            response.data.forEach(admin => {
+                                tbody += `
+                                    <tr>
+                                        <td>${count++}</td>
+                                        <td><img src='${admin.foto ? "<?php echo base_url('uploads/usersphoto/'); ?>" + admin.foto : "<?php echo base_url('coloradmin/assets/img/logo/logomenu.png'); ?>"}' width='40' height='40'></td>
+                                        <td>${admin.nickName}</td>
+                                        <td>${admin.nombre}</td>
+                                        <td>${admin.primerApellido}</td>
+                                        <td>${admin.segundoApellido}</td>
+                                        <td>${admin.ci}</td>
+                                        <td>${admin.email}</td>
+                                        <td>${admin.fono}</td>
+                                        <td>${admin.sexo}</td>
+                                        <td>${admin.fechaRegistro}</td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm modificarAdmin" data-id="${admin.idUsuario}">Modificar</button>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm eliminarAdmin" data-id="${admin.idUsuario}">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            tbody = `<tr><td colspan="13" class="text-center">No hay administradores registrados</td></tr>`;
                         }
-                        else
-                        {
-                            console.error('DataTable no está inicializado o disponible.');
+
+                        if ($.fn.DataTable.isDataTable("#datatable")) {
+                            $('#datatable').DataTable().destroy();
                         }
+
+                        $("#datatable tbody").html(tbody);
+                        TableManageCombine.init();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error en AJAX:", error);
+                        toastr.error("Error al cargar los administradores.");
                     }
-                    else
-                    {
-                        toastr.error("Error al habilitar el medidor");
-                    }
-                },
-                error: function(xhr, status, error)
-                {
-                    console.log("Status: " + status);
-                    console.log("Error: " + error);
-                    console.log("Response Text: " + xhr.responseText);
-                    toastr.error("Ocurrió un error al intentar restaurar. Inténtalo de nuevo.");
+                });
+            }
+
+            cargarAdministradores();
+
+            // Evento para abrir el modal correctamente
+            $(document).on("click", "#btnAbrirModalAgregar", function () {
+                console.log("Intentando abrir el modal...");
+                let modal = $("#modalAgregarAdmin");
+
+                if (modal.length > 0) {
+                    modal.modal('show');
+                    $("#formAgregarAdmin")[0].reset(); // Limpiar formulario al abrir modal
+                } else {
+                    console.error("Error: No se encontró el modal en el DOM.");
+                    toastr.error("No se encontró el modal en el DOM.");
                 }
             });
-        }
+
+            // Evento para enviar el formulario de agregar administrador
+            $("#btnGuardarAdmin").click(function () {
+                let formData = $("#formAgregarAdmin").serialize();
+                
+                // Deshabilitar el botón para evitar envíos múltiples
+                $("#btnGuardarAdmin").prop("disabled", true).text("Guardando...");
+
+                $.ajax({
+                    url: '<?php echo base_url("index.php/crudusers/agregarbd"); ?>',
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            toastr.success(response.message);
+                            $("#modalAgregarAdmin").modal('hide');
+                            cargarAdministradores();
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error en la solicitud.");
+                    },
+                    complete: function () {
+                        $("#btnGuardarAdmin").prop("disabled", false).text("AGREGAR"); // Rehabilitar botón
+                    }
+                });
+            });
+        });
     </script>
+
+
+
+
+
 
     </body>
 

@@ -9,37 +9,22 @@ use PHPMailer\PHPMailer\Exception;
 class Crudusers extends CI_Controller
 {
 	public function habilitados($rol)
-	{	
+	{
+		
+		$lista = $this->crudusers_model->habilitados($rol);
+		$data['usuarios'] = $lista;
 		$this->load->view('incrustaciones/vistascoloradmin/head');
 		$this->load->view('incrustaciones/vistascoloradmin/menuadmin');
-		$this->load->view('usuarioshabilitados1'); // Vista vacía, AJAX cargará los datos
+		if($rol==2)
+		{
+			$this->load->view('usuarioshabilitados1', $data);
+		}
+		else
+		{
+			$this->load->view('socioshabilitados', $data);
+		}	
 		$this->load->view('incrustaciones/vistascoloradmin/footercruduser');
 	}
-	
-	// Método separado para obtener los datos en JSON
-	public function obtener_habilitados($rol)
-	{
-		// Verificar que sea una petición AJAX
-		if (!$this->input->is_ajax_request()) {
-			show_404();
-		}
-	
-		// Obtener los datos desde el modelo
-		$query = $this->crudusers_model->habilitados($rol);
-		$usuarios = ($query instanceof CI_DB_result) ? $query->result_array() : [];
-	
-		// Devolver los datos en JSON
-		header('Content-Type: application/json');
-		echo json_encode([
-			'status' => 'success',
-			'data' => $usuarios
-		]);
-		exit;
-	}
-	
-	
-	
-	
 	public function deshabilitados($rol)
 	{
 		$lista = $this->crudusers_model->deshabilitados($rol);
@@ -66,51 +51,120 @@ class Crudusers extends CI_Controller
 	}
 	public function agregarbd()
 	{
-		// Validar que la solicitud sea AJAX
-		if (!$this->input->is_ajax_request()) {
-			show_404();
-		}
-		
-		// Capturar datos del formulario
-		$data = [
-			'nickName'       => $this->input->post('nickname', true),
-			'nombre'         => strtoupper($this->input->post('nombre', true)),
-			'primerApellido' => strtoupper($this->input->post('primerApellido', true)),
-			'segundoApellido'=> strtoupper($this->input->post('segundoApellido', true)),
-			'ci'  			 => $this->input->post('ci', true),
-			'email'          => $this->input->post('email', true),
-			'rol'            => (int) $this->input->post('rol'),
-			'fono'           => $this->input->post('fono', true),
-			'sexo'           => $this->input->post('genero', true)
-		];
+		$newdata['nickname'] = $_POST['nickname'];
+		$newdata['email'] = $_POST['email'];
+		$newdata['ci'] = strtoupper($_POST['ci']);
 
-		// Depuración: Registrar datos en logs
-		log_message('error', 'Datos recibidos en agregarbd: ' . json_encode($data));
-		// Verificar si ya existe el usuario (email o nickname)
-		$existeUsuario = $this->crudusers_model->comprobarinsercion([
-			'nickname' => $data['nickName'],
-			'ci' => $data['ci'],
-			'email'    => $data['email']
-		]);
-	
-		if (!empty($existeUsuario)) {
-			echo json_encode([
-				'status'  => 'error',
-				'message' => 'El Nickname o el E-mail ya están registrados.'
-			]);
-			exit;
+		$consulta = $this->crudusers_model->comprobarinsercion($newdata);
+		
+		if (!empty($consulta)) 
+		{
+			
+			if (isset($consulta['email']) && isset($consulta['nickName']) && isset($consulta['ci'])) 
+			{
+				$this->session->set_flashdata('mensaje', 'ERROR: El E-mail , Nickname y CI ya está registrados en el sistema.');
+				$this->session->set_flashdata('alert_type', 'error');
+			}
+			else 
+			{
+				if (isset($consulta['email'])&&isset($consulta['nickName'])) 
+				{
+					$this->session->set_flashdata('mensaje', 'ERROR: El E-mail y Nickname ya está registrados en el sistema.');
+					$this->session->set_flashdata('alert_type', 'error');
+				}
+				else
+				{
+					if (isset($consulta['email'])&&isset($consulta['ci'])) 
+					{
+						$this->session->set_flashdata('mensaje', 'ERROR: El E-mail y CI ya está registrados en el sistema.');
+						$this->session->set_flashdata('alert_type', 'error');
+					}
+					else
+					{
+						if (isset($consulta['nickName'])&&isset($consulta['ci'])) 
+						{
+							$this->session->set_flashdata('mensaje', 'ERROR: El Nickname y CI ya está registrados en el sistema.');
+							$this->session->set_flashdata('alert_type', 'error');
+						}
+						else
+						{
+							if (isset($consulta['nickName']))
+							{
+								$this->session->set_flashdata('mensaje', 'ERROR: El Nickname ya está registrado en el sistema.');
+								$this->session->set_flashdata('alert_type', 'error');
+							}
+							else
+							{
+								if (isset($consulta['email']))
+								{
+									$this->session->set_flashdata('mensaje', 'ERROR: El E-mail ya está registrado en el sistema.');
+									$this->session->set_flashdata('alert_type', 'error');
+								}
+								else
+								{
+									$this->session->set_flashdata('mensaje', 'ERROR: El CI ya está registrado en el sistema.');
+									$this->session->set_flashdata('alert_type', 'error');
+								}
+							}
+						}
+					}
+				}
+			}
+			//redirect('crudusers/agregar');
+			redirect('crudusers/agregar/'. $_POST['rol']);			
+		} 
+		else 
+		{
+			$this->session->set_userdata('flag', false);
+			$data['nickname'] = $_POST['nickname'];
+			$data['nombre'] = strtoupper($_POST['nombre']);
+			$data['primerApellido'] = strtoupper($_POST['primerapellido']);
+			$data['segundoApellido'] = strtoupper($_POST['segundoapellido']);
+			$data['ci'] = strtoupper($_POST['ci']);
+			$data['email'] = $_POST['email'];
+			$data['rol'] = $_POST['rol'];
+			$data['fono'] = $_POST['fono'];
+			$data['sexo'] = $_POST['genero'];
+			//$data['idAutor']=$this->session->userdata('idUsuario');
+
+			if($data['rol']==0)
+			{
+				$this->db->trans_start();
+
+				$this->crudusers_model->agregar($data);
+				$idUsuario=$this->db->insert_id();
+
+				$codigoSocio= $this->usuario_model->getusercode($idUsuario)->row_array();
+
+				$data2['idUsuario'] = $idUsuario;
+				$data2['codigoSocio'] = 'S-'.substr($codigoSocio['primerApellido'], 0, 2) . substr($codigoSocio['nombre'], -1) . substr($codigoSocio['ci'],0,1) . substr($codigoSocio['ci'], -1);
+				$this->db->insert('membresia',$data2);
+				$idMembresia=$this->db->insert_id();
+
+				$this->db->trans_complete();
+
+				if($this->db->trans_status()===FALSE)
+				{
+					$this->session->set_flashdata('mensaje', 'Error al agregar un nuevo usuario, inténtelo nuevamente');
+					$this->session->set_flashdata('alert_type', 'error');
+				}
+				else
+				{
+					$this->session->set_flashdata('mensaje', 'Usuario registrado exitosamente');
+					$this->session->set_flashdata('alert_type', 'success');
+				}
+			}
+			else
+			{
+				$this->crudusers_model->agregar($data);
+			}
+
+			
+			//$this->enviaremail($data);
+			
+			redirect('crudusers/agregar/'. $data['rol']);
 		}
-	
-		// Insertar en la base de datos
-		$this->crudusers_model->agregar($data);
-	
-		echo json_encode([
-			'status'  => 'success',
-			'message' => 'Administrador agregado correctamente.'
-		]);
-		exit;
 	}
-	
 
 	private function enviaremail($data)
 	{

@@ -389,6 +389,65 @@ div.pt-2 .parsley-errors-list li {
     }
   </style>
 
+  <style>
+    /* Estilo general del modal */
+#modalAgregarAdmin .modal-content {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Contenedor del formulario */
+#modalAgregarAdmin .modal-body {
+    padding: 20px;
+}
+
+/* Estilos generales de los inputs */
+#modalAgregarAdmin input, 
+#modalAgregarAdmin select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Espaciado entre campos */
+#modalAgregarAdmin .form-group {
+    margin-bottom: 15px;
+}
+
+/* Etiquetas */
+#modalAgregarAdmin label {
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Botón de agregar */
+#btnGuardarAdmin {
+    width: 100%;
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+/* Botón al pasar el mouse */
+#btnGuardarAdmin:hover {
+    background-color: #218838;
+}
+
+/* Género en línea */
+#modalAgregarAdmin .form-check-inline {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+  </style>
 </head>
 
 <body>

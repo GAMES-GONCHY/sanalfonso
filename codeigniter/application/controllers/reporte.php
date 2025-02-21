@@ -367,154 +367,66 @@ class Reporte extends CI_Controller
     {
         $data['tipoReporte'] = $this->input->post('tipoReporte');
         $data['opcionRanking'] = $this->input->post('opcionRanking');
+
         // Obtener los parámetros desde la solicitud
         if ($data['opcionRanking'] === 'MENSUAL') {
             $data['mes'] = $this->input->post('mes');
             $data['anio'] = $this->input->post('anio');
         } elseif ($data['opcionRanking'] === 'ANUAL') {
             $data['anio'] = $this->input->post('anio');
-            // $data['mes'] = null;
         } else { // GLOBAL
             $data['mes'] = null;
             $data['anio'] = null;
         }
-        
+
         $meses = [
-            "1" => 'Enero', 
-            "2" => 'Febrero', 
-            "3" => 'Marzo', 
-            "4" => 'Abril', 
-            "5" => 'Mayo', 
-            "6" => 'Junio', 
-            "7" => 'Julio', 
-            "8" => 'Agosto', 
-            "9" => 'Septiembre', 
-            "10" => 'Octubre', 
-            "11" => 'Noviembre', 
-            "12" => 'Diciembre'
+            "1" => 'Enero', "2" => 'Febrero', "3" => 'Marzo', "4" => 'Abril',
+            "5" => 'Mayo', "6" => 'Junio', "7" => 'Julio', "8" => 'Agosto',
+            "9" => 'Septiembre', "10" => 'Octubre', "11" => 'Noviembre', "12" => 'Diciembre'
         ];
-        
 
-        // Llamar al modelo para obtener el top 10 de consumidores
-        $rankingConsumo = $this->reporte_model->obtener_top_consumidores($data);
+        // Obtener el ranking de consumidores
+        $data['ranking'] = $this->reporte_model->obtener_top_consumidores($data);
 
-        // Crear la instancia de PDF y configurar la orientación y márgenes
-        $pdf = new Pdf('P', 'mm', 'Letter');
-        $pdf->AliasNbPages();
-        $pdf->SetLeftMargin(20);
-        $pdf->AddPage();
-
-        // Encabezado principal
-        $pdf->SetFillColor(200, 200, 200);
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', 'B', 16);
-
-        // Calcular el ancho disponible para la celda
-        $pageWidth = $pdf->GetPageWidth();
-        $margenIzquierdo = 45;
-        $margenDerecho = 30;
-        $anchoDisponible = $pageWidth - $margenIzquierdo - $margenDerecho;
-
-        // Título del reporte
-        $pdf->SetX($margenIzquierdo);
-        $pdf->Cell($anchoDisponible, 15, utf8_decode('Top 5 Consumidores'), 0, 1, 'C', true);
-        $pdf->Ln(5);
-
-        // Subtítulo "AquaReadPro"
-        $pdf->SetFont('Arial', 'B', 12);
-        $pdf->SetY(25);
-        $pdf->SetX(10);
-        $pdf->Cell(50, 10, 'AquaReadPro', 0, 1, 'L');
-        $pdf->Ln(5);
-
-        // Detalles del periodo
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetY(50);
-
-        // Verificar si mes y año están definidos
-        if ($data['opcionRanking']=="GLOBAL")
-        {
-            $periodo = 'Global';
-        }
-        else
-        {
-            if ($data['opcionRanking']=="MENSUAL")
-            {
-                // Convertir el mes a literal
-                $mesLiteral = isset($meses[$data['mes']]) ? $meses[$data['mes']] : 'Mes desconocido';
-                $periodo = $mesLiteral . ' de ' . $data['anio'];
-            }
-            else
-            {
-                $periodo = $data['anio'];
-            }
+        // Verificar si hay datos disponibles
+        if (empty($data['ranking'])) {
+            show_error('No hay datos disponibles para generar el reporte.', 500);
         }
 
-        $pdf->SetX($margenIzquierdo - 20);
-        $pdf->Cell(0, 5, 'Periodo: ' . $periodo, 0, 1, 'L');
-        $pdf->SetX($margenIzquierdo - 20);
-        $pdf->Cell(0, 5, utf8_decode('Fecha de emisión: ') . date('d/m/Y'), 0, 1, 'L');
-        $pdf->Ln(10);
-
-        // Configuración de la tabla de ranking
-        $tableStartX = $margenIzquierdo - 20;
-
-        // Encabezado de la tabla para ranking
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->SetFillColor(220, 220, 220);
-        $pdf->SetX($tableStartX);
-        $pdf->Cell(10, 10, 'No.', 0, 0, 'C', true);
-        $pdf->Cell(20, 10, utf8_decode('Código'), 0, 0, 'C', true);
-        $pdf->Cell(60, 10, utf8_decode('Socio'), 0, 0, 'L', true);
-        $pdf->Cell(30, 10, 'Consumo [m3]', 0, 0, 'C', true);
-        $pdf->Cell(30, 10, 'Total [Bs]', 0, 1, 'C', true);
-
-        // Datos de la tabla de ranking
-        $pdf->SetFont('Arial', '', 10);
-        $pdf->SetFillColor(240, 240, 240);
-        $fill = false;
-        $contador = 1;
-        $totalConsumo = 0;
-        $totalBs = 0;
-
-        foreach ($rankingConsumo as $consumidor) {
-            $pdf->SetX($tableStartX);
-            $pdf->Cell(10, 10, $contador++, 0, 0, 'C', $fill);
-
-            // Agregar el valor de `codigo`
-            $pdf->Cell(20, 10, $consumidor['codigo'], 0, 0, 'C', $fill);
-
-            // Agregar el valor de `socio`
-            $pdf->Cell(60, 10, utf8_decode($consumidor['socio']), 0, 0, 'L', $fill);
-
-            // Agregar el valor de `consumo` formateado con 2 decimales
-            $pdf->Cell(30, 10, number_format($consumidor['consumo'], 2), 0, 0, 'C', $fill);
-
-            // Agregar el valor de `total` formateado con 2 decimales
-            $pdf->Cell(30, 10, number_format($consumidor['total'], 2), 0, 1, 'C', $fill);
-
-            // Sumar los totales
-            $totalConsumo += $consumidor['consumo'];
-            $totalBs += $consumidor['total'];
-
-            // Alternar el color de fondo
-            $fill = !$fill;
+        // Determinar el periodo del reporte
+        if ($data['opcionRanking'] == "GLOBAL") {
+            $data['periodo'] = 'Global';
+        } elseif ($data['opcionRanking'] == "MENSUAL") {
+            $mesLiteral = isset($meses[$data['mes']]) ? $meses[$data['mes']] : 'Mes desconocido';
+            $data['periodo'] = $mesLiteral . ' de ' . $data['anio'];
+        } else {
+            $data['periodo'] = $data['anio'];
         }
 
-        // Fila de totales
-        $pdf->SetX($tableStartX);
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->SetFillColor(220, 220, 220);
-        $pdf->Cell(10, 10, '', 0, 0, 'C', true);
-        $pdf->Cell(20, 10, 'Totales:', 0, 0, 'C', true);
-        $pdf->Cell(60, 10, '', 0, 0, 'C', true);
-        $pdf->Cell(30, 10, number_format($totalConsumo, 2), 0, 0, 'C', true); // Total en columna 'Consumo [m3]'
-        $pdf->Cell(30, 10, number_format($totalBs, 2), 0, 1, 'C', true); // Total en columna 'Total [Bs]'
+        // Cargar el logo en formato base64
+        $logoPath = FCPATH . 'uploads/img/sanalfonso.png';
+        if (file_exists($logoPath)) {
+            $data['logo'] = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        } else {
+            $data['logo'] = '';
+        }
 
-        // Salida del PDF
-        $pdf->Output('Ranking_Consumidores.pdf', 'I');
+        // Pie de página con paginación
+        $data['footer_script'] = '<script type="text/php">
+                                    if (isset($pdf)) { 
+                                        $pdf->page_script(\'if ($PAGE_COUNT > 1) { 
+                                            $pdf->text(500, 780, "Página " . $PAGE_NUM . " de " . $PAGE_COUNT, "Arial", 10);
+                                        }\');
+                                    }
+                                </script>';
+
+        // Cargar la vista con los datos y convertirla en HTML
+        $html = $this->load->view('pdf/historial_ranking_pdf', $data, true);
+
+        // Generar el PDF en tamaño carta y abrirlo en el navegador
+        $this->dompdf_lib->generar_pdf($html, "Ranking_Consumidores.pdf", false, 'Letter', 'portrait');
     }
+
     public function obtener_avisos_vencidos_rechazados()
     {
         $total = $this->reporte_model->total_vencidos();
