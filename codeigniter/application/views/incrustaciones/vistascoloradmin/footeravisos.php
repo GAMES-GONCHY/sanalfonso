@@ -364,6 +364,7 @@
 <script>
     let idAvisoParam;
     let fechaVencimientoParam;
+    let estadoPrevio;
 
     // Función para cargar detalles en el modal
     function cargarDetalle(codigoSocio, nombreSocio, periodo, total, idAviso, fechaVencimiento, estado){
@@ -374,6 +375,7 @@
         actualizarContenidoModal(codigoSocio, nombreSocio, periodo, total, fechaVencimiento, estado);
         idAvisoParam = idAviso;
         fechaVencimientoParam = fechaVencimiento; 
+        estadoPrevio = estado;
     }
 
     function actualizarContenidoModal(codigoSocio, nombreSocio, periodo, total, fechaVencimiento, estado) {
@@ -507,6 +509,8 @@
                 // Guardar el estado anterior antes de cambiarlo
                 let estadoPrevio = switchSlider.querySelector(".active").getAttribute("data-estado");
 
+                console.log("estadoPrevio:", estadoPrevio);
+
                 // Quitar la clase active de todos y aplicar solo al seleccionado
                 switchSlider.querySelectorAll("span").forEach(o => o.classList.remove("active"));
                 this.classList.add("active");
@@ -514,6 +518,7 @@
                 // Mover el fondo del switch
                 moverFondoSwitch(this);
 
+                
                 // Enviar actualización vía AJAX
                 fetch('<?php echo base_url("index.php/avisocobranza/cambiarEstadoAviso"); ?>', {
                     method: 'POST',
@@ -580,7 +585,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idAviso: idAvisoParam, fechaVencimiento: fechaVencimientoParam, nuevoEstado: "PAGADO" }),
+                body: JSON.stringify({ idAviso: idAvisoParam, fechaVencimiento: fechaVencimientoParam, nuevoEstado: "PAGADO", estadoPrevio: estadoPrevio}),
             })
             .then(response => response.json())
             .then(data => {

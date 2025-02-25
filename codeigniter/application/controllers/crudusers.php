@@ -2,20 +2,17 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
-
 class Crudusers extends CI_Controller
 {
 	public function habilitados($rol)
-	{	
+	{
+		log_message('error', '📌 Rol recibido en habilitados: ' . $rol); // 🔍 DEPURACIÓN
+		$data['rol'] = $rol;
 		$this->load->view('incrustaciones/vistascoloradmin/head');
 		$this->load->view('incrustaciones/vistascoloradmin/menuadmin');
-		$this->load->view('usuarioshabilitados1'); // Vista vacía, AJAX cargará los datos
-		$this->load->view('incrustaciones/vistascoloradmin/footercruduser');
+		$this->load->view('usuarioshabilitados1', $data);
+		$this->load->view('incrustaciones/vistascoloradmin/footercruduser', $data);
 	}
-	
 	// Método separado para obtener los datos en JSON
 	public function obtener_habilitados($rol)
 	{
@@ -27,42 +24,46 @@ class Crudusers extends CI_Controller
 		// Obtener los datos desde el modelo
 		$query = $this->crudusers_model->habilitados($rol);
 		$usuarios = ($query instanceof CI_DB_result) ? $query->result_array() : [];
-	
+		
+		// Formatear la fecha en cada usuario
+		foreach ($usuarios as &$usuario) {
+			$usuario['fechaRegistro'] = formatearFecha($usuario['fechaRegistro']);
+		}
 		// Devolver los datos en JSON
-		header('Content-Type: application/json');
+		//header('Content-Type: application/json');
 		echo json_encode([
 			'status' => 'success',
 			'data' => $usuarios
 		]);
 		exit;
 	}
-	
-	
-	
-	
-	public function deshabilitados($rol)
+	// 🚀 Nueva función para obtener administradores deshabilitados
+    public function obtener_deshabilitados($rol)
 	{
-		$lista = $this->crudusers_model->deshabilitados($rol);
-		$data['usuarios'] = $lista;
-		$this->load->view('incrustaciones/vistascoloradmin/head');
-		$this->load->view('incrustaciones/vistascoloradmin/menuadmin');
-		if($rol==2)
-		{
-			$this->load->view('usuariosdeshabilitados1', $data);
-		}
-		else
-		{
-			$this->load->view('sociosdeshabilitados', $data);
-		}
-		$this->load->view('incrustaciones/vistascoloradmin/footercruduser');
-	}
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $query = $this->crudusers_model->deshabilitados($rol);
+        $usuarios = ($query instanceof CI_DB_result) ? $query->result_array() : [];
+
+        foreach ($usuarios as &$usuario) {
+            $usuario['fechaRegistro'] = formatearFecha($usuario['fechaRegistro']);
+        }
+
+        echo json_encode([
+            'status' => 'success',
+            'data' => $usuarios
+        ]);
+        exit;
+    }
 	public function agregar($rol)
 	{
 		$data['rol']=$rol;
 		$this->load->view('incrustaciones/vistascoloradmin/head');
 		$this->load->view('incrustaciones/vistascoloradmin/menuadmin');
-		$this->load->view('formagregaruser1',$data);
-		$this->load->view('incrustaciones/vistascoloradmin/footercruduser');
+		$this->load->view('formagregaruser1');
+		$this->load->view('incrustaciones/vistascoloradmin/footercruduser',$data);
 	}
 	public function agregarbd()
 	{
@@ -79,7 +80,7 @@ class Crudusers extends CI_Controller
 			'segundoApellido'=> strtoupper($this->input->post('segundoApellido', true)),
 			'ci'  			 => $this->input->post('ci', true),
 			'email'          => $this->input->post('email', true),
-			'rol'            => (int) $this->input->post('rol'),
+			'rol'            => $this->input->post('rol', true),
 			'fono'           => $this->input->post('fono', true),
 			'sexo'           => $this->input->post('genero', true)
 		];
@@ -111,136 +112,76 @@ class Crudusers extends CI_Controller
 		exit;
 	}
 	
-
-	private function enviaremail($data)
+	public function recuperarUsuario()
 	{
-		// Cargar el autoloader de Composer
-		require 'C:/xampp/htdocs/tercerAnio/sanalfonso/vendor/autoload.php';
-
-		$mail = new PHPMailer(true);
-		try {
-			//Server settings
-			$mail->SMTPDebug = 0;
-			$mail->isSMTP();
-			$mail->Host       = 'smtp.gmail.com';
-			$mail->SMTPAuth   = true;
-			$mail->Username   = 'games.gonzalo.883@gmail.com';
-			$mail->Password   = 'jsmrkomgwhphyoac';
-			$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-			$mail->Port       = 587;
-
-			//Recipients
-			$mail->setFrom('games.gonzalo.883@gmail.com', 'AquaReadPRo');
-			$mail->addAddress($data['email']);
-
-			//Content
-			$mail->isHTML(true);
-			$mail->Subject = 'prueba de envio';
-			$body = $this->load->view('emailmessage', $data, TRUE);
-			$mail->Body = $body;
-
-			$mail->send();
-			return true;
-		} 
-		catch (Exception $e) 
-		{
-			log_message('error', "Error al enviar el correo: {$mail->ErrorInfo}");
-			return false;
+		if (!$this->input->is_ajax_request()) {
+			show_404();
 		}
+	
+		$id = $this->input->post('id', true);
+		$usuario = $this->crudusers_model->recuperarusuario($id)->row_array();
+	
+		if ($usuario) {
+			echo json_encode([
+				'status' => 'success',
+				'data'   => $usuario
+			]);
+		} else {
+			echo json_encode([
+				'status' => 'error',
+				'message' => 'Usuario no encontrado.'
+			]);
+		}
+		exit;
 	}
-	public function modificar()
-	{
-
-		$id = $this->input->post('id');
-
-		$data['info'] = $this->crudusers_model->recuperarusuario($id)->row_array();
-
-		$this->load->view('incrustaciones/vistascoloradmin/head');
-		$this->load->view('incrustaciones/vistascoloradmin/menuadmin');
-		if ($this->session->userdata('form1') !== null && $id==null) 
-		{
-			$this->load->view('formmodificaruser1', $this->session->userdata('form1'));
-		}
-		else 
-		{
-			$this->load->view('formmodificaruser1', $data);
-		}
-		$this->load->view('incrustaciones/vistascoloradmin/footercruduser');
-	}
+	
 	public function modificarbd()
 	{
-
-		$id = $_POST['id'];
-
-		$newdata['nickname'] = $_POST['nickname'];
-		$newdata['email'] = $_POST['email'];
-
-		//verificar el email y nickname
-		$consulta = $this->crudusers_model->comprobarmodificacion($newdata, $id);
-		$data['info'] = $this->crudusers_model->recuperarusuario($id)->row_array();
-		if (!empty($consulta)) 
-		{
-			$this->session->set_flashdata('contraseña', false);
-			$this->session->set_userdata('form1', $data);
-			if ((isset($consulta['email']) && isset($consulta['nickName']))) 
-			{
-				$this->session->set_flashdata('mensaje', 'El E-mail y Nickname ya están registrados en el sistema.');
-				$this->session->set_flashdata('alert_type', 'error');
-			} 
-			else 
-			{
-				if (isset($consulta['email'])) 
-				{
-					$this->session->set_flashdata('mensaje', 'El E-mail ya está registrado en el sistema.');
-					$this->session->set_flashdata('alert_type', 'error');
-				}
-				if (isset($consulta['nickName'])) 
-				{
-					$this->session->set_flashdata('mensaje', 'El Nickname ya está registrado en el sistema.');
-					$this->session->set_flashdata('alert_type', 'error');
-				}
-			}
-
-			// if($_POST['formeditperfil'])
-			// {
-			//  redirect('crudusers/editarperfil', 'refresh');
-			// }
-			// else
-			// {
-			// 	redirect('crudusers/modificar', 'refresh');
-			// }
-
-			if (isset($_POST['formeditperfil'])) {
-				redirect('crudusers/editarperfil', 'refresh');
-			}
-			else
-			{
-				$this->session->set_flashdata('mensaje', 'ERROR al modificar el registro');
-				$this->session->set_flashdata('alert_type', 'error');
-				redirect('crudusers/modificar', 'refresh');
-			}
-		} 
-		else 
-		{
-
-			$data =
-			[
-				'nickName' => $_POST['nickname'],
-				'nombre' => strtoupper($_POST['nombre']),
-				'primerApellido' => strtoupper($_POST['primerapellido']),
-				'segundoApellido' => strtoupper($_POST['segundoapellido']),
-				'email' => $_POST['email'],
-				'rol' => (int)$_POST['rol'],
-				'fono' => $_POST['fono'],
-				'sexo' => $_POST['genero']
-			];
-
-			$this->crudusers_model->modificar($id, $data);
-			$this->session->set_flashdata('mensaje', 'Modificación exitosa');
-			$this->session->set_flashdata('alert_type', 'success');
-			redirect('crudusers/habilitados/'.$data['rol']); //revisar
+		// Validar que la solicitud sea AJAX
+		if (!$this->input->is_ajax_request()) {
+			show_404();
 		}
+	
+		// Capturar el ID del usuario a modificar
+		$idUsuario = $this->input->post('id', true);
+		
+		// Capturar datos del formulario
+		$data = [
+			'nickName'       => $this->input->post('nickname', true),
+			'nombre'         => strtoupper($this->input->post('nombre', true)),
+			'primerApellido' => strtoupper($this->input->post('primerApellido', true)),
+			'segundoApellido'=> strtoupper($this->input->post('segundoApellido', true)),
+			'ci'             => $this->input->post('ci', true),
+			'email'          => $this->input->post('email', true),
+			'fono'           => $this->input->post('fono', true),
+			'sexo'           => $this->input->post('genero', true),
+			'fechaActualizacion' => date('Y-m-d H:i:s') // Guardar fecha de modificación
+		];
+	
+		// Depuración: Registrar datos en logs
+		log_message('error', 'Datos recibidos en modificarbd: ' . json_encode($idUsuario));
+	
+		// Verificar si el usuario existe antes de modificar
+		$existeUsuario = $this->crudusers_model->comprobarmodificacion($data, $idUsuario);
+		
+		if (!empty($existeUsuario)) {
+			echo json_encode([
+				'status'  => 'error',
+				'message' => 'El Nickname o el E-mail ya están registrados en otro usuario.'
+			]);
+			exit;
+		}
+	
+		// Actualizar en la base de datos
+		$this->crudusers_model->modificar($idUsuario, $data);
+	
+		echo json_encode([
+			'status'  => 'success',
+			'message' => 'Administrador actualizado correctamente.'
+		]);
+		exit;
 	}
+	
 	public function eliminarbd()
 	{
 		$id = $_POST['id'];
@@ -265,6 +206,38 @@ class Crudusers extends CI_Controller
 		$this->crudusers_model->modificar($id, $data);
 		redirect('crudusers/deshabilitados/' . $rol);
 	}
+	public function cambiarEstado()
+	{
+		if (!$this->input->is_ajax_request()) {
+			show_404();
+		}
+	
+		// Capturar datos de la solicitud
+		$idUsuario = $this->input->post('id', true);
+		$nuevoEstado = $this->input->post('estado', true);
+	
+		// LOG: Datos recibidos
+		log_message('DEBUG', '📌 [cambiarEstado] Datos recibidos: ' . json_encode($_POST));
+
+		// Actualizar estado
+		$resultado = $this->crudusers_model->actualizarEstado($idUsuario, $nuevoEstado);
+		if (!$resultado) {
+			echo json_encode([
+				'status' => 'error',
+				'message' => 'ERROR, Intente nuevamente.'
+			]);
+			exit;
+		}
+		// Mensaje de éxito
+		echo json_encode([
+			'status' => 'success',
+			'message' => ($nuevoEstado == 1) ? 'Usuario restaurado correctamente.' : 'Usuario eliminado correctamente.'
+		]);
+		exit;
+	}
+	
+	
+
 	public function login()
 	{
 		$this->load->view('pagelogin');

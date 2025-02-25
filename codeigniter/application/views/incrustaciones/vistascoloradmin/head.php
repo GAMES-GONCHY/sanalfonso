@@ -389,8 +389,8 @@ div.pt-2 .parsley-errors-list li {
     }
   </style>
 
-  <style>
-    /* Estilo general del modal */
+<style>
+/* Estilo general del modal de agregar */
 #modalAgregarAdmin .modal-content {
     border-radius: 10px;
     border: none;
@@ -424,7 +424,7 @@ div.pt-2 .parsley-errors-list li {
     margin-bottom: 5px;
 }
 
-/* Botón de agregar */
+/* Botón de agregar (Verde y grande) */
 #btnGuardarAdmin {
     width: 100%;
     background-color: #28a745;
@@ -447,7 +447,78 @@ div.pt-2 .parsley-errors-list li {
     margin-right: 15px;
 }
 
-  </style>
+/* MODAL DE MODIFICACIÓN DE ADMINISTRADORES */
+
+/* Estilo general del modal de edición */
+#modalEditarAdmin .modal-content {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Contenedor del formulario */
+#modalEditarAdmin .modal-body {
+    padding: 20px;
+}
+
+/* Estilos generales de los inputs */
+#modalEditarAdmin input, 
+#modalEditarAdmin select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Espaciado entre campos */
+#modalEditarAdmin .form-group {
+    margin-bottom: 15px;
+}
+
+/* Etiquetas */
+#modalEditarAdmin label {
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Botón de guardar cambios (Más pequeño y azul) */
+#btnGuardarCambios {
+    width: auto;
+    padding: 8px 20px;
+    background-color: #007bff; /* Azul */
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+}
+
+/* Botón al pasar el mouse */
+#btnGuardarCambios:hover {
+    background-color: #0056b3;
+}
+
+/* Botón de cancelar (Más pequeño y gris) */
+#modalEditarAdmin .btnCancelar {
+    width: auto;
+    padding: 8px 20px;
+    background-color: #6c757d; /* Gris oscuro */
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+}
+
+/* Botón de cancelar al pasar el mouse */
+#modalEditarAdmin .btnCancelar:hover {
+    background-color: #5a6268;
+}
+</style>
+
+
 </head>
 
 <body>

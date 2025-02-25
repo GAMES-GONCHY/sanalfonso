@@ -110,9 +110,10 @@ class Avisocobranza extends CI_Controller
     {
         // Recibir los datos enviados por AJAX
         $input = json_decode(file_get_contents('php://input'), true);
-    
+        // Depuración: Registrar los datos recibidos en el log
+        log_message('debug', 'Datos recibidos en cambiarEstadoAviso: ' . json_encode($input));
         // Validar que se recibió el idAviso y el nuevoEstado
-        if (!isset($input['idAviso']) || !isset($input['nuevoEstado']) || !isset($input['fechaVencimiento']) || !isset($input['estadoPrevio'])) {
+        if (!isset($input['idAviso']) || !isset($input['nuevoEstado']) || !isset($input['fechaVencimiento'])) {
             echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
             return;
         }

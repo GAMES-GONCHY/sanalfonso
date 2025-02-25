@@ -10,18 +10,20 @@
   </div>
   <!-- END APP HEADER -->
 
+<!-- MODAL PARA AGREGAR ADMINISTRADORES -->
   <div class="modal fade" id="modalAgregarAdmin">
   <div class="modal-dialog modal-lg">
     <div class="modal-content border-0">
       <!-- Encabezado del modal -->
       <div class="modal-header">
-        <h4 class="modal-title">Registro</h4>
+        <h4 class="modal-title">Nuevo Administrador</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
       <!-- Cuerpo del modal -->
       <div class="modal-body">
         <form id="formAgregarAdmin">
+          <input type="hidden" name="rol" value="<?= $rol; ?>"> <!-- Rol oculto -->
           <div class="row">
             <!-- Columna izquierda -->
             <div class="col-md-6">
@@ -41,41 +43,44 @@
                 <label class="form-label">Segundo Apellido</label>
                 <input type="text" class="form-control" id="segundoapellido" name="segundoApellido" placeholder="Segundo Apellido">
               </div>
-              <div class="mb-3">
-                <label class="form-label">CI*</label>
-                <input type="text" class="form-control" id="ci" name="ci" placeholder="Cédula de identidad">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Email *</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
-              </div>
+              
+              
             </div>
 
             <!-- Columna derecha -->
             <div class="col-md-6">
-              <!-- <div class="mb-3">
-                <label class="form-label">Tipo Usuario *</label>
-                <select class="form-select" id="rol" name="rol">
-                  <option value="2" selected>ADMINISTRADOR</option>
-                </select>
-              </div> -->
-              <div class="mb-3">
-                <label class="form-label">Fono *</label>
-                <input type="text" class="form-control" id="fono" name="fono" placeholder="Número" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Género *</label>
-                <div class="d-flex">
-                  <div class="form-check me-3">
-                    <input class="form-check-input" type="radio" id="generoM" name="genero" value="M" required>
-                    <label class="form-check-label" for="generoM">Masculino</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" id="generoF" name="genero" value="F">
-                    <label class="form-check-label" for="generoF">Femenino</label>
-                  </div>
+                <!-- <div class="mb-3">
+                    <label class="form-label">Tipo Usuario *</label>
+                    <select class="form-select" id="rol" name="rol">
+                    <option value="2" selected>ADMINISTRADOR</option>
+                    </select>
+                </div> -->
+                <div class="mb-3">
+                    <label class="form-label">CI*</label>
+                    <input type="text" class="form-control" id="ci" name="ci" placeholder="Cédula de identidad">
                 </div>
-              </div>
+                <div class="mb-3">
+                    <label class="form-label">Email *</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Fono *</label>
+                    <input type="text" class="form-control" id="fono" name="fono" placeholder="Número" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Género *</label>
+                    <div class="d-flex">
+                    <div class="form-check me-3">
+                        <input class="form-check-input" type="radio" id="generoM" name="genero" value="M" required>
+                        <label class="form-check-label" for="generoM">Masculino</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="generoF" name="genero" value="F">
+                        <label class="form-check-label" for="generoF">Femenino</label>
+                    </div>
+                    </div>
+                </div>
             </div>
           </div>
         </form>
@@ -88,6 +93,83 @@
     </div>
   </div>
 </div>
+
+<!-- Modal para Editar Administrador -->
+<div class="modal fade" id="modalEditarAdmin">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0">
+            <!-- Encabezado del modal -->
+            <div class="modal-header">
+                <h4 class="modal-title fw-bold">Editar Administrador</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Cuerpo del modal -->
+            <div class="modal-body">
+                <form id="formEditarAdmin">
+                    <input type="hidden" name="id"> <!-- ID oculto del usuario -->
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nickname *</label>
+                                <input type="text" class="form-control" name="nickname" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre *</label>
+                                <input type="text" class="form-control" name="nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Primer Apellido *</label>
+                                <input type="text" class="form-control" name="primerApellido" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Segundo Apellido</label>
+                                <input type="text" class="form-control" name="segundoApellido">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>CI *</label>
+                                <input type="text" class="form-control" name="ci" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email *</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Fono *</label>
+                                <input type="text" class="form-control" name="fono" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Género *</label>
+                                <div class="form-check-inline">
+                                    <input class="form-check-input" type="radio" name="genero" value="M">
+                                    <label class="form-check-label">Masculino</label>
+                                </div>
+                                <div class="form-check-inline">
+                                    <input class="form-check-input" type="radio" name="genero" value="F">
+                                    <label class="form-check-label">Femenino</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Pie del modal -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnGuardarCambios">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 
 
 
@@ -561,108 +643,272 @@
         }
     </script>
 
-    <!-- SCRIPT PARA CRUD DE ADMINISTRADORES -->
-    <script>
-        $(document).ready(function () {
-            function cargarAdministradores() {
-                console.log("Intentando cargar administradores...");
-                $.ajax({
-                    url: '<?php echo base_url("index.php/crudusers/obtener_habilitados/2"); ?>',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (response) {
-                        console.log("Respuesta recibida:", response);
-                        let tbody = '';
-                        if (response.status === 'success' && response.data.length > 0) {
-                            let count = 1;
-                            response.data.forEach(admin => {
-                                tbody += `
-                                    <tr>
-                                        <td>${count++}</td>
-                                        <td><img src='${admin.foto ? "<?php echo base_url('uploads/usersphoto/'); ?>" + admin.foto : "<?php echo base_url('coloradmin/assets/img/logo/logomenu.png'); ?>"}' width='40' height='40'></td>
-                                        <td>${admin.nickName}</td>
-                                        <td>${admin.nombre}</td>
-                                        <td>${admin.primerApellido}</td>
-                                        <td>${admin.segundoApellido}</td>
-                                        <td>${admin.ci}</td>
-                                        <td>${admin.email}</td>
-                                        <td>${admin.fono}</td>
-                                        <td>${admin.sexo}</td>
-                                        <td>${admin.fechaRegistro}</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm modificarAdmin" data-id="${admin.idUsuario}">Modificar</button>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-danger btn-sm eliminarAdmin" data-id="${admin.idUsuario}">Eliminar</button>
-                                        </td>
-                                    </tr>
-                                `;
-                            });
-                        } else {
-                            tbody = `<tr><td colspan="13" class="text-center">No hay administradores registrados</td></tr>`;
-                        }
 
-                        if ($.fn.DataTable.isDataTable("#datatable")) {
-                            $('#datatable').DataTable().destroy();
-                        }
+<!-- SCRIPT PARA CRUD DE ADMINISTRADORES -->
+<script>
+    $(document).ready(function () {
+        let mostrandoDeshabilitados = false;
+        let urlHabilitados = '<?php echo base_url("index.php/crudusers/obtener_habilitados/".$rol); ?>';
+        let urlDeshabilitados = '<?php echo base_url("index.php/crudusers/obtener_deshabilitados/".$rol); ?>';
 
-                        $("#datatable tbody").html(tbody);
-                        TableManageCombine.init();
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error en AJAX:", error);
-                        toastr.error("Error al cargar los administradores.");
+        function cargarAdministradores(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    console.log("Respuesta recibida:", response);
+                    let tbody = '';
+
+                    if (response.status === 'success' && response.data.length > 0) {
+                        let count = 1;
+
+                        response.data.forEach(admin => {
+                            tbody += `
+                                <tr>
+                                    <td width="1%">${count++}</td>
+                                    <td width="1%"><img src='${admin.foto ? "<?php echo base_url('uploads/usersphoto/'); ?>" + admin.foto : "<?php echo base_url('coloradmin/assets/img/logo/logomenu.png'); ?>"}' width='40' height='40'></td>
+                                    ${<?php echo $rol; ?> == 0 ? `<td>${admin.codigo}</td>` : ''}
+                                    <td>${admin.nombre}</td>
+                                    <td>${admin.primerApellido}</td>
+                                    <td>${admin.segundoApellido}</td>
+                                    <td>${admin.ci}</td>
+                                    <td>${admin.email}</td>
+                                    <td>${admin.fono}</td>
+                                    <td>${admin.fechaRegistro}</td>
+                                    <td class="text-center">
+                                        <button class="btn ${mostrandoDeshabilitados ? 'btn-success' : 'btn-danger'} btn-icon cambiarEstadoAdmin"
+                                            data-id="${admin.idUsuario}" 
+                                            data-estado="${mostrandoDeshabilitados ? 1 : 0}">
+                                            <i class="fas ${mostrandoDeshabilitados ? 'fa-plus' : 'fa-trash'}"></i>
+                                        </button>
+                                        ${mostrandoDeshabilitados ? '' : `
+                                            <button class="btn btn-warning btn-icon modificarAdmin" data-id="${admin.idUsuario}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        `}
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                    } else {
+                        tbody = ''; // Mantener vacío para que DataTables maneje el mensaje correctamente
                     }
-                });
-            }
 
-            cargarAdministradores();
+                    if ($.fn.DataTable.isDataTable("#datatable")) {
+                        $('#datatable').DataTable().destroy();
+                    }
 
-            // Evento para abrir el modal correctamente
-            $(document).on("click", "#btnAbrirModalAgregar", function () {
-                console.log("Intentando abrir el modal...");
-                let modal = $("#modalAgregarAdmin");
+                    let tableHeaderFooter = `
+                        <tr>
+                            <th width="1%">No.</th>
+                            <th width="1%" data-orderable="false">Perfil</th>
+                            ${<?php echo $rol; ?> == 0 ? `<th>Código</th>` : ''}
+                            <th>Nombre</th>
+                            <th>Primer Apellido</th>
+                            <th>Segundo Apellido</th>
+                            <th>CI</th>
+                            <th>E-mail</th>
+                            <th>Fono</th>
+                            <th>Creado</th>
+                            <th class="text-center">${mostrandoDeshabilitados ? "Restaurar" : "Acción"}</th>
+                        </tr>
+                    `;
 
-                if (modal.length > 0) {
-                    modal.modal('show');
-                    $("#formAgregarAdmin")[0].reset(); // Limpiar formulario al abrir modal
-                } else {
-                    console.error("Error: No se encontró el modal en el DOM.");
-                    toastr.error("No se encontró el modal en el DOM.");
+                    $("#datatable thead").html(tableHeaderFooter);
+                    $("#datatable tfoot").html(tableHeaderFooter);
+                    $("#datatable tbody").html(tbody);
+
+                    TableManageCombine.init();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error en AJAX:", error);
+                    toastr.error("Error al cargar los administradores.");
                 }
             });
+        }
 
-            // Evento para enviar el formulario de agregar administrador
-            $("#btnGuardarAdmin").click(function () {
-                let formData = $("#formAgregarAdmin").serialize();
-                
-                // Deshabilitar el botón para evitar envíos múltiples
-                $("#btnGuardarAdmin").prop("disabled", true).text("Guardando...");
 
-                $.ajax({
-                    url: '<?php echo base_url("index.php/crudusers/agregarbd"); ?>',
-                    type: 'POST',
-                    data: formData,
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.status === 'success') {
-                            toastr.success(response.message);
-                            $("#modalAgregarAdmin").modal('hide');
-                            cargarAdministradores();
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function () {
-                        toastr.error("Error en la solicitud.");
-                    },
-                    complete: function () {
-                        $("#btnGuardarAdmin").prop("disabled", false).text("AGREGAR"); // Rehabilitar botón
+        $(document).on("click", "#btnVerDeshabilitados", function () {
+            mostrandoDeshabilitados = !mostrandoDeshabilitados;
+            
+            let nuevaURL = mostrandoDeshabilitados ? urlDeshabilitados : urlHabilitados;
+            let nuevoTexto = mostrandoDeshabilitados ? "VER HABILITADOS" : "VER DESHABILITADOS";
+
+            $(this).text(nuevoTexto);
+            cargarAdministradores(nuevaURL);
+        });
+
+        cargarAdministradores(urlHabilitados);
+
+        // Evento para abrir el modal de agregar
+        $(document).on("click", "#btnAbrirModalAgregar", function () {
+            console.log("Intentando abrir el modal...");
+            let modal = $("#modalAgregarAdmin");
+
+            if (modal.length > 0) {
+                modal.modal('show');
+                $("#formAgregarAdmin")[0].reset();
+            } else {
+                console.error("Error: No se encontró el modal en el DOM.");
+                toastr.error("No se encontró el modal en el DOM.");
+            }
+        });
+
+        // Evento para agregar administrador
+        $("#btnGuardarAdmin").click(function () {
+            let formData = $("#formAgregarAdmin").serialize();
+
+            $("#btnGuardarAdmin").prop("disabled", true).text("Guardando...");
+
+            $.ajax({
+                url: '<?php echo base_url("index.php/crudusers/agregarbd"); ?>',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        $("#modalAgregarAdmin").modal('hide');
+                        cargarAdministradores(urlHabilitados);
+                    } else {
+                        toastr.error(response.message);
                     }
-                });
+                },
+                error: function () {
+                    toastr.error("Error en la solicitud.");
+                },
+                complete: function () {
+                    $("#btnGuardarAdmin").prop("disabled", false).text("AGREGAR");
+                }
             });
         });
-    </script>
+
+        // Evento para modificar administrador
+        $(document).on("click", ".modificarAdmin", function () {
+            let idUsuario = $(this).data("id");
+
+            $.ajax({
+                url: '<?php echo base_url("index.php/crudusers/recuperarUsuario"); ?>', 
+                type: 'POST',
+                data: { id: idUsuario },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status === 'success') {
+                        let usuario = response.data;
+
+                        $("#formEditarAdmin input[name='id']").val(usuario.idUsuario);
+                        $("#formEditarAdmin input[name='nickname']").val(usuario.nickName);
+                        $("#formEditarAdmin input[name='nombre']").val(usuario.nombre);
+                        $("#formEditarAdmin input[name='primerApellido']").val(usuario.primerApellido);
+                        $("#formEditarAdmin input[name='segundoApellido']").val(usuario.segundoApellido);
+                        $("#formEditarAdmin input[name='ci']").val(usuario.ci);
+                        $("#formEditarAdmin input[name='email']").val(usuario.email);
+                        $("#formEditarAdmin input[name='fono']").val(usuario.fono);
+                        
+                        if (usuario.sexo === 'M') {
+                            $("#formEditarAdmin input[name='genero'][value='M']").prop("checked", true);
+                        } else {
+                            $("#formEditarAdmin input[name='genero'][value='F']").prop("checked", true);
+                        }
+
+                        $("#modalEditarAdmin").modal("show");
+                    } else {
+                        toastr.error("Error al recuperar los datos del administrador.");
+                    }
+                },
+                error: function () {
+                    toastr.error("Error en la solicitud al servidor.");
+                }
+            });
+        });
+
+        // Evento para guardar cambios en la edición de administradores (RESTAURADO)
+        $(document).on("click", "#btnGuardarCambios", function () {
+            console.log("Intentando modificar administrador...");
+
+            let formData = $("#formEditarAdmin").serialize();
+            console.log("Datos enviados al servidor:", formData);
+
+            $("#btnGuardarCambios").prop("disabled", true).text("Guardando...");
+
+            $.ajax({
+                url: '<?php echo base_url("index.php/crudusers/modificarbd"); ?>',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function (response) {
+                    console.log("Respuesta recibida:", response);
+
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        $("#modalEditarAdmin").modal('hide');
+                        cargarAdministradores(urlHabilitados);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error("Error en la solicitud.");
+                },
+                complete: function () {
+                    $("#btnGuardarCambios").prop("disabled", false).text("Guardar Cambios");
+                }
+            });
+        });
+
+        // Evento para cambiar el estado del usuario sin mensajes ni confirmaciones
+        $(document).on("click", ".cambiarEstadoAdmin", function () {
+            let idUsuario = $(this).data("id");
+            let nuevoEstado = $(this).data("estado"); // 1 para restaurar, 2 para eliminar
+
+            console.log("📌 Enviando datos al servidor:", { idUsuario, nuevoEstado });
+
+            $.ajax({
+                url: '<?php echo base_url("index.php/crudusers/cambiarEstado"); ?>',
+                type: 'POST',
+                data: { id: idUsuario, estado: nuevoEstado },
+                dataType: 'json',
+                success: function (response) {
+                    console.log("✅ Respuesta del servidor:", response);
+
+                    if (response.status === 'success') {
+                        // Recargar tabla con los datos correctos según el estado actual
+                        cargarAdministradores(mostrandoDeshabilitados
+                            ? '<?php echo base_url("index.php/crudusers/obtener_deshabilitados/".$rol); ?>'
+                            : '<?php echo base_url("index.php/crudusers/obtener_habilitados/".$rol); ?>'
+                        );
+                        toastr.success(response.message);
+                    }
+                    else
+                    {
+                        toastr.error(response.message || "Ocurrió un error inesperado.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("❌ Error en AJAX:", error);
+                    toastr.error(response.message || "Ocurrió un error inesperado.");
+                }
+            });
+        });
+        $(document).ready(function () {
+            let rol = <?php echo $rol; ?>; // Obtiene el rol desde PHP
+
+            // Modificar los títulos según el rol
+            if (rol === 2) {
+                $("#tituloPrincipal").text("Administradores");
+                $("#subtituloPanel").text("Gestionar Administradores");
+            } else if (rol === 0) {
+                $("#tituloPrincipal").text("Socios");
+                $("#subtituloPanel").text("Gestionar Socios");
+            }
+        });
+    });
+</script>
+
+
+
 
 
 
