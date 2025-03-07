@@ -86,7 +86,7 @@ class Crudusers extends CI_Controller
 		];
 
 		// Depuración: Registrar datos en logs
-		log_message('error', 'Datos recibidos en agregarbd: ' . json_encode($data));
+		log_message('DEBUG', 'Datos recibidos en agregarbd: ' . json_encode($data));
 		// Verificar si ya existe el usuario (email o nickname)
 		$existeUsuario = $this->crudusers_model->comprobarinsercion([
 			'nickname' => $data['nickName'],
@@ -111,7 +111,6 @@ class Crudusers extends CI_Controller
 		]);
 		exit;
 	}
-	
 	public function recuperarUsuario()
 	{
 		if (!$this->input->is_ajax_request()) {

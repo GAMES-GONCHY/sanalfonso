@@ -53,6 +53,7 @@
                   data-parsley-no-special-chars 
                   data-parsley-no-special-chars-message="Este campo no debe contener caracteres especiales ni tener espacios al inicio o al final." 
                   data-parsley-required="true" />
+                
               </div>
             </div>
           

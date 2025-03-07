@@ -22,7 +22,7 @@
 
       <!-- Cuerpo del modal -->
       <div class="modal-body">
-        <form id="formAgregarAdmin">
+        <form id="formAgregarAdmin" data-parsley-validate>
           <input type="hidden" name="rol" value="<?= $rol; ?>"> <!-- Rol oculto -->
           <div class="row">
             <!-- Columna izquierda -->
@@ -49,12 +49,7 @@
 
             <!-- Columna derecha -->
             <div class="col-md-6">
-                <!-- <div class="mb-3">
-                    <label class="form-label">Tipo Usuario *</label>
-                    <select class="form-select" id="rol" name="rol">
-                    <option value="2" selected>ADMINISTRADOR</option>
-                    </select>
-                </div> -->
+                
                 <div class="mb-3">
                     <label class="form-label">CI*</label>
                     <input type="text" class="form-control" id="ci" name="ci" placeholder="Cédula de identidad">
@@ -70,17 +65,18 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Género *</label>
-                    <div class="d-flex">
-                    <div class="form-check me-3">
-                        <input class="form-check-input" type="radio" id="generoM" name="genero" value="M" required>
-                        <label class="form-check-label" for="generoM">Masculino</label>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="genero" value="M">
+                        <label class="form-check-label">Masculino</label>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="generoF" name="genero" value="F">
-                        <label class="form-check-label" for="generoF">Femenino</label>
-                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="genero" value="F">
+                        <label class="form-check-label">Femenino</label>
                     </div>
                 </div>
+
+
+
             </div>
           </div>
         </form>
@@ -106,14 +102,20 @@
 
             <!-- Cuerpo del modal -->
             <div class="modal-body">
-                <form id="formEditarAdmin">
+                <form id="formEditarAdmin" data-parsley-validate="true">
                     <input type="hidden" name="id"> <!-- ID oculto del usuario -->
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Nickname *</label>
-                                <input type="text" class="form-control" name="nickname" required>
+                                <!-- <input type="text" class="form-control" name="nickname" required> -->
+
+                                <input class="form-control" type="text" name="nickname" 
+                                    placeholder="Nickname" 
+                                    data-parsley-no-special-chars 
+                                    data-parsley-no-special-chars-message="Este campo no debe contener caracteres especiales ni tener espacios al inicio o al final." 
+                                    data-parsley-required="true" />
                             </div>
                             <div class="form-group">
                                 <label>Nombre *</label>
@@ -336,7 +338,6 @@
         }
     });
 
-
     // Configuración global de Parsley para aplicar estilos a los mensajes de error
     Parsley.on('field:error', function() {
         this.$element.nextAll('.parsley-errors-list').find('li').css('color', 'red');
@@ -344,12 +345,11 @@
 
     Parsley.on('field:validate', function() {
         // Aplica a todos los campos de texto excepto algunos que puedas excluir, si es necesario
-        if (this.$element.is('input[type="text"]') && this.$element.attr('id') !== 'ci') {
+        if (this.$element.is('input[type="text"]')) {
             this.$element.attr('data-parsley-no-special-chars', '');
             this.$element.attr('data-parsley-no-special-chars-message', 'Este campo no debe contener caracteres especiales ni tener espacios al inicio o al final.');
         }
     });
-
 </script>
 
 
@@ -405,243 +405,22 @@
     });
   </script>
 
-<!-- sweet alert agragar usuario -->
+
+
+<!-- Agregar el script antes del cierre del body -->
 <script>
-  $(document).ready(function() {
-      <?php if ($this->session->flashdata('mensaje')): ?>
-          var alertType = '<?php echo $this->session->flashdata('alert_type'); ?>';
-          var mensaje = '<?php echo $this->session->flashdata('mensaje'); ?>';
-          
-          swal({
-              title: alertType === 'success' ? 'Éxito' : 'Error',
-              icon: alertType === 'success' ? 'success': 'error',
-              text: mensaje,
-              type: alertType, // 'success', 'error', 'warning'
-              buttons: false,
-              timer: 2000,
-              showConfirmButton: true
-          }).then(function() {
-              <?php if ($this->session->flashdata('alert_type') === 'success'): ?>
-                  
-              <?php endif; ?>
-          });
-      <?php endif; ?>
-  });
+    $(document).ready(function () {
+        // Asegurar que Parsley está activado en el modal al abrirlo
+        $('#modalEditarAdmin').on('shown.bs.modal', function () {
+            $('#formEditarAdmin').parsley().reset();
+        });
+
+        // Validación en tiempo real para el campo nickname
+        $('input[name="nickname"]').on('input', function () {
+            $(this).parsley().validate();
+        });
+    });
 </script>
-
-
-
-    <script>
-        function cargarDatos(idDatalogger)
-        {
-            var row = $('#datatable tbody').find('tr[data-id="' + idDatalogger + '"]');
-            var IP = row.find('.ip').text();
-            var puerto = row.find('.puerto').text();
-
-            // Asignar los valores actualizados a los inputs del modal
-            $('#idDatalogger').val(idDatalogger);
-            $('#IP').val(IP);
-            $('#puerto').val(puerto);
-        }
-
-        $('#btnGuardarConfiguracion').on('click', function()
-        {
-            // Obtener los valores de los inputs en el modal
-            var idDatalogger = $('#idDatalogger').val();
-            var IP = $('#IP').val();
-            var puerto = $('#puerto').val();
-
-            // Enviar los datos mediante AJAX
-            $.ajax({
-                url: '<?php echo base_url("index.php/datalogger/configurar_datalogger"); ?>',
-                type: 'POST',
-                data: {
-                    idDatalogger: idDatalogger,
-                    IP: IP,
-                    puerto: puerto
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success') {
-                        toastr.success(response.message);
-                        $('#modalPosBooking').modal('hide'); // Cerrar el modal
-
-                        // Actualizar los valores en la fila correspondiente del DataTable
-                        var row = $('#datatable tbody').find('tr[data-id="' + idDatalogger + '"]');
-
-                        // Actualizar las celdas de IP y Puerto en esa fila
-                        row.find('.ip').text(IP);
-                        row.find('.puerto').text(puerto);
-
-                        // Si estás utilizando DataTables, podrías necesitar redibujar la tabla
-                        window.tablaDatalogger.draw(false); // Redibuja la tabla si es necesario
-                    } else {
-                        toastr.error(response.message);
-                    }
-                },
-                error: function() {
-                    toastr.error('Error al actualizar la configuración. Inténtalo de nuevo.');
-                }
-            });
-        });
-
-        // Detectar la tecla Enter en el modal
-        $('#modalPosBooking').on('keypress', function(e) {
-            // 13 es el código de la tecla Enter
-            if (e.which === 13) {
-                e.preventDefault(); // Evita el envío del formulario
-                $('#btnGuardarConfiguracion').click(); // Simula el clic en el botón Guardar
-            }
-        });
-    </script>
-
-    <!-- dashabilitar datalogger -->
-    <script>
-        $(document).ready(function() {
-            window.tablaDatalogger = $('#datatable').DataTable();
-        });
-        function eliminarDatalogger(idDatalogger)
-        {
-            // Confirmación de eliminación con SweetAlert 1
-            swal({
-                title: "¿Estás seguro?",
-                text: "Es posible revertir esta acción",
-                icon: "warning",
-                buttons: ["Cancelar", "Sí, deshabilitar"],
-                dangerMode: true,
-            }).then((willDelete) => {
-                if (willDelete)
-                {
-                    $.ajax({
-                        url: '<?php echo base_url("index.php/datalogger/eliminar_datalogger"); ?>',
-                        type: 'POST',
-                        data: { idDatalogger: idDatalogger },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.status === 'success')
-                            {
-                                toastr.success(response.message);
-                                // Verificar si el DataTable está definido
-                                if (window.tablaDatalogger) {
-                                    // Encontrar y eliminar la fila correspondiente
-                                    var row = $('#datatable tbody').find('tr[data-id="' + idDatalogger + '"]');
-                                    window.tablaDatalogger.row(row).remove().draw(false); // Actualiza la tabla sin recargar
-                                }
-                                else
-                                {
-                                    console.error('DataTable no está inicializado o disponible.');
-                                }
-                            }
-                            else
-                            {
-                                toastr.error(response.message);
-                            }
-                        },
-                        error: function() {
-                            toastr.error('Error al intentar eliminar. Inténtalo de nuevo.');
-                        }
-                    });
-                }
-                else
-                {
-                    toastr.info('Eliminación cancelada');
-                }
-            });
-        }
-    </script>
-
-    <!-- restaurar datalogger -->
-    <script>
-        function restaurarDatalogger(idDatalogger)
-        {
-            $.ajax({
-                url: "<?php echo base_url('index.php/datalogger/restaurar_datalogger'); ?>",
-                type: "POST",
-                data: { id: idDatalogger },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status === 'success') {
-                        toastr.success("Datalogger restaurado con éxito");
-
-                        // Verifica si el DataTable está definido
-                        if (window.tablaDatalogger) {
-                            // Encuentra y elimina la fila correspondiente si existe
-                            var row = $('#datatable tbody').find('tr[data-id="' + idDatalogger + '"]');
-                            if (row.length) {
-                                window.tablaDatalogger.row(row).remove().draw(false); // Actualiza la tabla sin recargar
-                            } else {
-                                console.error('La fila con ID ' + idDatalogger + ' no se encontró en la tabla.');
-                            }
-                        } else {
-                            console.error('DataTable no está inicializado o disponible.');
-                        }
-                    } else {
-                        toastr.error("Error al restaurar el datalogger");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.log("Status: " + status);
-                    console.log("Error: " + error);
-                    console.log("Response Text: " + xhr.responseText);
-                    toastr.error("Ocurrió un error al intentar restaurar. Inténtalo de nuevo.");
-                }
-            });
-        }
-    </script>
-
-    <!-- deshabilitar medidor -->
-    <script>
-        $(document).ready(function() {
-            window.tablaMedidor = $('#datatable').DataTable(); // Inicializa DataTable para los medidores
-        });
-
-        function deshabilitarMedidor(idMedidor) {
-            // Confirmación de eliminación con SweetAlert 1
-            swal({
-                title: "¿Estás seguro?",
-                text: "Es posible revertir esta acción",
-                icon: "warning",
-                buttons: ["Cancelar", "Sí, deshabilitar"],
-                dangerMode: true,
-            }).then((willDelete) => {
-                if (willDelete) {
-                    $.ajax({
-                        url: '<?php echo base_url("index.php/medidor/deshabilitar_medidor"); ?>', // URL del controlador para eliminar el medidor
-                        type: 'POST',
-                        data: { idMedidor: idMedidor },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                toastr.success(response.message);
-                                // Verificar si el DataTable está definido
-                                if (window.tablaMedidor) {
-                                    // Encontrar y eliminar la fila correspondiente
-                                    var row = $('#datatable tbody').find('tr[data-id="' + idMedidor + '"]');
-                                    window.tablaMedidor.row(row).remove().draw(false); // Actualiza la tabla sin recargar
-                                }
-                                else
-                                {
-                                    console.error('DataTable no está inicializado o disponible.');
-                                }
-                            }
-                            else
-                            {
-                                toastr.error(response.message);
-                            }
-                        },
-                        error: function()
-                        {
-                            toastr.error('Error al intentar Deshabilitar. Inténtalo de nuevo.');
-                        }
-                    });
-                }
-                else
-                {
-                    toastr.info('Eliminación cancelada');
-                }
-            });
-        }
-    </script>
 
 
 <!-- SCRIPT PARA CRUD DE ADMINISTRADORES -->
@@ -677,16 +456,16 @@
                                     <td>${admin.fono}</td>
                                     <td>${admin.fechaRegistro}</td>
                                     <td class="text-center">
-                                        <button class="btn ${mostrandoDeshabilitados ? 'btn-success' : 'btn-danger'} btn-icon cambiarEstadoAdmin"
-                                            data-id="${admin.idUsuario}" 
-                                            data-estado="${mostrandoDeshabilitados ? 1 : 0}">
-                                            <i class="fas ${mostrandoDeshabilitados ? 'fa-plus' : 'fa-trash'}"></i>
-                                        </button>
                                         ${mostrandoDeshabilitados ? '' : `
                                             <button class="btn btn-warning btn-icon modificarAdmin" data-id="${admin.idUsuario}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                         `}
+                                        <button class="btn ${mostrandoDeshabilitados ? 'btn-success' : 'btn-danger'} btn-icon cambiarEstadoAdmin"
+                                            data-id="${admin.idUsuario}" 
+                                            data-estado="${mostrandoDeshabilitados ? 1 : 0}">
+                                            <i class="fas ${mostrandoDeshabilitados ? 'fa-plus' : 'fa-trash'}"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             `;
@@ -827,6 +606,14 @@
         // Evento para guardar cambios en la edición de administradores (RESTAURADO)
         $(document).on("click", "#btnGuardarCambios", function () {
             console.log("Intentando modificar administrador...");
+
+            var form = $("#formEditarAdmin").parsley(); // Obtener instancia de Parsley
+    
+                if (!form.validate()) { // Validar formulario antes de enviarlo
+                    console.log("Formulario inválido, revisa los campos.");
+                    return; // Detener la ejecución si hay errores
+                }
+
 
             let formData = $("#formEditarAdmin").serialize();
             console.log("Datos enviados al servidor:", formData);

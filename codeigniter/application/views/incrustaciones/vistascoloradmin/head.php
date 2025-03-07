@@ -390,6 +390,8 @@ div.pt-2 .parsley-errors-list li {
   </style>
 
 <style>
+/* MODAL DE AGREGAR ADMINISTRADORES */
+
 /* Estilo general del modal de agregar */
 #modalAgregarAdmin .modal-content {
     border-radius: 10px;
@@ -424,28 +426,22 @@ div.pt-2 .parsley-errors-list li {
     margin-bottom: 5px;
 }
 
-/* Botón de agregar (Verde y grande) */
-#btnGuardarAdmin {
-    width: 100%;
-    background-color: #28a745;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-}
-
-/* Botón al pasar el mouse */
-#btnGuardarAdmin:hover {
-    background-color: #218838;
-}
-
-/* Género en línea */
+/* Alineación de los inputs de Género (MISMA ESTRUCTURA QUE EL MODAL DE MODIFICACIÓN) */
 #modalAgregarAdmin .form-check-inline {
     display: inline-block;
     margin-right: 15px;
 }
+
+#modalAgregarAdmin .form-check-input {
+    margin-right: 5px; /* Asegura que el input y el label estén alineados correctamente */
+}
+/* Cambia el color de los radio buttons seleccionados a verde */
+#modalAgregarAdmin .form-check-input:checked {
+    background-color: #28a745 !important; /* Verde */
+    border-color: #28a745 !important; /* Borde también en verde */
+}
+
+
 
 /* MODAL DE MODIFICACIÓN DE ADMINISTRADORES */
 

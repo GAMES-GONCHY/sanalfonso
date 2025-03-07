@@ -9,6 +9,105 @@
   <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>
   </div>
   <!-- END APP HEADER -->
+   
+   
+<!-- Modal para insertar nueva tarifa -->
+<div class="modal fade" id="modalNuevaTarifa" tabindex="-1" role="dialog" aria-labelledby="modalNuevaTarifaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light border-bottom-0">
+                <h5 class="modal-title text-primary fw-bold" id="modalNuevaTarifaLabel">Nueva Tarifa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                aria-label="Cerrar"></button>
+            </div>
+            <div class="alert alert-warning text-center mx-3 mt-3" role="alert">
+                Al crear una nueva tarifa, la tarifa vigente actual será dada de baja automáticamente.
+            </div>
+            <div class="modal-body">
+                <form id="formNuevaTarifa" data-parsley-validate>
+                    <div class="form-group mb-3">
+                        <label for="tarifaMinima1" class="form-label">Tarifa Mínima (Bs.)</label>
+                        <input type="text" id="tarifaMinima1" class="form-control"
+                               required
+                               data-parsley-required="true"
+                               data-parsley-pattern="^\d{1,3}(\.\d{1})?$"
+                               data-parsley-error-message="Debe ser un número con hasta 3 dígitos enteros y 1 decimal."
+                               placeholder="999.9" maxlength="5">
+                        <div class="error-message text-danger" id="errorTarifaMinima"></div> 
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="tarifaVigente1" class="form-label">Tarifa Vigente (Bs.)</label>
+                        <input type="text" id="tarifaVigente1" class="form-control"
+                               required
+                               data-parsley-required="true"
+                               data-parsley-pattern="^\d{1,3}(\.\d{1})?$"
+                               data-parsley-error-message="Debe ser un número con hasta 3 dígitos enteros y 1 decimal."
+                               placeholder="999.9" maxlength="5">
+                        <div class="error-message text-danger" id="errorTarifaVigente"></div>
+                    </div>
+
+                    <div class="modal-footer border-top-0">
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-outline-success" id="btnRegistrarTarifa">Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+ <!-- Modal para modificar tarifa -->
+<div class="modal fade" id="modalModificarTarifa" tabindex="-1" role="dialog" aria-labelledby="modalModificarTarifaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-light border-bottom-0">
+                <h5 class="modal-title text-primary fw-bold" id="modalModificarTarifaLabel">Modificar Tarifa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="alert alert-warning text-center mx-3 mt-3" role="alert">
+                Modifique los valores de la tarifa y guarde los cambios.
+            </div>
+            <div class="modal-body">
+                <form id="formModificarTarifa" data-parsley-validate>
+                    <input type="hidden" id="idTarifa" name="idTarifa">
+
+                    <div class="form-group mb-3">
+                        <label for="tarifaMinimaEdit" class="form-label">Tarifa Mínima (Bs.)</label>
+                        <input type="text" id="tarifaMinimaEdit" class="form-control"
+                               required
+                               data-parsley-required="true"
+                               data-parsley-pattern="^\d{1,3}(\.\d{1})?$"
+                               data-parsley-error-message="Debe ser un número con hasta 3 dígitos enteros y 1 decimal."
+                               placeholder="999.9" maxlength="5">
+                        <div class="error-message text-danger" id="errorTarifaMinimaEdit"></div> 
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="tarifaVigenteEdit" class="form-label">Tarifa Vigente (Bs.)</label>
+                        <input type="text" id="tarifaVigenteEdit" class="form-control"
+                               required
+                               data-parsley-required="true"
+                               data-parsley-pattern="^\d{1,3}(\.\d{1})?$"
+                               data-parsley-error-message="Debe ser un número con hasta 3 dígitos enteros y 1 decimal."
+                               placeholder="999.9" maxlength="5">
+                        <div class="error-message text-danger" id="errorTarifaVigenteEdit"></div>
+                    </div>
+
+                    <div class="modal-footer border-top-0">
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-outline-success" id="btnModificarTarifa">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -56,6 +155,8 @@
   <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo.js"></script>
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
 
+  <!-- toast -->
+  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/toastr.min.js"></script>
 
   <!-- Sweets alerts/Modals scripts -->
   <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/sweetalert/dist/sweetalert.min.js"></script>
@@ -105,10 +206,7 @@
             es: "Debe ser un número con hasta 3 dígitos enteros y 1 decimal."  // Mensaje en español
         }
     });
-</script>
-
-
-
+    </script>
 
 
   <!-- Botones de exportacion dataTable -->
@@ -190,35 +288,303 @@
     });
   </script>
 
-<!-- tarifas/modificar -->
+
+<!-- modificar tarifa -->
 <script>
-function cargarDatos(idTarifa, fechaInicioVigencia) {
-    // Busca la fila correspondiente por su ID
-    var fila = document.getElementById("row_" + idTarifa);
+  $(document).ready(function() {
+    var tablaTarifas = $('#datatable').DataTable(); // Inicializa DataTable
 
-    // Comprobar si la fila existe
-    if (fila) {
-        // Obtener los valores de las celdas correspondientes
-        var tarifaVigente = fila.cells[1].innerText;
-        var tarifaMinima = fila.cells[2].innerText;
-        // var fechaInicioVigencia = fila.cells[3].innerText;
+    // Inicializa Parsley en el formulario de modificación
+    $('#formModificarTarifa').parsley();
 
-        // Asignar los valores a los campos del modal
-        document.getElementById('idTarifa').value = idTarifa;
-        document.getElementById('tarifaVigente').value = tarifaVigente.trim();
-        document.getElementById('tarifaMinima').value = tarifaMinima.trim();
+    function cargarDatos(idTarifa, tarifaVigente, tarifaMinima) {
+        $('#idTarifa').val(idTarifa);
+        $('#tarifaVigenteEdit').val(tarifaVigente);
+        $('#tarifaMinimaEdit').val(tarifaMinima);
 
-        // Mostrar el modal de modificación
         $('#modalModificarTarifa').modal('show');
-    } else {
-        console.error("No se encontró la fila: ", idTarifa);
     }
-}
+
+    $('#datatable').on('click', '.editar', function() {
+        var fila = $(this).closest("tr");
+        var datos = tablaTarifas.row(fila).data();
+
+        if (!datos) {
+            toastr.error('Error al obtener los datos de la tarifa.');
+            return;
+        }
+
+        var idTarifa = datos[0];
+        var tarifaVigente = datos[1];
+        var tarifaMinima = datos[2];
+
+        cargarDatos(idTarifa, tarifaVigente, tarifaMinima);
+    });
+
+    $('#formModificarTarifa').on('submit', function(event) {
+        event.preventDefault(); // Evita el envío tradicional
+
+        // Verifica si el formulario es válido con Parsley
+        if (!$(this).parsley().isValid()) {
+            return; // No se envía si hay errores de validación
+        }
+
+        var idTarifa = $('#idTarifa').val();
+        var tarifaMinima = $('#tarifaMinimaEdit').val().trim();
+        var tarifaVigente = $('#tarifaVigenteEdit').val().trim();
+
+        $.ajax({
+            url: '<?php echo base_url("index.php/tarifa/modificar"); ?>',
+            type: 'POST',
+            data: {
+                idTarifa: idTarifa,
+                tarifaMinima: tarifaMinima,
+                tarifaVigente: tarifaVigente
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    toastr.success(response.message);
+
+                    tablaTarifas.clear().draw();
+                    tablaTarifas.row.add([
+                        idTarifa,
+                        tarifaVigente,
+                        tarifaMinima,
+                        `<button type="button" class="btn btn-info btn-sm editar"
+                            data-id="${idTarifa}"
+                            onclick="cargarDatos(${idTarifa}, '${tarifaVigente}', '${tarifaMinima}')">
+                            <i class="fas fa-edit"></i>
+                        </button>`
+                    ]).draw(false);
+
+                    $('#modalModificarTarifa').modal('hide');
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function() {
+                toastr.error('Error en la solicitud.');
+            }
+        });
+    });
+
+    // Eliminar errores cuando el usuario escriba nuevamente
+    $('#tarifaMinimaEdit, #tarifaVigenteEdit').on('input', function() {
+        $(this).next('.error-message').text('');
+    });
+
+    // 🛑 Nueva función: Limpiar el modal de modificación al cerrarlo
+    $('#modalModificarTarifa').on('hidden.bs.modal', function () {
+        $('#tarifaMinimaEdit, #tarifaVigenteEdit').val(''); // Limpiar inputs
+        $('#formModificarTarifa').parsley().reset(); // Resetear validaciones de Parsley
+        $('#errorTarifaMinimaEdit, #errorTarifaVigenteEdit').text(''); // Limpiar mensajes de error
+    });
+
+    window.cargarDatos = cargarDatos;
+});
 
 </script>
 
 
 
+
+<!-- tarifas/insertar -->
+<script>
+   $(document).ready(function() {
+    var tablaTarifas = $('#datatable').DataTable(); // Inicializa DataTable
+
+    // Inicializa Parsley en el formulario
+    $('#formNuevaTarifa').parsley();
+
+    $('#formNuevaTarifa').on('submit', function(event) {
+        event.preventDefault(); // Evita el envío tradicional del formulario
+
+        // Limpiar mensajes de error previos
+        $('#errorTarifaMinima, #errorTarifaVigente').text('');
+
+        var tarifaMinima = $('#tarifaMinima1').val().trim();
+        var tarifaVigente = $('#tarifaVigente1').val().trim();
+        var errores = false;
+
+        // Validación con expresiones regulares
+        var formatoTarifa = /^\d{1,3}(\.\d{1})?$/;
+
+        if (!formatoTarifa.test(tarifaMinima)) {
+            $('#errorTarifaMinima').text('Debe ser un número con hasta 3 dígitos enteros y 1 decimal.');
+            errores = true;
+        }
+        if (!formatoTarifa.test(tarifaVigente)) {
+            $('#errorTarifaVigente').text('Debe ser un número con hasta 3 dígitos enteros y 1 decimal.');
+            errores = true;
+        }
+
+        // Si hay errores, detener el envío
+        if (errores) return;
+
+        // Enviar datos con AJAX
+        $.ajax({
+            url: '<?php echo base_url("index.php/tarifa/agregar"); ?>',
+            type: 'POST',
+            data: {
+                tarifaMinima: tarifaMinima,
+                tarifaVigente: tarifaVigente
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    toastr.success(response.message);
+                    tablaTarifas.clear().draw();
+                    tablaTarifas.row.add([
+                        response.id,
+                        tarifaVigente,
+                        tarifaMinima,
+                        `<button type="button" class="btn btn-info btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalModificarTarifa"
+                            onclick="cargarDatos(${response.id}, '${tarifaVigente}', '${tarifaMinima}')">
+                            <i class="fas fa-edit"></i>
+                        </button>`
+                    ]).draw(false);
+
+                    $('#modalNuevaTarifa').modal('hide');
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function() {
+                toastr.error('Error en la solicitud.');
+            }
+        });
+    });
+
+    // Eliminar errores cuando el usuario escriba nuevamente
+    $('#tarifaMinima1, #tarifaVigente1').on('input', function() {
+        $(this).next('.error-message').text('');
+    });
+
+    // 🛑 Nueva función: Limpiar el modal al cerrarlo
+    $('#modalNuevaTarifa').on('hidden.bs.modal', function () {
+        // Limpiar los inputs
+        $('#tarifaMinima1, #tarifaVigente1').val('');
+
+        // Resetear validaciones de Parsley
+        $('#formNuevaTarifa').parsley().reset();
+
+        // Limpiar los mensajes de error
+        $('#errorTarifaMinima, #errorTarifaVigente').text('');
+    });
+});
+
+
+</script>
+
+
+<!-- tarifas / mostrar lista eliminados con botón volver -->
+
+<script>
+     
+    $(document).ready(function() {
+        var tablaTarifas = $('#datatable').DataTable(); // Inicializar DataTable
+
+        var btnVolver = $('#btnVolver'); // Botón "Volver"
+        var tituloTarifas = $('#tituloTarifas'); // Título de la tabla
+        var contenedorAgregar = $('#btnAgregarTarifa').closest('.card'); // Contenedor del botón "+"
+        var contenedorEliminar = $('#btnVerEliminadas').closest('.card'); // Contenedor del botón "🗑️"
+
+        // 🔹 Evento para mostrar las tarifas eliminadas
+        $('#btnVerEliminadas').click(function(event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: '<?php echo base_url("index.php/tarifa/getTarifasEliminadas"); ?>',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        tablaTarifas.clear().draw();
+
+                        // ✅ Cambiar encabezado y mostrar botón "Volver"
+                        tituloTarifas.text("Tarifas Eliminadas");
+                        btnVolver.show();
+
+                        // ✅ Ocultar completamente los contenedores de los botones
+                        contenedorAgregar.css('display', 'none');
+                        contenedorEliminar.css('display', 'none');
+
+                        // ✅ Agregar tarifas eliminadas a la tabla
+                        $.each(response.data, function(index, tarifa) {
+                            tablaTarifas.row.add([
+                                tarifa.idTarifa,
+                                tarifa.tarifaVigente,
+                                tarifa.tarifaMinima,
+                                tarifa.fechaActualizacion
+                            ]).draw(false);
+                        });
+
+                        console.log("Tarifas eliminadas mostradas.");
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function() {
+                    toastr.error('Error al cargar tarifas eliminadas.');
+                }
+            });
+        });
+
+        // 🔹 Evento para volver a la lista de tarifas habilitadas
+        $('#btnVolver').click(function(event) {
+            event.preventDefault();
+
+            $.ajax({
+                url: '<?php echo base_url("index.php/tarifa/getTarifasHabilitadas"); ?>',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        tablaTarifas.clear().draw();
+
+                        // ✅ Restaurar encabezado y ocultar botón "Volver"
+                        tituloTarifas.text("Gestionar Tarifas");
+                        btnVolver.hide();
+
+                        // ✅ Mostrar los contenedores de los botones nuevamente
+                        contenedorAgregar.css('display', 'block');
+                        contenedorEliminar.css('display', 'block');
+
+                        // ✅ Agregar tarifas habilitadas a la tabla
+                        $.each(response.data, function(index, tarifa) {
+                            tablaTarifas.row.add([
+                                tarifa.idTarifa,
+                                tarifa.tarifaVigente,
+                                tarifa.tarifaMinima,
+                                `<button type="button" class="btn btn-info btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalModificarTarifa"
+                                    onclick="cargarDatos(${tarifa.idTarifa}, '${tarifa.tarifaVigente}', '${tarifa.tarifaMinima}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>`
+                            ]).draw(false);
+                        });
+
+                        console.log("Tarifas habilitadas mostradas.");
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function() {
+                    toastr.error('Error al cargar tarifas habilitadas.');
+                }
+            });
+        });
+
+        // 🔹 Ocultar el botón "volver" cuando se carga la página
+        btnVolver.hide();
+    });
+
+
+</script>
 
 
 

@@ -19,41 +19,27 @@ class Tarifa_model extends CI_Model
     }
     public function agregar($data) 
     {
-        // Obtener el ID del usuario actual desde la sesión
-        $data['idAutor'] = $this->session->userdata('idUsuario');
-    
-        // Iniciar una transacción para asegurar la consistencia de datos
-        $this->db->trans_start();
-    
-        // Paso 1: Cambiar todas las tarifas anteriores a "Vencido"
-        $this->db->set('estado', 'Vencido');  
-        $this->db->where('estado', 'Vigente'); // Afecta solo a tarifas vigentes
-        $this->db->update('tarifa');
-    
-        // Depuración: Registrar la actualización de tarifas
-        log_message('error', 'Se actualizaron todas las tarifas vigentes a estado "Vencido".');
-    
-        // Paso 2: Insertar la nueva tarifa con estado "Vigente"
-        $data['estado'] = 'Vigente'; // Solo la nueva tarifa estará vigente
-        $this->db->insert('tarifa', $data);
-    
-        // Obtener el ID insertado
-        $insert_id = $this->db->insert_id();
-    
-        // Confirmar la transacción
-        $this->db->trans_complete();
-    
-        // Verificar si la transacción fue exitosa
-        if ($this->db->trans_status() === FALSE) {
-            log_message('error', 'Error en la transacción al insertar la nueva tarifa.');
-            return false;
-        } else {
-            log_message('error', 'Nueva tarifa insertada con estado "Vigente". ID: ' . $insert_id);
-            return $insert_id;
-        }
+        // Verificamos que los datos se reciben correctamente
+        // print_r($data); // Asegúrate de que los datos llegan correctamente aquí
+        // echo "<br>";
+
+        // // Intentar insertar los datos en la tabla tarifa
+        // $this->db->insert('tarifa', $data);
+
+        // // Verificar si se realizó la inserción correctamente
+        // if ($this->db->affected_rows() > 0) {
+        //     echo "Inserción exitosa";
+        //     return true;
+        // } else {
+        //     echo "Fallo en la inserción";
+        //     echo $this->db->last_query(); // Imprime la última consulta SQL para depuración
+        //     return false;
+        // }
+        // Llamar al procedimiento almacenado con los datos proporcionados
+        $data['idAutor']=$this->session->userdata('idUsuario');
+        $this->db->query("CALL uspDarBajaTarifaAlInsertar(?, ?, ?)", array($data['tarifaMinima'], $data['tarifaVigente'], $data['idAutor']));
     }
-    
-        
+
     
     public function deshabilitar($id) 
     {
@@ -125,14 +111,5 @@ class Tarifa_model extends CI_Model
         return $query->num_rows() > 0;
     
     }
-    public function obtenerTarifasEliminadas()
-    {
-        $this->db->select('*');
-        $this->db->from('tarifa');
-        $this->db->where('estado', 'vencido');
-        
-        $query = $this->db->get();
-        return $query->result();
-    }
-
+    
 }

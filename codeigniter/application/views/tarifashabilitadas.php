@@ -1,3 +1,4 @@
+
 <!-- START CONTENT PAGE -->
 <div id="content" class="app-content">
 
@@ -12,20 +13,24 @@
         <div class="card text-center shadow-sm" style="width: 7rem; margin: 0;"> <!-- Reduce el ancho aquí -->
           <div class="card-body" style="padding: 5px;"> <!-- Reduce el padding aquí -->
             <!-- Cambia este enlace para que abra el modal -->
-            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#modalNuevaTarifa" class="text-success text-decoration-none hover-registrar" style="display: block; padding: 5px; border-radius: 8px; transition: 0.3s;">
-              <i class="fas fa-plus-circle fa-lg mb-1"></i><br> <!-- Cambia el tamaño del icono a fa-lg -->
+            <a href="javascript:void(0);" id="btnAgregarTarifa" data-bs-toggle="modal" 
+              data-bs-target="#modalNuevaTarifa" 
+              class="text-success text-decoration-none hover-registrar"
+              style="display: block; padding: 5px; border-radius: 8px; transition: 0.3s;">
+                <i class="fas fa-plus-circle fa-lg mb-1"></i><br> <!-- Cambia el tamaño del icono a fa-lg -->
             </a>
           </div>
         </div>
 
-        <!-- Botón "Lecturas Eliminadas" -->
-        <div class="card text-center shadow-sm" style="width: 7rem; margin: 0;">
-          <div class="card-body" style="padding: 5px;"> <!-- Reduce el padding aquí -->
-            <a href="<?php echo base_url(); ?>index.php/tarifa/deshabilitados" class="text-danger text-decoration-none hover-eliminados" style="display: block; padding: 5px; border-radius: 8px; transition: 0.3s;">
-              <i class="fas fa-trash-restore fa-lg mb-1"></i><br> <!-- Cambia el tamaño del icono a fa-lg -->
-              
-            </a>
-          </div>
+        <!-- Botón "Tarifas Eliminadas" -->
+          <div class="card text-center shadow-sm" style="width: 7rem; margin: 0;">
+            <div class="card-body" style="padding: 5px;"> <!-- Reduce el padding aquí -->
+                <a href="javascript:void(0);" id="btnVerEliminadas"
+                  class="text-danger text-decoration-none hover-eliminados" 
+                  style="display: block; padding: 5px; border-radius: 8px; transition: 0.3s;">
+                    <i class="fas fa-trash-restore fa-lg mb-1"></i><br> <!-- Cambia el tamaño del icono a fa-lg -->
+                </a>
+            </div>
         </div>
       </div>
     </div>
@@ -42,13 +47,19 @@
         <?php echo $this->session->flashdata('error'); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
+    
     <?php endif; ?>
+                  
+    <!-- Botón de volver (se oculta por defecto) -->
+    <button id="btnVolver" class="btn btn-primary mb-3" style="display: none;">
+        <i class="fas fa-arrow-left"></i> Volver
+    </button>
     <!-- Fin de mensajes de éxito y error -->
     <div class="row">
       <div class="col-xl-12">
         <div class="panel panel-inverse">
           <div class="panel-heading d-flex justify-content-between align-items-center">
-            <h4 class="panel-title">Gestionar tarifas</h4>
+          <h4 class="panel-title" id="tituloTarifas">Gestionar Tarifas</h4>
             <div class="panel-heading-btn">
               <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
               <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload"><i class="fa fa-redo"></i></a>
@@ -57,6 +68,8 @@
             </div>
           </div>
           <div class="panel-body">
+           
+
               <table id="datatable" class="table table-hover table-striped align-middle" style="text-align: center;">
                 <thead>
                     <tr>
@@ -82,10 +95,10 @@
                                 <button type="button" class="btn btn-info btn-sm btnModificar"
                                     data-bs-toggle="modal"
                                     data-bs-target="#modalModificarTarifa"
-                                    onclick="cargarDatos(<?php echo $row->idTarifa; ?>,
-                                                        '<?php echo $row->fechaInicioVigencia; ?>')">
+                                    onclick="cargarDatos(<?php echo $row->idTarifa; ?>, '<?php echo $row->tarifaVigente; ?>', '<?php echo $row->tarifaMinima; ?>')">
                                     <i class="fas fa-edit"></i>
                                 </button>
+
                             </td>
                             <!-- <td>
                                 <div class="btn-group" role="group">
@@ -120,100 +133,11 @@
       </div>
     </div>
   
-  
-    <div class="modal fade" id="modalModificarTarifa" tabindex="-1" role="dialog" aria-labelledby="modalModificarTarifaLabel" aria-hidden="true" data-parsley-validate="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalModificarTarifaLabel">Modificar Tarifa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formModificarTarifa" action="<?php echo base_url('index.php/tarifa/modificar'); ?>" method="POST">
-                    <input type="hidden" name="idTarifa" id="idTarifa"> <!-- Campo oculto para enviar el ID de la tarifa -->
-
-                    <!-- Campo para tarifa vigente -->
-                    <div class="form-group">
-                        <label for="tarifaVigente">Tarifa Vigente</label>
-                        <input type="text" name="tarifaVigente" id="tarifaVigente" class="form-control" required 
-                                  data-parsley-decimal41 
-                                  data-parsley-trigger="input"
-                                  placeholder="999.9" 
-                                  maxlength="5">
-                    </div>
-
-                    <!-- Campo para tarifa mínima -->
-                    <div class="form-group">
-                        <label for="tarifaMinima">Tarifa Mínima</label>
-                        <input type="text" name="tarifaMinima" id="tarifaMinima" class="form-control" required 
-                                  data-parsley-decimal41 
-                                  data-parsley-trigger="input"
-                                  placeholder="999.9" 
-                                  maxlength="5">
-                    </div>
-
-                    <!-- Campo para fecha de inicio de vigencia -->
-                    <!-- <div class="form-group">
-                        <label for="fechaInicioVigencia">Fecha de Inicio de Vigencia</label>
-                        <input type="date" name="fechaInicioVigencia" id="fechaInicioVigencia" class="form-control" required>
-                    </div> -->
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-success">Guardar Cambios</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+ 
 
 
 
-      <!-- Modal para insertar nueva tarifa -->
-      <div class="modal fade" id="modalNuevaTarifa" tabindex="-1" role="dialog" aria-labelledby="modalNuevaTarifaLabel" aria-hidden="true" data-parsley-validate="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-              <div class="modal-content">
-                  <!-- Header con diseño mejorado -->
-                  <div class="modal-header bg-light border-bottom-0">
-                      <h5 class="modal-title text-primary fw-bold" id="modalNuevaTarifaLabel">Nueva Tarifa</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                  </div>
-                  <!-- Mensaje de advertencia mejorado -->
-                  <div class="alert alert-warning text-center mx-3 mt-3" role="alert">
-                      Al crear una nueva tarifa, la tarifa vigente actual será dada de baja automáticamente.
-                  </div>
-                  <div class="modal-body">
-                      <form action="<?php echo base_url('index.php/tarifa/agregar'); ?>" method="POST">
-                          <div class="form-group mb-3">
-                              <label for="tarifaMinima" class="form-label">Tarifa Mínima (Bs.)</label>
-                                  <input type="text" name="tarifaMinima1" id="tarifaMinima1" class="form-control" required
-                                    data-parsley-decimal41 
-                                    data-parsley-trigger="input"
-                                    placeholder="999.9" 
-                                    maxlength="5"
-                                    style="width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ced4da; box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
-
-                          </div>
-                          <div class="form-group mb-3">
-                              <label for="tarifaVigente" class="form-label">Tarifa Vigente (Bs.)</label>
-                                  <input type="text" name="tarifaVigente1" id="tarifaVigente1" class="form-control" required
-                                    data-parsley-decimal41 
-                                    data-parsley-trigger="input"
-                                    placeholder="999.9" 
-                                    maxlength="5"
-                                    style="width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ced4da; box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);">
-
-                          </div>
-                          <div class="modal-footer border-top-0">
-                              <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cerrar</button>
-                              <button type="submit" class="btn btn-outline-success">Registrar</button>
-                          </div>
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
+   
 
       
 
