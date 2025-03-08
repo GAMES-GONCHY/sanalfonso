@@ -1,3 +1,10 @@
+/*
+Template Name: Color Admin - Responsive Admin Dashboard Template build with Twitter Bootstrap 5
+Version: 5.0.0
+Author: Sean Ngu
+Website: http://www.seantheme.com/color-admin/
+*/
+
 var handleDataTableCombinationSetting = function() {
 	"use strict";
     
@@ -41,29 +48,7 @@ var handleDataTableCombinationSetting = function() {
 			options.rowReorder = false;
 			options.colReorder = false;
 		}
-
-		var tablaLecturas = $('#datatable').DataTable(options);
-
-        // Añadir evento de clic para el botón eliminar
-        $('#datatable tbody').on('click', 'button.delete', function() {
-            var data = tablaLecturas.row($(this).parents('tr')).data();
-            var userId = data[0];  // Asumiendo que el ID del usuario está en la primera columna
-
-            if (confirm('¿Estás seguro de que deseas eliminar este administrador?')) {
-                $.ajax({
-                    url: baseUrl + 'eliminarbd',
-                    type: 'POST',
-                    data: {id: userId},
-                    success: function(response) {
-                        tablaLecturas.row($(this).parents('tr')).remove().draw();
-                        alert('Administrador eliminado correctamente');
-                    },
-                    error: function() {
-                        alert('Error al eliminar el administrador');
-                    }
-                });
-            }
-        });
+		$('#datatable').DataTable(options);
 	}
 };
 

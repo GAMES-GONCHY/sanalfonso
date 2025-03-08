@@ -48,7 +48,7 @@ var handleDataTableCombinationSetting = function() {
 			options.rowReorder = false;
 			options.colReorder = false;
 		}
-		window.tablaLecturas = $('#datatable').DataTable(options);
+		$('#datatable').DataTable(options);
 	}
 };
 

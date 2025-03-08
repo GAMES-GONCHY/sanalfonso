@@ -94,8 +94,7 @@
                     data-parsley-required="true" 
                     data-parsley-required-message="Este campo es obligatorio." 
                     data-parsley-pattern="/^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)?$/" 
-                    data-parsley-pattern-message="Solo se permiten letras, números y un guion opcional seguido de alfanumérico, sin caracteres especiales ni espacios."
-                />
+                    data-parsley-pattern-message="Solo se permiten letras, números y un guion opcional seguido de alfanumérico, sin caracteres especiales ni espacios."/>
               </div>
             </div>
 

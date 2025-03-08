@@ -26,7 +26,8 @@ class Crudusers extends CI_Controller
 		$usuarios = ($query instanceof CI_DB_result) ? $query->result_array() : [];
 		
 		// Formatear la fecha en cada usuario
-		foreach ($usuarios as &$usuario) {
+		foreach ($usuarios as &$usuario)
+		{
 			$usuario['fechaRegistro'] = formatearFecha($usuario['fechaRegistro']);
 		}
 		// Devolver los datos en JSON

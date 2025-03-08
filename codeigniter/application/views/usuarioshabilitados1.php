@@ -1,13 +1,17 @@
 <!-- START CONTENT PAGE -->
 <div id="content" class="app-content">
     <h1 id="tituloPrincipal" class="page-header">Administradores</h1>
-
     <div class="container mt-4">
         <div class="row">
             <div class="col-xl-12">
                 <div class="panel panel-inverse">
                     <div class="panel-heading d-flex justify-content-between align-items-center">
                         <h4 id="subtituloPanel" class="panel-title">Gestionar Administradores</h4>
+                        <div class="panel-heading-btn">
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload"><i class="fa fa-redo"></i></a>
+                            <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse"><i class="fa fa-minus"></i></a>
+                        </div>
                     </div>
                     <div class="panel-body">
                         <div class="row mb-3">
@@ -17,9 +21,12 @@
                                 </a>
                             </div>
                             <div class="col-md-6 mb-2">
-                            <button id="btnAbrirModalAgregar" class="btn btn-success btn-lg btn-block text-uppercase font-weight-bold w-100">
-                                Agregar
-                            </button>
+                                <!-- <button id="btnAbrirModalAgregar" class="btn btn-success btn-lg btn-block text-uppercase font-weight-bold w-100">
+                                    Agregar
+                                </button> -->
+                                <button id="btnAbrirModalAgregar" class="btn btn-success btn-lg btn-block text-uppercase font-weight-bold w-100" data-rol="<?= $rol; ?>">
+                                    Agregar
+                                </button>
                             </div>
                         </div>
 

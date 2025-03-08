@@ -29,22 +29,45 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">Nickname *</label>
-                <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Nickname" required>
+                <!-- <input type="text" class="form-control" id="nickname" name="nickname" placeholder="Nickname" required data-parsley-trigger="keyup"> -->
+                <input class="form-control" type="text" id="nickname" name="nickname"
+                    placeholder="Nickname"
+                    required
+                    data-parsley-minlength="4"
+                    data-parsley-minlength-message="El Nickname debe tener al menos 4 caracteres."
+                    data-parsley-maxlength="15"
+                    data-parsley-maxlength-message="El Nickname no puede superar los 15 caracteres."
+                    data-parsley-trigger="keyup change">
               </div>
               <div class="mb-3">
                 <label class="form-label">Nombre *</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required>
+                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre"
+                    required
+                    data-parsley-minlength="4"
+                    data-parsley-minlength-message="El Nombre debe tener al menos 4 caracteres."
+                    data-parsley-maxlength="15"
+                    data-parsley-maxlength-message="El Nombre no puede superar los 15 caracteres."
+                    data-parsley-trigger="keyup change">
               </div>
               <div class="mb-3">
                 <label class="form-label">Primer Apellido *</label>
-                <input type="text" class="form-control" id="primerapellido" name="primerApellido" placeholder="Primer Apellido" required>
+                <input type="text" class="form-control" id="primerapellido" name="primerApellido" placeholder="Primer Apellido"
+                    required
+                    data-parsley-minlength="4"
+                    data-parsley-minlength-message="El Primer Apellido debe tener al menos 4 caracteres."
+                    data-parsley-maxlength="15"
+                    data-parsley-maxlength-message="El Primer Apellido no puede superar los 15 caracteres."
+                    data-parsley-trigger="keyup change">
               </div>
               <div class="mb-3">
                 <label class="form-label">Segundo Apellido</label>
-                <input type="text" class="form-control" id="segundoapellido" name="segundoApellido" placeholder="Segundo Apellido">
+                <input type="text" class="form-control" id="segundoapellido" name="segundoApellido" placeholder="Segundo Apellido"
+                    data-parsley-minlength="4"
+                    data-parsley-minlength-message="El Segundo Apellido debe tener al menos 4 caracteres."
+                    data-parsley-maxlength="15"
+                    data-parsley-maxlength-message="El Segundo Apellido no puede superar los 15 caracteres."
+                    data-parsley-trigger="keyup change">
               </div>
-              
-              
             </div>
 
             <!-- Columna derecha -->
@@ -52,28 +75,61 @@
                 
                 <div class="mb-3">
                     <label class="form-label">CI*</label>
-                    <input type="text" class="form-control" id="ci" name="ci" placeholder="Cédula de identidad">
+                    <input type="text" class="form-control" id="ci" name="ci" placeholder="Cédula de identidad"
+                        required
+                        data-parsley-pattern="^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$"
+                        data-parsley-pattern-message="Solo se permiten letras, números y un guion opcional seguido de alfanumérico, sin caracteres especiales ni espacios."
+                        data-parsley-trigger="keyup change">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email *</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email"
+                        required
+                        data-parsley-type="email" 
+                        data-parsley-custom-email-validation 
+                        data-parsley-custom-email-validation-message="El correo electrónico debe contener '@' y terminar en '.com'.">
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label">Fono *</label>
-                    <input type="text" class="form-control" id="fono" name="fono" placeholder="Número" required>
+                    <input type="text" class="form-control" id="fono" name="fono" placeholder="Teléfono"
+                        required
+                        data-parsley-type="digits" 
+                        data-parsley-min="60000000" 
+                        data-parsley-min-message="El número debe tener al menos 8 dígitos y debe empezar mínimamente con 6."
+                        data-parsley-max="79999999" 
+                        data-parsley-max-message="El número no puede exceder 8 dígitos.">
                 </div>
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label class="form-label">Género *</label>
                     <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="genero" value="M">
+                        <input class="form-check-input" type="radio" name="genero" value="M" required>
                         <label class="form-check-label">Masculino</label>
                     </div>
                     <div class="form-check-inline">
-                        <input class="form-check-input" type="radio" name="genero" value="F">
+                        <input class="form-check-input" type="radio" name="genero" value="F" required>
                         <label class="form-check-label">Femenino</label>
                     </div>
+                </div> -->
+
+                <div class="mb-3">
+                    <label class="form-label">Género *</label>
+                    <div class="radio-group">
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" name="genero" value="M" required>
+                            <label class="form-check-label">Masculino</label>
+                        </div>
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" name="genero" value="F" required>
+                            <label class="form-check-label">Femenino</label>
+                        </div>
                 </div>
+                <!-- El mensaje de error solo se mostrará aquí -->
+                <div id="genero-error-container"></div>
+</div>
+
+
+
 
 
 
@@ -84,7 +140,7 @@
 
       <!-- Pie del modal -->
       <div class="modal-footer">
-        <button type="submit" class="btn btn-success w-100" id="btnGuardarAdmin">AGREGAR</button>
+        <button type="button" class="btn btn-success w-100" id="btnGuardarAdmin">AGREGAR</button>
       </div>
     </div>
   </div>
@@ -275,8 +331,8 @@
   <script>
     var baseUrl = "<?php echo base_url('index.php/crudusers/'); ?>";
   </script>
-  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine.demo.js"></script>
-
+  <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/table-manage-combine-crudusers.demo.js"></script>
+  <script src="<?php echo base_url(); ?>coloradmin/assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
   <!-- toast -->
   <script src="<?php echo base_url(); ?>coloradmin/assets/js/demo/toastr.min.js"></script>
   <!-- Sweets alerts/Modals scripts -->
@@ -345,25 +401,13 @@
 
     Parsley.on('field:validate', function() {
         // Aplica a todos los campos de texto excepto algunos que puedas excluir, si es necesario
-        if (this.$element.is('input[type="text"]')) {
+        // Aplicar la validación solo si NO es el input CI
+        if (this.$element.is('input[type="text"]') && this.$element.attr('id') !== 'ci') {
             this.$element.attr('data-parsley-no-special-chars', '');
             this.$element.attr('data-parsley-no-special-chars-message', 'Este campo no debe contener caracteres especiales ni tener espacios al inicio o al final.');
         }
     });
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   <!-- Sweet alart cierre de sesión -->
@@ -407,20 +451,7 @@
 
 
 
-<!-- Agregar el script antes del cierre del body -->
-<script>
-    $(document).ready(function () {
-        // Asegurar que Parsley está activado en el modal al abrirlo
-        $('#modalEditarAdmin').on('shown.bs.modal', function () {
-            $('#formEditarAdmin').parsley().reset();
-        });
 
-        // Validación en tiempo real para el campo nickname
-        $('input[name="nickname"]').on('input', function () {
-            $(this).parsley().validate();
-        });
-    });
-</script>
 
 
 <!-- SCRIPT PARA CRUD DE ADMINISTRADORES -->
@@ -517,16 +548,32 @@
 
             $(this).text(nuevoTexto);
             cargarAdministradores(nuevaURL);
+
+            // Ocultar o mostrar el botón AGREGAR
+            if (mostrandoDeshabilitados) {
+                $("#btnAbrirModalAgregar").hide();
+            } else {
+                $("#btnAbrirModalAgregar").show();
+            }
         });
 
         cargarAdministradores(urlHabilitados);
 
+        var form = $("#formAgregarAdmin").parsley(); // Inicializar Parsley en el formulario
+
+        // Validar en tiempo real cada vez que el usuario escriba
+        // Deshabilitar el auto-focus moviendo el cursor manualmente al final del input actual
+        $('#formAgregarAdmin input, #formAgregarAdmin select').on('keyup change', function (event) {
+            form.validate(); // Ejecuta la validación en cada cambio
+            $(this).focus(); // Mantiene el foco en el input actual
+        });
         // Evento para abrir el modal de agregar
         $(document).on("click", "#btnAbrirModalAgregar", function () {
-            console.log("Intentando abrir el modal...");
             let modal = $("#modalAgregarAdmin");
-
+            let rol = $(this).data("rol"); // Capturar el rol desde el botón
+            let tituloModal = (rol == 2) ? "Nuevo Administrador" : "Nuevo Socio"; // Definir el título dinámico
             if (modal.length > 0) {
+                $("#modalAgregarAdmin .modal-title").text(tituloModal); // Cambia el título del modal
                 modal.modal('show');
                 $("#formAgregarAdmin")[0].reset();
             } else {
@@ -537,6 +584,13 @@
 
         // Evento para agregar administrador
         $("#btnGuardarAdmin").click(function () {
+
+
+            if (!form.validate()) { // Validar formulario antes de enviarlo
+                console.log("Formulario inválido, revisa los campos.");
+                return; // Detener la ejecución si hay errores
+            }
+
             let formData = $("#formAgregarAdmin").serialize();
 
             $("#btnGuardarAdmin").prop("disabled", true).text("Guardando...");
@@ -549,8 +603,14 @@
                 success: function (response) {
                     if (response.status === 'success') {
                         toastr.success(response.message);
-                        $("#modalAgregarAdmin").modal('hide');
+
+                        setTimeout(function () { 
+                            $("#modalAgregarAdmin").modal('hide'); 
+                        }, 1000); // Cierra el modal después de 1 segundo
+
                         cargarAdministradores(urlHabilitados);
+                        $("#formAgregarAdmin")[0].reset(); // Resetear formulario
+                        $('#formAgregarAdmin').parsley().reset(); // Resetear validaciones de Parsley
                     } else {
                         toastr.error(response.message);
                     }
@@ -694,8 +754,24 @@
     });
 </script>
 
+<!-- SCRIPT PARA SETEAR EL MENSAJE DE VALIDACION PARSLEY DE FORMA ORDENADA EN EL INPUT SEXO -->
+<script>
+$(document).ready(function() {
+    $('#formAgregarAdmin').parsley().on('field:error', function() {
+        if (this.$element.attr('name') === 'genero') {
+            // Previene la inserción automática de Parsley
+            this.$element.closest('.radio-group').find('.parsley-errors-list').remove();
+            // Inserta el mensaje solo en el contenedor correcto
+            $('#genero-error-container').html('<span class="text-danger">' + this.getErrorsMessages().join('<br>') + '</span>');
+        }
+    }).on('field:success', function() {
+        if (this.$element.attr('name') === 'genero') {
+            $('#genero-error-container').html(''); // Limpia el mensaje cuando se selecciona una opción
+        }
+    });
+});
 
-
+</script>
 
 
 

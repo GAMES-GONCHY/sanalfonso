@@ -10,14 +10,17 @@ class Crudusers_model extends CI_Model
 		$this->db->join('membresia M', 'U.idUsuario = M.idUsuario', 'left');
 		$this->db->where('U.estado', 1);
 		$this->db->where('U.rol', $rol);
-		if($rol==2)
-		{
-			$this->db->order_by('fechaRegistro', 'DESC');
-		}
-		elseif($rol==0)
-		{
-			$this->db->order_by('fechaActualizacion', 'DESC');
-		}
+		// if($rol==2)
+		// {
+		// 	$this->db->order_by('U.fechaRegistro', 'DESC');
+		// }
+		// elseif($rol==0)
+		// {
+		// 	$this->db->order_by('U.fechaActualizacion', 'DESC');
+		// }
+		$this->db->order_by('U.fechaActualizacion', 'DESC');
+		$this->db->order_by('U.fechaRegistro', 'DESC');
+		
 		$query = $this->db->get(); // Devuelve un objeto de consulta
 	
 		return $query; // No convertimos a array aquí
@@ -29,6 +32,10 @@ class Crudusers_model extends CI_Model
 		$this->db->join('membresia M', 'U.idUsuario = M.idUsuario', 'left');
 		$this->db->where('U.rol', $rol);
         $this->db->where_in('U.estado', [0, 2]);
+		$this->db->order_by('U.fechaRegistro', 'DESC');
+		$this->db->order_by('U.fechaActualizacion', 'DESC');
+		
+		
         return $this->db->get();
     }
 	public function agregar($data)
