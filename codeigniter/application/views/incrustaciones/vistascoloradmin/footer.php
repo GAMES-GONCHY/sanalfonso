@@ -1,5 +1,6 @@
   <div id="footer" class="app-footer mx-0 px-0">
-    <h5 class="mb-0">&copy; 2024 <b>Aqua</b>ReadPro - by G@mes Rights Reserved</h5>
+    <!-- <h5 class="mb-0">&copy; 2024 <b>Aqua</b>ReadPro - by G@mes Rights Reserved</h5> -->
+    <h5 class="mb-0">© <?php echo date("Y"); ?> <b>Aqua</b>ReadPro • by <span class="arrow">::::</span> 𝓖𝒾𝓖𝒾 - G@〽️€💲 ✦ All Rights Reserved</h5>
   </div>
   </div>
   <!-- END CONTENT PAGE -->

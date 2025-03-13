@@ -60,12 +60,6 @@ class Crudusers_model extends CI_Model
 		$this->db->where('idUsuario', $idUsuario);
 		return $this->db->update('usuario', $data);
 	}
-
-	public function eliminar($id)
-	{
-		$this->db->where('idUsuario', $id);
-		$this->db->delete('usuario');
-	}
 	public function recuperarusuario($id)
 	{
 		$this->db->select('*');
@@ -88,35 +82,73 @@ class Crudusers_model extends CI_Model
 		$query = $this->db->get();
 		return $query->num_rows() > 0;
 	}
-	public function comprobarinsercion($newdata)
-	{
-		$duplicate = [];
-		$this->db->where('email', $newdata['email']);
-		$query = $this->db->get('usuario');
+	// public function comprobarinsercion($newdata)
+	// {
+	// 	$duplicate = [];
+	// 	$this->db->where('email', $newdata['email']);
+	// 	$query = $this->db->get('usuario');
 
-		if ($query->num_rows() > 0)
-		{
-			$duplicate['email'] = true;
-		}
+	// 	if ($query->num_rows() > 0)
+	// 	{
+	// 		$duplicate['email'] = true;
+	// 	}
 		
-		$this->db->where('nickName', $newdata['nickname']);
-		$query = $this->db->get('usuario');
+	// 	$this->db->where('nickName', $newdata['nickname']);
+	// 	$query = $this->db->get('usuario');
 
-		if ($query->num_rows() > 0) 
-		{
-			$duplicate['nickName'] = true;
-		}
+	// 	if ($query->num_rows() > 0) 
+	// 	{
+	// 		$duplicate['nickName'] = true;
+	// 	}
 
-		$this->db->where('ci', $newdata['ci']);
-		$query = $this->db->get('usuario');
+	// 	$this->db->where('ci', $newdata['ci']);
+	// 	$query = $this->db->get('usuario');
 
-		if ($query->num_rows() > 0) 
-		{
-			$duplicate['ci'] = true;
+	// 	if ($query->num_rows() > 0) 
+	// 	{
+	// 		$duplicate['ci'] = true;
+	// 	}
+
+	// 	return $duplicate;
+	// }
+	public function comprobarinsercion($nickname, $ci, $email) 
+	{
+		$this->db->select('nickName, ci, email');
+		$this->db->from('usuario');
+		$this->db->where('email', $email);
+		$this->db->or_where('nickName', $nickname);
+		$this->db->or_where('ci', $ci);
+		
+		$query = $this->db->get();
+		$result = $query->row_array();
+
+		$duplicate = [];
+
+		if ($result) {
+			if ($result['email'] === $email) {
+				$duplicate['email'] = true;
+			}
+			if ($result['nickName'] === $nickname) {
+				$duplicate['nickName'] = true;
+			}
+			if ($result['ci'] === $ci) {
+				$duplicate['ci'] = true;
+			}
 		}
 
 		return $duplicate;
 	}
+
+	public function agregarMembresia($idUsuario, $codigoSocio)
+	{
+		$data = [
+			'idUsuario'   => $idUsuario,
+			'codigoSocio' => $codigoSocio
+		];
+		
+		return $this->db->insert('membresia', $data);
+	}
+
 	public function comprobarmodificacion($newdata, $id)
 	{
 		log_message('error', 'Verificando duplicados para el ID: ' . $id);
@@ -124,10 +156,10 @@ class Crudusers_model extends CI_Model
 	
 		// Obtener los datos actuales del usuario
 		$usuarioActual = $this->db->select('email, nickName')
-								  ->from('usuario')
-								  ->where('idUsuario', $id)
-								  ->get()
-								  ->row_array();
+									->from('usuario')
+									->where('idUsuario', $id)
+									->get()
+									->row_array();
 	
 		log_message('error', 'Datos actuales del usuario: ' . json_encode($usuarioActual));
 	

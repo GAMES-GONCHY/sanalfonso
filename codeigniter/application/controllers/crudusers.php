@@ -66,6 +66,52 @@ class Crudusers extends CI_Controller
 		$this->load->view('formagregaruser1');
 		$this->load->view('incrustaciones/vistascoloradmin/footercruduser',$data);
 	}
+	// public function agregarbd()
+	// {
+	// 	// Validar que la solicitud sea AJAX
+	// 	if (!$this->input->is_ajax_request()) {
+	// 		show_404();
+	// 	}
+		
+	// 	// Capturar datos del formulario
+	// 	$data = [
+	// 		'nickName'       => $this->input->post('nickname', true),
+	// 		'nombre'         => strtoupper($this->input->post('nombre', true)),
+	// 		'primerApellido' => strtoupper($this->input->post('primerApellido', true)),
+	// 		'segundoApellido'=> strtoupper($this->input->post('segundoApellido', true)),
+	// 		'ci'  			 => $this->input->post('ci', true),
+	// 		'email'          => $this->input->post('email', true),
+	// 		'rol'            => $this->input->post('rol', true),
+	// 		'fono'           => $this->input->post('fono', true),
+	// 		'sexo'           => $this->input->post('genero', true)
+	// 	];
+
+	// 	// Depuración: Registrar datos en logs
+	// 	log_message('DEBUG', 'Datos recibidos en agregarbd: ' . json_encode($data));
+	// 	// Verificar si ya existe el usuario (email o nickname)
+	// 	$existeUsuario = $this->crudusers_model->comprobarinsercion([
+	// 		'nickname' => $data['nickName'],
+	// 		'ci' => $data['ci'],
+	// 		'email'    => $data['email']
+	// 	]);
+	
+	// 	if (!empty($existeUsuario)) {
+	// 		echo json_encode([
+	// 			'status'  => 'error',
+	// 			'message' => 'El Nickname o el E-mail ya están registrados.'
+	// 		]);
+	// 		exit;
+	// 	}
+	
+	// 	// Insertar en la base de datos
+	// 	$this->crudusers_model->agregar($data);
+	
+	// 	echo json_encode([
+	// 		'status'  => 'success',
+	// 		'message' => 'Administrador agregado correctamente.'
+	// 	]);
+	// 	exit;
+	// }
 	public function agregarbd()
 	{
 		// Validar que la solicitud sea AJAX
@@ -73,37 +119,58 @@ class Crudusers extends CI_Controller
 			show_404();
 		}
 		
-		// Capturar datos del formulario
+		// Capturar y sanitizar datos del formulario
 		$data = [
 			'nickName'       => $this->input->post('nickname', true),
 			'nombre'         => strtoupper($this->input->post('nombre', true)),
 			'primerApellido' => strtoupper($this->input->post('primerApellido', true)),
 			'segundoApellido'=> strtoupper($this->input->post('segundoApellido', true)),
-			'ci'  			 => $this->input->post('ci', true),
+			'ci'             => $this->input->post('ci', true),
 			'email'          => $this->input->post('email', true),
-			'rol'            => $this->input->post('rol', true),
+			'rol'            => (int) $this->input->post('rol', true), // Convertimos el rol a entero
 			'fono'           => $this->input->post('fono', true),
 			'sexo'           => $this->input->post('genero', true)
 		];
-
-		// Depuración: Registrar datos en logs
-		log_message('DEBUG', 'Datos recibidos en agregarbd: ' . json_encode($data));
-		// Verificar si ya existe el usuario (email o nickname)
-		$existeUsuario = $this->crudusers_model->comprobarinsercion([
-			'nickname' => $data['nickName'],
-			'ci' => $data['ci'],
-			'email'    => $data['email']
-		]);
 	
-		if (!empty($existeUsuario)) {
+		// Registrar datos en logs para depuración
+		log_message('DEBUG', 'Datos recibidos en agregarbd: ' . json_encode($data));
+	
+		// Verificar si ya existe el usuario (email, nickname o CI)
+		if ($this->crudusers_model->comprobarinsercion($data['nickName'], $data['ci'], $data['email'])) {
 			echo json_encode([
 				'status'  => 'error',
-				'message' => 'El Nickname o el E-mail ya están registrados.'
+				'message' => 'El Nickname, CI o el E-mail ya están registrados.'
 			]);
 			exit;
 		}
 	
-		// Insertar en la base de datos
+		// Si el usuario es un SOCIO (rol = 0), usamos una transacción
+		if ($data['rol'] === 0) {
+			$this->db->trans_start(); // Iniciar transacción
+	
+			// Insertar usuario en la base de datos
+			$this->crudusers_model->agregar($data);
+			$idUsuario = $this->db->insert_id();
+	
+			// **Generar código de socio directamente desde los datos del POST**
+			$codigoSocio = 'S-' . substr($data['primerApellido'], 0, 2) . 
+									substr($data['nombre'], -1) . 
+									substr($data['ci'], 0, 1) . 
+									substr($data['ci'], -1);
+	
+			// Insertar en la tabla membresia a través del modelo
+			$insertMembresia = $this->crudusers_model->agregarMembresia($idUsuario, $codigoSocio);
+	
+			$this->db->trans_complete(); // Finalizar transacción
+	
+			echo json_encode([
+				'status'  => ($this->db->trans_status() && $insertMembresia) ? 'success' : 'error',
+				'message' => ($this->db->trans_status() && $insertMembresia) ? 'Socio agregado correctamente.' : 'Error al agregar el socio.'
+			]);
+			exit;
+		}
+	
+		// Si es un Administrador (rol = 2), solo insertamos en la tabla usuario
 		$this->crudusers_model->agregar($data);
 	
 		echo json_encode([
@@ -112,6 +179,8 @@ class Crudusers extends CI_Controller
 		]);
 		exit;
 	}
+	
+
 	public function recuperarUsuario()
 	{
 		if (!$this->input->is_ajax_request()) {

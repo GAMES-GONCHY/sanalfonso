@@ -1,6 +1,6 @@
 <div class="navbar-header">
     <a href="#" class="navbar-brand">
-        <span class="navbar-logo"></span> <b>Aqua</b>ReadPro <img src="<?php echo base_url(); ?>coloradmin/assets/img/logo/logomenu.png" alt="" width="50" />
+        <span class="navbar-logo"></span> <b>San</b>Alfonso <img src="<?php echo base_url(); ?>coloradmin/assets/img/logo/logomenu.png" alt="" width="50" />
     </a>
     
     <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">

@@ -53,7 +53,7 @@
 						<div class="d-flex align-items-center">
 							<span class="logo"></span> <b>Aqua</b> ReadPrO
 						</div>
-						<h6> Telemetría inteligente para control preciso del agua</h6>
+						<h6> Gestión profesional y precisa del agua.</h6>
 					</div>
 					<div class="icon">
 						<span><img src="<?php echo base_url(); ?>coloradmin/assets/img/login-bg/logo13.png" alt="Imagen con efecto hover combinado" class="image-hover-combined" height="108"></span>

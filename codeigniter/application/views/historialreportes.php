@@ -81,6 +81,11 @@
             <a id="generarPDFBtn" class="btn btn-xs btn-success">
               <i class="fa fa-file-pdf"></i> Generar PDF
             </a>
+            <div class="panel-heading-btn">
+              <a href="javascript:;" class="btn btn-xs btn-icon btn-default" data-toggle="panel-expand"><i class="fa fa-expand"></i></a>
+              <a href="javascript:;" class="btn btn-xs btn-icon btn-success" data-toggle="panel-reload"><i class="fa fa-redo"></i></a>
+              <a href="javascript:;" class="btn btn-xs btn-icon btn-warning" data-toggle="panel-collapse"><i class="fa fa-minus"></i></a>
+            </div>
           </div>
           <div class="panel-body">
             <table id="datatable" class="table table-hover table-striped align-middle" style="text-align: center;">
@@ -108,4 +113,4 @@
       </div>
     </div>
   </div>
-</div>
+<!-- </div> -->

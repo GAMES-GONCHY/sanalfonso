@@ -222,7 +222,14 @@
           color: #ffffff !important; /* Texto blanco */
       }
   </style>
-
+  <!-- estilo para el pie de pagina -->
+    <style>
+          .arrow {
+        color: #ff5733; /* Color naranja */
+        font-weight: bold;
+        font-size: 1.2em;
+    } 
+    </style>
 
 </head>
 
